@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="cc.rome753.surfacepaint">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/fractal"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:theme="@style/AppTheme">
+        <activity android:name="cc.rome753.surfacepaint.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="cc.rome753.surfacepaint.SurfaceActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_fractal"
+            android:theme="@style/FullScreenTheme">
+        </activity>
+        <activity android:name="cc.rome753.surfacepaint.FramesActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:label="@string/title_activity_fractal"
+                  android:theme="@style/FullScreenTheme">
+        </activity>
+        <activity android:name="cc.rome753.surfacepaint.TextureActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:label="@string/title_activity_fractal"
+                  android:theme="@style/FullScreenTheme">
+        </activity>
+    </application>
+
+</manifest>
