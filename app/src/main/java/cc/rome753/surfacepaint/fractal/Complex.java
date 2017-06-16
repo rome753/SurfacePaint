@@ -1,4 +1,4 @@
-package cc.rome753.surfacepaint;
+package cc.rome753.surfacepaint.fractal;
 
 /**
  * complex number

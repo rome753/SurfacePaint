@@ -11,6 +11,11 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
+import cc.rome753.surfacepaint.fractal.FramesActivity;
+import cc.rome753.surfacepaint.fractal.SurfaceActivity;
+import cc.rome753.surfacepaint.fractal.TextureActivity;
+import cc.rome753.surfacepaint.opengl.OpenGLActivity;
+
 public class MainActivity extends AppCompatActivity {
 
     ListView mListView;
@@ -27,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
         mData.add("TextureView paint");
         mData.add("Frames");
 
+        mData.add("OpenGL Sphere");
+
         mListView = (ListView) findViewById(R.id.lv);
         mListView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mData));
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -41,6 +48,9 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case 2:
                         startActivity(new Intent(MainActivity.this, FramesActivity.class));
+                        break;
+                    case 3:
+                        startActivity(new Intent(MainActivity.this, OpenGLActivity.class));
                         break;
                 }
             }
