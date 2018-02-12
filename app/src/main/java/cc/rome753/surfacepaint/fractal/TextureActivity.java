@@ -105,8 +105,4 @@ public class TextureActivity extends BaseActivity {
         }
     }
 
-    synchronized void syncDraw(Rect r, Bitmap bitmap){
-        drawBitmap(texture, r, bitmap);
-    }
-
 }

@@ -15,8 +15,8 @@ public class Sphere {
 
     float R = 0.5f;
 
-    int layers = 11;
-    int sectors = 11;
+    int layers = 100;
+    int sectors = 360;
     float alpha = (float) (Math.PI / layers);
     float beta = (float) (Math.PI * 2 / sectors);
 

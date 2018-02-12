@@ -32,7 +32,7 @@ public class Complex {
         re = temp;
     }
 
-    public float abs(){
-        return (float) Math.sqrt(re*re + im*im);
+    public float square(){
+        return re*re + im*im;
     }
 }

@@ -136,7 +136,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                 int k = 0;
                 for (; k < ITERATE_TIMES; k++) {
-                    if (z.abs() > 2) break;
+                    if (z.square() > 4) break;
                     z.mul(z);
                     z.add(c);
                 }

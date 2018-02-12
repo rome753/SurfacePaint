@@ -46,9 +46,6 @@ public class SurfaceActivity extends BaseActivity {
             canvas.drawColor(Color.BLACK);
             holder.unlockCanvasAndPost(canvas);
 
-            canvas = holder.lockCanvas(new Rect(0,0,100,100));
-            canvas.drawColor(Color.RED);
-            holder.unlockCanvasAndPost(canvas);
             go();
         }
 
