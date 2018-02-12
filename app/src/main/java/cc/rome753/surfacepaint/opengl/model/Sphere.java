@@ -11,8 +11,7 @@ public class Sphere {
     private static final int POSITION_COMPONENT_COUNT = 3;
     private static final int TEXTURE_COORDINATES_COMPONENT_COUNT = 2;
     private static final int COMPONENT_COUNT = POSITION_COMPONENT_COUNT + TEXTURE_COORDINATES_COMPONENT_COUNT;
-    private static final int STRIDE = (POSITION_COMPONENT_COUNT
-            + TEXTURE_COORDINATES_COMPONENT_COUNT) * BYTES_PER_FLOAT;
+    private static final int STRIDE = (POSITION_COMPONENT_COUNT + TEXTURE_COORDINATES_COMPONENT_COUNT) * BYTES_PER_FLOAT;
 
     float R = 0.5f;
 
@@ -72,13 +71,13 @@ public class Sphere {
     }
 
     public void bindData(TextureShaderProgram textureProgram) {
-        vertexArray.setVertexAttribPointer(
+        vertexArray.setVertexAttrPointer(
                 0,
                 textureProgram.getPositionAttributeLocation(),
                 POSITION_COMPONENT_COUNT,
                 STRIDE);
 
-        vertexArray.setVertexAttribPointer(
+        vertexArray.setVertexAttrPointer(
                 POSITION_COMPONENT_COUNT,
                 textureProgram.getTextureCoordinatesAttributeLocation(),
                 TEXTURE_COORDINATES_COMPONENT_COUNT,

@@ -1,11 +1,3 @@
-/***
- * Excerpted from "OpenGL ES for Android",
- * published by The Pragmatic Bookshelf.
- * Copyrights apply to this code. It may not be used to create training material, 
- * courses, books, articles, and the like. Contact us if you are in doubt.
- * We make no guarantees that this code is fit for any purpose. 
- * Visit http://www.pragmaticprogrammer.com/titles/kbogla for more book information.
-***/
 package cc.rome753.surfacepaint.opengl.data;
 
 import java.nio.ByteBuffer;
@@ -28,13 +20,11 @@ public class VertexArray {
             .put(vertexData);
     }
         
-    public void setVertexAttribPointer(int dataOffset, int attributeLocation,
-        int componentCount, int stride) {        
+    public void setVertexAttrPointer(int dataOffset, int attributeLocation, int componentCount, int stride) {
         floatBuffer.position(dataOffset);        
         glVertexAttribPointer(attributeLocation, componentCount, GL_FLOAT, 
             false, stride, floatBuffer);
         glEnableVertexAttribArray(attributeLocation);
-        
         floatBuffer.position(0);
     }
 }

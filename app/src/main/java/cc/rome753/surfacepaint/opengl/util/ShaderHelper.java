@@ -1,11 +1,3 @@
-/***
- * Excerpted from "OpenGL ES for Android",
- * published by The Pragmatic Bookshelf.
- * Copyrights apply to this code. It may not be used to create training material, 
- * courses, books, articles, and the like. Contact us if you are in doubt.
- * We make no guarantees that this code is fit for any purpose. 
- * Visit http://www.pragmaticprogrammer.com/titles/kbogla for more book information.
-***/
 package cc.rome753.surfacepaint.opengl.util;
 
 import android.util.Log;
@@ -54,10 +46,7 @@ public class ShaderHelper {
         final int shaderObjectId = glCreateShader(type);
 
         if (shaderObjectId == 0) {
-            if (LoggerConfig.ON) {
-                Log.w(TAG, "Could not create new shader.");
-            }
-
+            Log.w(TAG, "Could not create new shader.");
             return 0;
         }
 
@@ -71,21 +60,15 @@ public class ShaderHelper {
         final int[] compileStatus = new int[1];
         glGetShaderiv(shaderObjectId, GL_COMPILE_STATUS,
             compileStatus, 0);
-
-        if (LoggerConfig.ON) {
             // Print the shader info log to the Android log output.
             Log.v(TAG, "Results of compiling source:" + "\n" + shaderCode
                 + "\n:" + glGetShaderInfoLog(shaderObjectId));
-        }
 
         // Verify the compile status.
         if (compileStatus[0] == 0) {
             // If it failed, delete the shader object.
             glDeleteShader(shaderObjectId);
-
-            if (LoggerConfig.ON) {
                 Log.w(TAG, "Compilation of shader failed.");
-            }
 
             return 0;
         }
@@ -104,9 +87,7 @@ public class ShaderHelper {
         final int programObjectId = glCreateProgram();
 
         if (programObjectId == 0) {
-            if (LoggerConfig.ON) {
                 Log.w(TAG, "Could not create new program");
-            }
 
             return 0;
         }
@@ -124,23 +105,17 @@ public class ShaderHelper {
         final int[] linkStatus = new int[1];
         glGetProgramiv(programObjectId, GL_LINK_STATUS,
             linkStatus, 0);
-
-        if (LoggerConfig.ON) {
             // Print the program info log to the Android log output.
             Log.v(
                 TAG,
                 "Results of linking program:\n"
                     + glGetProgramInfoLog(programObjectId));
-        }
 
         // Verify the link status.
         if (linkStatus[0] == 0) {
             // If it failed, delete the program object.
             glDeleteProgram(programObjectId);
-
-            if (LoggerConfig.ON) {
                 Log.w(TAG, "Linking of program failed.");
-            }
 
             return 0;
         }
@@ -179,9 +154,7 @@ public class ShaderHelper {
         // Link them into a shader program.
         program = linkProgram(vertexShader, fragmentShader);
 
-        if (LoggerConfig.ON) {
-            validateProgram(program);
-        }
+        validateProgram(program);
 
         return program;
     }

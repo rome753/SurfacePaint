@@ -1,11 +1,3 @@
-/***
- * Excerpted from "OpenGL ES for Android",
- * published by The Pragmatic Bookshelf.
- * Copyrights apply to this code. It may not be used to create training material,
- * courses, books, articles, and the like. Contact us if you are in doubt.
- * We make no guarantees that this code is fit for any purpose.
- * Visit http://www.pragmaticprogrammer.com/titles/kbogla for more book information.
- ***/
 package cc.rome753.surfacepaint.opengl.model;
 
 import cc.rome753.surfacepaint.opengl.data.VertexArray;
@@ -54,13 +46,13 @@ public class Dice {
     }
 
     public void bindData(TextureShaderProgram textureProgram) {
-        vertexArray.setVertexAttribPointer(
+        vertexArray.setVertexAttrPointer(
                 0,
                 textureProgram.getPositionAttributeLocation(),
                 POSITION_COMPONENT_COUNT,
                 STRIDE);
 
-        vertexArray.setVertexAttribPointer(
+        vertexArray.setVertexAttrPointer(
                 POSITION_COMPONENT_COUNT,
                 textureProgram.getTextureCoordinatesAttributeLocation(),
                 TEXTURE_COORDINATES_COMPONENT_COUNT,

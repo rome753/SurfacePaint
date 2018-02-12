@@ -18,22 +18,22 @@
         <activity
             android:name="cc.rome753.surfacepaint.fractal.SurfaceActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_fractal"
             android:theme="@style/FullScreenTheme">
         </activity>
         <activity android:name="cc.rome753.surfacepaint.fractal.FramesActivity"
                   android:configChanges="orientation|keyboardHidden|screenSize"
-                  android:label="@string/title_activity_fractal"
                   android:theme="@style/FullScreenTheme">
         </activity>
         <activity android:name="cc.rome753.surfacepaint.fractal.TextureActivity"
                   android:configChanges="orientation|keyboardHidden|screenSize"
-                  android:label="@string/title_activity_fractal"
                   android:theme="@style/FullScreenTheme">
         </activity>
-        <activity android:name="cc.rome753.surfacepaint.opengl.OpenGLActivity"
+        <activity android:name="cc.rome753.surfacepaint.opengl.SphereActivity"
                   android:configChanges="orientation|keyboardHidden|screenSize"
-                  android:label="@string/title_activity_fractal"
+                  android:theme="@style/FullScreenTheme">
+        </activity>
+        <activity android:name="cc.rome753.surfacepaint.opengl.DiceActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
                   android:theme="@style/FullScreenTheme">
         </activity>
     </application>

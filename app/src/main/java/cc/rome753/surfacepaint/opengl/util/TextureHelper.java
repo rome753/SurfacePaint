@@ -1,11 +1,4 @@
-/***
- * Excerpted from "OpenGL ES for Android",
- * published by The Pragmatic Bookshelf.
- * Copyrights apply to this code. It may not be used to create training material, 
- * courses, books, articles, and the like. Contact us if you are in doubt.
- * We make no guarantees that this code is fit for any purpose. 
- * Visit http://www.pragmaticprogrammer.com/titles/kbogla for more book information.
-***/
+
 package cc.rome753.surfacepaint.opengl.util;
 
 import android.content.Context;
@@ -41,9 +34,7 @@ public class TextureHelper {
         glGenTextures(1, textureObjectIds, 0);
 
         if (textureObjectIds[0] == 0) {
-            if (LoggerConfig.ON) {
                 Log.w(TAG, "Could not generate a new OpenGL texture object.");
-            }
             return 0;
         } 
         
@@ -55,9 +46,8 @@ public class TextureHelper {
             context.getResources(), resourceId, options);
 
         if (bitmap == null) {
-            if (LoggerConfig.ON) {
                 Log.w(TAG, "Resource ID " + resourceId + " could not be decoded.");
-            }
+
 
             glDeleteTextures(1, textureObjectIds, 0);
             return 0;

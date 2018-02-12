@@ -14,7 +14,8 @@ import java.util.List;
 import cc.rome753.surfacepaint.fractal.FramesActivity;
 import cc.rome753.surfacepaint.fractal.SurfaceActivity;
 import cc.rome753.surfacepaint.fractal.TextureActivity;
-import cc.rome753.surfacepaint.opengl.OpenGLActivity;
+import cc.rome753.surfacepaint.opengl.DiceActivity;
+import cc.rome753.surfacepaint.opengl.SphereActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         mData.add("Frames");
 
         mData.add("OpenGL Sphere");
+        mData.add("OpenGL Dice");
 
         mListView = (ListView) findViewById(R.id.lv);
         mListView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mData));
@@ -50,7 +52,10 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(new Intent(MainActivity.this, FramesActivity.class));
                         break;
                     case 3:
-                        startActivity(new Intent(MainActivity.this, OpenGLActivity.class));
+                        startActivity(new Intent(MainActivity.this, SphereActivity.class));
+                        break;
+                    case 4:
+                        startActivity(new Intent(MainActivity.this, DiceActivity.class));
                         break;
                 }
             }
