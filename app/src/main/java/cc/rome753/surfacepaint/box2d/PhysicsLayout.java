@@ -23,7 +23,6 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
-import org.jbox2d.dynamics.joints.JointDef;
 import org.jbox2d.dynamics.joints.JointType;
 import org.jbox2d.dynamics.joints.MouseJoint;
 import org.jbox2d.dynamics.joints.MouseJointDef;
@@ -130,19 +129,14 @@ public class PhysicsLayout extends FrameLayout {
         this.gravity = gravity;
     }
 
-    public void impulseRandom() {
-        float x = random.nextInt(1000) - 1000;
-        float y = random.nextInt(1000) - 1000;
-        impulse(x, y);
-    }
-
-    public void impulse(float x, float y) {
+    public void setForce(float x, float y) {
         for (int i = 0; i < getChildCount(); i++) {
             Vec2 impulse = new Vec2(x, y);
             View view = getChildAt(i);
             Body body = (Body) view.getTag();
             if (body != null) {
-                body.applyLinearImpulse(impulse, body.getPosition());
+                body.applyForce(impulse, body.getPosition());
+//                body.applyLinearImpulse(impulse, body.getPosition());
             }
         }
     }
