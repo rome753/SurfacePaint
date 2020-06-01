@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <cc.rome753.surfacepaint.box2d.PhysicsLayout
+        android:id="@+id/phy"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </cc.rome753.surfacepaint.box2d.PhysicsLayout>
+</FrameLayout>
