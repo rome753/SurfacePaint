@@ -67,7 +67,7 @@ public class DiceRenderer implements Renderer {
         setIdentityM(modelMatrix, 0);
         translateM(modelMatrix, 0, 0f, 0f, -2.5f);
 //        rotateM(modelMatrix, 0, rotateZ, 0f, 0f, 1f);
-        rotateM(modelMatrix, 0, rotateX, 1f, 0f, 0f);
+        rotateM(modelMatrix, 0, rotateX - 30, 1f, 0f, 0f);
         rotateM(modelMatrix, 0, rotateY, 0f, 1f, 0f);
 
         final float[] temp = new float[16];

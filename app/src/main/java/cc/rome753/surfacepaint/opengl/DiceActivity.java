@@ -28,7 +28,7 @@ public class DiceActivity extends Activity {
                 float y = event.values[1];
                 float z = event.values[2];
                 try {
-                    if (Math.abs(lastX - x) > 0.5 || Math.abs(lastY - y) > 0.5) {
+                    if (Math.abs(lastX - x) > 0.1 || Math.abs(lastY - y) > 0.1) {
                         diceRenderer.rotate(x / 2 + lastX, y / 2 + lastY, z);
                     }
                 } catch (Exception e) {

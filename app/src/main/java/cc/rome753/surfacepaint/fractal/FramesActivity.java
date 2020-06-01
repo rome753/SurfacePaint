@@ -69,6 +69,7 @@ public class FramesActivity extends TextureActivity {
                 paint.setColor(Color.RED);
                 while (isAvailable.get()) {
                     int waitTime = map.size() == 0 ? 1000 : 1000 / map.size();
+                    if (waitTime < 60) waitTime = 60;
                     SystemClock.sleep(waitTime);
 //                        Pair<Integer, Bitmap> pair = queue.take();
 
