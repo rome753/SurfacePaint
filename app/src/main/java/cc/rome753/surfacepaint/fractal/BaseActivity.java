@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
@@ -14,6 +13,8 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout.LayoutParams;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

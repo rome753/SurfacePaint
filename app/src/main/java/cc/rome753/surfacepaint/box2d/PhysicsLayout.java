@@ -2,14 +2,17 @@ package cc.rome753.surfacepaint.box2d;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import org.jbox2d.callbacks.QueryCallback;
+import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
@@ -17,9 +20,9 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
-import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.JointDef;
 import org.jbox2d.dynamics.joints.JointType;
 import org.jbox2d.dynamics.joints.MouseJoint;
@@ -35,6 +38,9 @@ public class PhysicsLayout extends FrameLayout {
     private float dt = 1f / 60f;
     private Random random = new Random();
     private MouseJoint mouseJoint;
+    private Body groundBody;
+
+    private Vec2 hitPoint = new Vec2();
 
     public PhysicsLayout(@NonNull Context context) {
         this(context, null);
@@ -68,40 +74,56 @@ public class PhysicsLayout extends FrameLayout {
             Body body = (Body) view.getTag();
             if (body != null) {
                 updateView(view, body);
-                view.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        float x = pixel2Meter(event.getX());
-                        float y = pixel2Meter(event.getY());
-                        switch (event.getAction()) {
-                            case MotionEvent.ACTION_DOWN:
-
-                                BodyDef def = new BodyDef();
-                                def.position = new Vec2(x, y);
-                                def.type = BodyType.STATIC;
-
-                                MouseJointDef jointDef = new MouseJointDef();
-                                jointDef.type = JointType.MOUSE;
-                                jointDef.bodyA = world.createBody(def);
-                                jointDef.bodyB = (Body) v.getTag();
-                                mouseJoint = (MouseJoint) world.createJoint(jointDef);
-//                                mouseJoint.setMaxForce(1000);
-
-                                break;
-                            case MotionEvent.ACTION_MOVE:
-                                if (mouseJoint != null) {
-                                    mouseJoint.setTarget(new Vec2(x, y));
-                                }
-
-                                break;
-                        }
-                        return true;
-                    }
-                });
             }
         }
 
         invalidate();
+    }
+
+    QueryCallback queryCallback = new QueryCallback() {
+        @Override
+        public boolean reportFixture(Fixture fixture) {
+            if (fixture.testPoint(hitPoint)) {
+                Body hitBody = fixture.m_body;
+
+                MouseJointDef jointDef = new MouseJointDef();
+                jointDef.type = JointType.MOUSE;
+                jointDef.bodyA = groundBody;
+                jointDef.bodyB = hitBody;
+                jointDef.collideConnected = true;
+                jointDef.maxForce = 10000f;
+                jointDef.target.set(hitPoint.x, hitPoint.y);
+                mouseJoint = (MouseJoint) world.createJoint(jointDef);
+                hitBody.setAwake(true);
+                return false;
+            }
+            return true;
+        }
+    };
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        final float x = pixel2Meter(event.getX());
+        final float y = pixel2Meter(event.getY());
+        hitPoint.set(x, y);
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                world.queryAABB(queryCallback, new AABB(new Vec2(x - 0.1f, y - 0.1f), new Vec2(x + 0.1f, y + 0.1f)));
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (mouseJoint != null) {
+                    mouseJoint.setTarget(hitPoint);
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                if (mouseJoint != null) {
+                    world.destroyJoint(mouseJoint);
+                    mouseJoint = null;
+                }
+                break;
+        }
+        return true;
     }
 
     public void setGravity(float gravity) {
@@ -119,19 +141,9 @@ public class PhysicsLayout extends FrameLayout {
             Vec2 impulse = new Vec2(x, y);
             View view = getChildAt(i);
             Body body = (Body) view.getTag();
-            if(body != null){
+            if (body != null) {
                 body.applyLinearImpulse(impulse, body.getPosition());
             }
-        }
-    }
-
-    public void moveBody(View view, float dx, float dy) {
-        JointDef jointDef = new JointDef();
-        Log.d("chao", "moveBody " + dx + "," + dy);
-        Body body = (Body) view.getTag();
-        if(body != null){
-            Vec2 impulse = new Vec2(dx, dy);
-            body.applyLinearImpulse(impulse, body.getPosition());
         }
     }
 
@@ -193,8 +205,8 @@ public class PhysicsLayout extends FrameLayout {
         top.createFixture(fixtureDef);
 
         bodyDef.position.set(0, h + wall);
-        Body bottom = world.createBody(bodyDef);
-        bottom.createFixture(fixtureDef);
+        groundBody = world.createBody(bodyDef);
+        groundBody.createFixture(fixtureDef);
 
         wallShape.setAsBox(wall, h);
 
@@ -219,7 +231,7 @@ public class PhysicsLayout extends FrameLayout {
         return radians / 3.14f * 180f;
     }
 
-    private float degreesToRadians(float degrees){
+    private float degreesToRadians(float degrees) {
         return (degrees / 180f) * 3.14f;
     }
 
