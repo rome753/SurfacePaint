@@ -7,6 +7,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -23,8 +24,8 @@ public class Box2DActivity extends Activity {
         public void onSensorChanged(SensorEvent event) {
             if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
                 float x =  event.values[0];
-                float y =   event.values[1];
-                Log.d("chao", "sensor " + x + " " + y);
+                float y =  event.values[1] / 5;
+//                Log.d("chao", "sensor " + x + " " + y);
                 physicsLayout.impulse(-x,y);
             }
         }
@@ -40,16 +41,18 @@ public class Box2DActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_box2d);
         physicsLayout = findViewById(R.id.phy);
+        physicsLayout.setGravity(0f);
         for(int i = 0; i < 10; i++) {
             View view = new View(this);
             view.setBackgroundResource(R.drawable.soccer);
+
             physicsLayout.addView(view, new FrameLayout.LayoutParams(100, 100));
         }
 
         physicsLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                physicsLayout.impulseRandom();
+//                physicsLayout.impulseRandom();
             }
         });
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);

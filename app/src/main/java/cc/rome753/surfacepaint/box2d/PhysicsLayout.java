@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -18,15 +19,22 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.joints.Joint;
+import org.jbox2d.dynamics.joints.JointDef;
+import org.jbox2d.dynamics.joints.JointType;
+import org.jbox2d.dynamics.joints.MouseJoint;
+import org.jbox2d.dynamics.joints.MouseJointDef;
 
 import java.util.Random;
 
 public class PhysicsLayout extends FrameLayout {
 
     private World world;
+    private float gravity = 9.8f;
     private int ratio = 50;
     private float dt = 1f / 60f;
     private Random random = new Random();
+    private MouseJoint mouseJoint;
 
     public PhysicsLayout(@NonNull Context context) {
         this(context, null);
@@ -60,10 +68,44 @@ public class PhysicsLayout extends FrameLayout {
             Body body = (Body) view.getTag();
             if (body != null) {
                 updateView(view, body);
+                view.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        float x = pixel2Meter(event.getX());
+                        float y = pixel2Meter(event.getY());
+                        switch (event.getAction()) {
+                            case MotionEvent.ACTION_DOWN:
+
+                                BodyDef def = new BodyDef();
+                                def.position = new Vec2(x, y);
+                                def.type = BodyType.STATIC;
+
+                                MouseJointDef jointDef = new MouseJointDef();
+                                jointDef.type = JointType.MOUSE;
+                                jointDef.bodyA = world.createBody(def);
+                                jointDef.bodyB = (Body) v.getTag();
+                                mouseJoint = (MouseJoint) world.createJoint(jointDef);
+//                                mouseJoint.setMaxForce(1000);
+
+                                break;
+                            case MotionEvent.ACTION_MOVE:
+                                if (mouseJoint != null) {
+                                    mouseJoint.setTarget(new Vec2(x, y));
+                                }
+
+                                break;
+                        }
+                        return true;
+                    }
+                });
             }
         }
 
         invalidate();
+    }
+
+    public void setGravity(float gravity) {
+        this.gravity = gravity;
     }
 
     public void impulseRandom() {
@@ -83,6 +125,16 @@ public class PhysicsLayout extends FrameLayout {
         }
     }
 
+    public void moveBody(View view, float dx, float dy) {
+        JointDef jointDef = new JointDef();
+        Log.d("chao", "moveBody " + dx + "," + dy);
+        Body body = (Body) view.getTag();
+        if(body != null){
+            Vec2 impulse = new Vec2(dx, dy);
+            body.applyLinearImpulse(impulse, body.getPosition());
+        }
+    }
+
     private void updateView(View view, Body body) {
         Vec2 position = body.getPosition();
         float x = meter2Pixel(position.x) - view.getWidth() / 2;
@@ -90,7 +142,7 @@ public class PhysicsLayout extends FrameLayout {
         view.setX(x);
         view.setY(y);
         view.setRotation(radiansToDegrees(body.getAngle() % 360));
-        Log.d("chao", "updateView " + x + "," + y);
+//        Log.d("chao", "updateView " + x + "," + y);
     }
 
     private void createBody(View view) {
@@ -122,7 +174,7 @@ public class PhysicsLayout extends FrameLayout {
         float w = pixel2Meter(getWidth()), h = pixel2Meter(getHeight());
         Log.d("chao", "createWorld " + w + "," + h);
         float wall = 1f;
-        world = new World(new Vec2(0, 10f));
+        world = new World(new Vec2(0, gravity));
 
         PolygonShape wallShape = new PolygonShape();
         wallShape.setAsBox(w, wall);
