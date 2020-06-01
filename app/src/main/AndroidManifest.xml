@@ -40,6 +40,10 @@
                   android:configChanges="orientation|keyboardHidden|screenSize"
                   android:theme="@style/FullScreenTheme">
         </activity>
+        <activity android:name="cc.rome753.surfacepaint.box2d.GalaxyActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:theme="@style/FullScreenTheme">
+        </activity>
     </application>
 
 </manifest>

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cc.rome753.surfacepaint.box2d.Box2DActivity;
+import cc.rome753.surfacepaint.box2d.GalaxyActivity;
 import cc.rome753.surfacepaint.fractal.FramesActivity;
 import cc.rome753.surfacepaint.fractal.SurfaceActivity;
 import cc.rome753.surfacepaint.fractal.TextureActivity;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         mData.add("OpenGL Dice");
 
         mData.add("Box2d");
+        mData.add("Box2d galaxy");
 
         mListView = (ListView) findViewById(R.id.lv);
         mListView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mData));
@@ -63,6 +65,9 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case 5:
                         startActivity(new Intent(MainActivity.this, Box2DActivity.class));
+                        break;
+                    case 6:
+                        startActivity(new Intent(MainActivity.this, GalaxyActivity.class));
                         break;
                 }
             }
