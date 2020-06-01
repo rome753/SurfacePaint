@@ -2,6 +2,8 @@ package cc.rome753.surfacepaint.box2d;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -26,6 +28,7 @@ import org.jbox2d.dynamics.joints.JointType;
 import org.jbox2d.dynamics.joints.MouseJoint;
 import org.jbox2d.dynamics.joints.MouseJointDef;
 
+import java.util.LinkedList;
 import java.util.Random;
 
 public class Galaxy extends FrameLayout {
@@ -40,6 +43,20 @@ public class Galaxy extends FrameLayout {
 
     private Vec2 hitPoint = new Vec2();
 
+    static class Planet {
+        static int[] colors = {Color.BLUE, Color.RED, Color.YELLOW, Color.GREEN, Color.CYAN};
+        private static int maxPoint = 200;
+        LinkedList<Integer> points = new LinkedList<>();
+        Paint pointPaint = new Paint();
+
+        Planet() {
+            int color = colors[new Random().nextInt(colors.length)];
+            pointPaint.setStyle(Paint.Style.FILL);
+            pointPaint.setColor(color);
+            pointPaint.setAntiAlias(true);
+        }
+    }
+
     public Galaxy(@NonNull Context context) {
         this(context, null);
     }
@@ -51,6 +68,7 @@ public class Galaxy extends FrameLayout {
     public Galaxy(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setWillNotDraw(false);
+
     }
 
     @Override
@@ -75,8 +93,8 @@ public class Galaxy extends FrameLayout {
         for (int i = 0; i < getChildCount(); i++) {
             View view = getChildAt(i);
             Body body = (Body) view.getTag();
-            if (body != null) {
-                updateView(view, body);
+            if (body != null && body.getType() == BodyType.DYNAMIC) {
+                updateView(view, body, canvas);
             }
         }
 
@@ -150,20 +168,35 @@ public class Galaxy extends FrameLayout {
         }
     }
 
-    private void updateView(View view, Body body) {
+    private void updateView(View view, Body body, Canvas canvas) {
         Vec2 position = body.getPosition();
-        float x = meter2Pixel(position.x) - view.getWidth() / 2;
-        float y = meter2Pixel(position.y) - view.getHeight() / 2;
+        int cx = (int) meter2Pixel(position.x);
+        int cy = (int) meter2Pixel(position.y);
+        int x = cx - view.getWidth() / 2;
+        int y = cy - view.getHeight() / 2;
         view.setX(x);
         view.setY(y);
         view.setRotation(radiansToDegrees(body.getAngle() % 360));
+
+        Planet planet = (Planet) body.getUserData();
+        LinkedList<Integer> points = planet.points;
+        if (points.size() >= Planet.maxPoint) {
+            points.removeFirst();
+        }
+        int pp = (cx << 16) + cy;
+        points.addLast(pp);
+        for (int p : points) {
+            int x1 = p >> 16;
+            int y1 = p & 65535;
+            canvas.drawCircle(x1, y1, 5, planet.pointPaint);
+        }
 //        Log.d("chao", "updateView " + x + "," + y);
     }
 
     private void createStar(View view) {
         float w = pixel2Meter(view.getWidth()), h = pixel2Meter(view.getHeight());
-        float cx = pixel2Meter(view.getX()) + w;
-        float cy = pixel2Meter(view.getY()) + h;
+        float cx = pixel2Meter(view.getX()) + w / 2;
+        float cy = pixel2Meter(view.getY()) + h / 2;
         Log.d("chao", "createStar " + w + "," + h);
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyType.STATIC;
@@ -186,8 +219,8 @@ public class Galaxy extends FrameLayout {
 
     private void createBody(View view) {
         float w = pixel2Meter(view.getWidth()), h = pixel2Meter(view.getHeight());
-        float cx = pixel2Meter(view.getX()) + w;
-        float cy = pixel2Meter(view.getY()) + h;
+        float cx = pixel2Meter(view.getX()) + w / 2;
+        float cy = pixel2Meter(view.getY()) + h / 2;
         Log.d("chao", "createBody " + w + "," + h);
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyType.DYNAMIC;
@@ -205,6 +238,7 @@ public class Galaxy extends FrameLayout {
         Body body = world.createBody(bodyDef);
         body.createFixture(fixtureDef);
         body.setLinearVelocity(new Vec2(random.nextFloat(), random.nextFloat()));
+        body.setUserData(new Planet());
 
         view.setTag(body);
     }

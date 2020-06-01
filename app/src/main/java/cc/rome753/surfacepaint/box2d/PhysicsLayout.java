@@ -153,8 +153,8 @@ public class PhysicsLayout extends FrameLayout {
 
     private void createBody(View view) {
         float w = pixel2Meter(view.getWidth()), h = pixel2Meter(view.getHeight());
-        float cx = pixel2Meter(view.getX()) + w;
-        float cy = pixel2Meter(view.getY()) + h;
+        float cx = pixel2Meter(view.getX()) + w / 2;
+        float cy = pixel2Meter(view.getY()) + h / 2;
         Log.d("chao", "createBody " + w + "," + h);
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyType.DYNAMIC;
