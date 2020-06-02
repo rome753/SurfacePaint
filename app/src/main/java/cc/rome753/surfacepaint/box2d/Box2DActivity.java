@@ -21,10 +21,9 @@ public class Box2DActivity extends Activity {
         @Override
         public void onSensorChanged(SensorEvent event) {
             if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-                float x =  event.values[0] * 5;
-                float y =  event.values[1] * 5;
-//                Log.d("chao", "sensor " + x + " " + y);
-                physicsLayout.setForce(-x,y);
+                float x = event.values[0] * 10;
+                float y = event.values[1] * 10;
+                physicsLayout.setGravity(-x, y);
             }
         }
 
@@ -39,7 +38,6 @@ public class Box2DActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_box2d);
         physicsLayout = findViewById(R.id.phy);
-        physicsLayout.setGravity(0f);
         for(int i = 0; i < 10; i++) {
             View view = new View(this);
             view.setBackgroundResource(R.drawable.soccer);

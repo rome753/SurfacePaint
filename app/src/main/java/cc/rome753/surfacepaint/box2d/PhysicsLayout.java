@@ -31,8 +31,9 @@ import java.util.Random;
 
 public class PhysicsLayout extends FrameLayout {
 
+    private static final float GRAVITY = 10f;
     private World world;
-    private float gravity = 9.8f;
+    private Vec2 gravity = new Vec2(0, GRAVITY);
     private int ratio = 50;
     private float dt = 1f / 60f;
     private Random random = new Random();
@@ -125,8 +126,12 @@ public class PhysicsLayout extends FrameLayout {
         return true;
     }
 
-    public void setGravity(float gravity) {
-        this.gravity = gravity;
+    public void setGravity(float x, float y) {
+        gravity.x = x;
+        gravity.y = y;
+        if (world != null) {
+            world.setGravity(gravity);
+        }
     }
 
     public void setForce(float x, float y) {
@@ -180,7 +185,7 @@ public class PhysicsLayout extends FrameLayout {
         float w = pixel2Meter(getWidth()), h = pixel2Meter(getHeight());
         Log.d("chao", "createWorld " + w + "," + h);
         float wall = 1f;
-        world = new World(new Vec2(0, gravity));
+        world = new World(gravity);
 
         PolygonShape wallShape = new PolygonShape();
         wallShape.setAsBox(w, wall);
