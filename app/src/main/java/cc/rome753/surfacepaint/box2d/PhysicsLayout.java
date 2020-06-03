@@ -2,6 +2,8 @@ package cc.rome753.surfacepaint.box2d;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -26,13 +28,16 @@ import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.joints.JointType;
 import org.jbox2d.dynamics.joints.MouseJoint;
 import org.jbox2d.dynamics.joints.MouseJointDef;
+import org.jbox2d.particle.ParticleGroupDef;
+import org.jbox2d.particle.ParticleType;
 
 import java.util.Random;
 
 public class PhysicsLayout extends FrameLayout {
 
+    private static final float GRAVITY = 10f;
     private World world;
-    private float gravity = 9.8f;
+    private Vec2 gravity = new Vec2(0, GRAVITY);
     private int ratio = 50;
     private float dt = 1f / 60f;
     private Random random = new Random();
@@ -40,6 +45,7 @@ public class PhysicsLayout extends FrameLayout {
     private Body groundBody;
 
     private Vec2 hitPoint = new Vec2();
+    private Paint paint = new Paint();
 
     public PhysicsLayout(@NonNull Context context) {
         this(context, null);
@@ -52,12 +58,16 @@ public class PhysicsLayout extends FrameLayout {
     public PhysicsLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setWillNotDraw(false);
+        paint.setColor(Color.RED);
+        paint.setStrokeWidth(5);
+        paint.setStyle(Paint.Style.STROKE);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         if (world == null) {
             createWorld();
+            createLiquid();
         }
         for (int i = 0; i < getChildCount(); i++) {
             View view = getChildAt(i);
@@ -67,7 +77,10 @@ public class PhysicsLayout extends FrameLayout {
             }
         }
 
-        world.step(dt, 10, 10);
+        long time = System.currentTimeMillis();
+        world.step(dt, 1, 1);
+        long time1 = System.currentTimeMillis();
+        Log.d("chao", "step time " + (time1 - time));
         for (int i = 0; i < getChildCount(); i++) {
             View view = getChildAt(i);
             Body body = (Body) view.getTag();
@@ -76,7 +89,37 @@ public class PhysicsLayout extends FrameLayout {
             }
         }
 
+        // draw particles
+        Vec2[] particlePositionBuffer = world.getParticlePositionBuffer();
+        for (Vec2 vec2 : particlePositionBuffer) {
+            float x = meter2Pixel(vec2.x);
+            float y = meter2Pixel(vec2.y);
+            canvas.drawCircle(x, y, 15, paint);
+        }
+        long time2 = System.currentTimeMillis();
+        Log.d("chao", "draw time " + (time2 - time1));
+
         invalidate();
+    }
+
+
+    private void createLiquid() {
+//        world.setParticleRadius(0.15f);
+        world.setParticleRadius(0.5f);
+        world.setParticleDamping(1f);
+
+        ParticleGroupDef pd = new ParticleGroupDef();
+//        pd.flags = ParticleType.b2_elasticParticle;
+        pd.flags = ParticleType.b2_waterParticle;
+        pd.strength = 2f;
+
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(8f, 8f, new Vec2(20f, 20f), 0f);
+
+        pd.shape = shape;
+        world.createParticleGroup(pd);
+
+        Log.d("chao", "create particles " + world.getParticleCount());
     }
 
     QueryCallback queryCallback = new QueryCallback() {
@@ -125,19 +168,11 @@ public class PhysicsLayout extends FrameLayout {
         return true;
     }
 
-    public void setGravity(float gravity) {
-        this.gravity = gravity;
-    }
-
-    public void setForce(float x, float y) {
-        for (int i = 0; i < getChildCount(); i++) {
-            Vec2 impulse = new Vec2(x, y);
-            View view = getChildAt(i);
-            Body body = (Body) view.getTag();
-            if (body != null) {
-                body.applyForce(impulse, body.getPosition());
-//                body.applyLinearImpulse(impulse, body.getPosition());
-            }
+    public void setGravity(float x, float y) {
+        gravity.x = x;
+        gravity.y = y;
+        if (world != null) {
+            world.setGravity(gravity);
         }
     }
 
@@ -180,7 +215,7 @@ public class PhysicsLayout extends FrameLayout {
         float w = pixel2Meter(getWidth()), h = pixel2Meter(getHeight());
         Log.d("chao", "createWorld " + w + "," + h);
         float wall = 1f;
-        world = new World(new Vec2(0, gravity));
+        world = new World(gravity);
 
         PolygonShape wallShape = new PolygonShape();
         wallShape.setAsBox(w, wall);
