@@ -1,2 +1,3 @@
+include ':liquidfunpaint'
 include ':liquidapp'
 include ':app'

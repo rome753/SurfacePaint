@@ -4,11 +4,12 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.FrameLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.fpl.liquidfun.Body;
 import com.google.fpl.liquidfun.BodyDef;
@@ -63,20 +64,20 @@ public class LiquidLayout extends FrameLayout {
             createLiquid();
         }
 
-//        long time = System.currentTimeMillis();
-//        world.step(dt, 1, 1, 1);
-//        long time1 = System.currentTimeMillis();
-//        Log.d("chao", "step time " + (time1 - time));
-//
-//        // draw particles
-//        for (int i = 0; i < particleSystem.getParticleCount(); i++) {
-//            float x = meter2Pixel(particleSystem.getParticlePositionX(i));
-//            float y = meter2Pixel(particleSystem.getParticlePositionY(i));
-//            canvas.drawCircle(x, y, 15, paint);
-//        }
-//
-//        long time2 = System.currentTimeMillis();
-//        Log.d("chao", "draw time " + (time2 - time1));
+        long time = System.currentTimeMillis();
+        world.step(dt, 1, 1, 1);
+        long time1 = System.currentTimeMillis();
+        Log.d("chao", "step time " + (time1 - time));
+
+        // draw particles
+        for (int i = 0; i < particleSystem.getParticleCount(); i++) {
+            float x = meter2Pixel(particleSystem.getParticlePositionX(i));
+            float y = meter2Pixel(particleSystem.getParticlePositionY(i));
+            canvas.drawCircle(x, y, 15, paint);
+        }
+
+        long time2 = System.currentTimeMillis();
+        Log.d("chao", "draw time " + (time2 - time1));
 
         invalidate();
     }
@@ -102,7 +103,7 @@ public class LiquidLayout extends FrameLayout {
 
         // signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x25
         // Cause: null pointer dereference
-//        particleSystem.createParticleGroup(pd);
+        particleSystem.createParticleGroup(pd);
 
         psd.delete();
         shape.delete();
