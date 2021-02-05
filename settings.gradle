@@ -1,3 +1,4 @@
+include ':opengles3'
 include ':liquidfunpaint'
 include ':liquidapp'
 include ':app'
