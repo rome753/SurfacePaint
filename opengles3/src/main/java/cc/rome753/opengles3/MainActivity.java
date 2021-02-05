@@ -29,16 +29,22 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private class MyRender implements GLSurfaceView.Renderer {
+    private static class MyRender implements GLSurfaceView.Renderer {
 
-        private float[] vertexPoints = new float[]{
+        private final float[] vertexPoints = new float[]{
                 0.0f, 0.5f, 0.0f,
                 -0.5f, -0.5f, 0.0f,
                 0.5f, -0.5f, 0.0f
         };
+        private float color[] = {
+                0.0f, 1.0f, 0.0f, 1.0f,
+                1.0f, 0.0f, 0.0f, 1.0f,
+                0.0f, 0.0f, 1.0f, 1.0f
+        };
 
         int program;
         FloatBuffer vertexBuffer;
+        FloatBuffer colorBuffer;
 
         @Override
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -50,10 +56,17 @@ public class MainActivity extends AppCompatActivity {
             vertexBuffer.put(vertexPoints);
             vertexBuffer.position(0);
 
+            colorBuffer = ByteBuffer.allocateDirect(color.length * 4)
+                    .order(ByteOrder.nativeOrder())
+                    .asFloatBuffer();
+            //传入指定的数据
+            colorBuffer.put(color);
+            colorBuffer.position(0);
+
             program = ShaderUtils.loadProgram();
 
 
-            glClearColor(0.5f, 1f, 0.5f, 0.5f);
+            glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
         }
 
         @Override
@@ -73,7 +86,11 @@ public class MainActivity extends AppCompatActivity {
             glVertexAttribPointer ( 0, 3, GL_FLOAT, false, 0, vertexBuffer );
             glEnableVertexAttribArray ( 0 );
 
+            glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, colorBuffer);
+            glEnableVertexAttribArray ( 1 );
+
             glDrawArrays ( GL_TRIANGLES, 0, 3 );
+
         }
     }
 }
