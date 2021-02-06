@@ -22,9 +22,12 @@ public class SimpleRender implements GLSurfaceView.Renderer {
         int program;
         FloatBuffer vertexBuffer;
         FloatBuffer colorBuffer;
+        int[] vao;
 
         @Override
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+
+            program = ShaderUtils.loadProgram();
             //分配内存空间,每个浮点型占4字节空间
             vertexBuffer = ByteBuffer.allocateDirect(vertexPoints.length * 4)
                     .order(ByteOrder.nativeOrder())
@@ -33,12 +36,23 @@ public class SimpleRender implements GLSurfaceView.Renderer {
             vertexBuffer.put(vertexPoints);
             vertexBuffer.position(0);
 
+            vao = new int[1];
+            glGenVertexArrays(1, vao, 0);
+            glBindVertexArray(vao[0]);
+
             int[] vbo = new int[1];
             glGenBuffers(1, vbo, 0);
             glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
             glBufferData(GL_ARRAY_BUFFER, vertexPoints.length * 4, vertexBuffer, GL_STATIC_DRAW);
 
-            program = ShaderUtils.loadProgram();
+
+            // Load the vertex data
+//            glVertexAttribPointer ( 0, 3, GL_FLOAT, false, 0, vertexBuffer );
+            glVertexAttribPointer ( 0, 3, GL_FLOAT, false, 12, 0 );
+            glEnableVertexAttribArray ( 0 );
+
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            glBindVertexArray(0);
 
             glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
         }
@@ -55,11 +69,7 @@ public class SimpleRender implements GLSurfaceView.Renderer {
 
             // Use the program object
             glUseProgram ( program );
-
-            // Load the vertex data
-//            glVertexAttribPointer ( 0, 3, GL_FLOAT, false, 0, vertexBuffer );
-            glVertexAttribPointer ( 0, 3, GL_FLOAT, false, 12, 0 );
-            glEnableVertexAttribArray ( 0 );
+            glBindVertexArray(vao[0]);
 
             glDrawArrays ( GL_TRIANGLES, 0, 3 );
 
