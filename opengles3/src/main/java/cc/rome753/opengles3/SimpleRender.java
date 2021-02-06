@@ -70,8 +70,9 @@ public class SimpleRender implements GLSurfaceView.Renderer {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[0]);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.length * 4, intBuffer, GL_STATIC_DRAW);
 
-        tex = new int[1];
-        glGenTextures(1, tex, 0);
+        tex = new int[2];
+        glGenTextures(2, tex, 0);
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, tex[0]);
         // 为当前绑定的纹理对象设置环绕、过滤方式
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -81,6 +82,23 @@ public class SimpleRender implements GLSurfaceView.Renderer {
         Bitmap bitmap = Utils.loadImageAssets("wall.jpg");
         GLUtils.texImage2D(GL_TEXTURE_2D, 0, bitmap, 0);
         glGenerateMipmap(GL_TEXTURE_2D);
+
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, tex[1]);
+        // 为当前绑定的纹理对象设置环绕、过滤方式
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        Bitmap bitmap1 = Utils.loadImageAssets("face.png");
+        GLUtils.texImage2D(GL_TEXTURE_2D, 0, bitmap1, 0);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        glUseProgram(program);
+        int loc0 = glGetUniformLocation(program, "texture1");
+        glUniform1i(loc0, 0);
+        int loc1 = glGetUniformLocation(program, "texture2");
+        glUniform1i(loc1, 1);
 
         // Load the vertex data
         glVertexAttribPointer(0, 3, GL_FLOAT, false, 8 * 4, 0);
@@ -111,6 +129,7 @@ public class SimpleRender implements GLSurfaceView.Renderer {
         // Use the program object
         glUseProgram(program);
         glBindTexture(GL_TEXTURE_2D, tex[0]);
+        glBindTexture(GL_TEXTURE_2D, tex[1]);
         glBindVertexArray(vao[0]);
 
 //            glDrawArrays ( GL_TRIANGLES, 0, vertices.length );
