@@ -11,6 +11,12 @@ public class ShaderUtils {
         return linkProgram(vShader, fShader);
     }
 
+    public static int loadProgram(String vs, String fs) {
+        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, vs);
+        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, fs);
+        return linkProgram(vShader, fShader);
+    }
+
     private static int loadShader(int type, String shaderSrc) {
         int shader = glCreateShader(type);
         if (shader == 0) {
