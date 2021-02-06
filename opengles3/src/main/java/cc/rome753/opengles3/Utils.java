@@ -1,6 +1,8 @@
 package cc.rome753.opengles3;
 
-import java.io.IOException;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
@@ -19,5 +21,15 @@ public class Utils {
             e.printStackTrace();
         }
         return s;
+    }
+
+    public static Bitmap loadImageAssets(String name) {
+        try {
+            InputStream is = App.getApp().getAssets().open(name);
+            return BitmapFactory.decodeStream(is);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
