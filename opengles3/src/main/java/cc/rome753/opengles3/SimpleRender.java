@@ -18,11 +18,6 @@ public class SimpleRender implements GLSurfaceView.Renderer {
                 -0.5f, -0.5f, 0.0f,
                 0.5f, -0.5f, 0.0f
         };
-        private float color[] = {
-                0.0f, 1.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f, 1.0f
-        };
 
         int program;
         FloatBuffer vertexBuffer;
@@ -38,20 +33,10 @@ public class SimpleRender implements GLSurfaceView.Renderer {
             vertexBuffer.put(vertexPoints);
             vertexBuffer.position(0);
 
-            colorBuffer = ByteBuffer.allocateDirect(color.length * 4)
-                    .order(ByteOrder.nativeOrder())
-                    .asFloatBuffer();
-            //传入指定的数据
-            colorBuffer.put(color);
-            colorBuffer.position(0);
-
-//            int[] vbo = new int[2];
-//            glGenBuffers(2, vbo, 0);
-//            glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-//            glBufferData(GL_ARRAY_BUFFER, vertexPoints.length * 4, vertexBuffer, GL_STATIC_DRAW);
-//
-//            glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-//            glBufferData(GL_ARRAY_BUFFER, color.length * 4, colorBuffer, GL_STATIC_DRAW);
+            int[] vbo = new int[1];
+            glGenBuffers(1, vbo, 0);
+            glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+            glBufferData(GL_ARRAY_BUFFER, vertexPoints.length * 4, vertexBuffer, GL_STATIC_DRAW);
 
             program = ShaderUtils.loadProgram();
 
@@ -72,13 +57,9 @@ public class SimpleRender implements GLSurfaceView.Renderer {
             glUseProgram ( program );
 
             // Load the vertex data
-            glVertexAttribPointer ( 0, 3, GL_FLOAT, false, 0, vertexBuffer );
-//            glVertexAttribPointer ( 0, 3, GL_FLOAT, false, 0, 0 );
+//            glVertexAttribPointer ( 0, 3, GL_FLOAT, false, 0, vertexBuffer );
+            glVertexAttribPointer ( 0, 3, GL_FLOAT, false, 12, 0 );
             glEnableVertexAttribArray ( 0 );
-
-            glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, colorBuffer);
-//            glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, 0);
-            glEnableVertexAttribArray ( 1 );
 
             glDrawArrays ( GL_TRIANGLES, 0, 3 );
 
