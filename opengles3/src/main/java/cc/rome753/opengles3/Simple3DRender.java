@@ -61,6 +61,19 @@ public class Simple3DRender implements GLSurfaceView.Renderer {
             -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
 
+    float cubePositions[][] = {
+            {0.0f,  0.0f,  0.0f},
+            {2.0f,  5.0f, -15.0f},
+            {-1.5f, -2.2f, -2.5f},
+            {-3.8f, -2.0f, -12.3f},
+            {2.4f, -0.4f, -3.5f},
+            {-1.7f,  3.0f, -7.5f},
+            {1.3f, -2.0f, -2.5f},
+            {1.5f,  2.0f, -2.5f},
+            {1.5f,  0.2f, -1.5f},
+            {-1.3f,  1.0f, -1.5f},
+    };
+
     int program;
     FloatBuffer vertexBuffer;
     int[] vao;
@@ -156,18 +169,18 @@ public class Simple3DRender implements GLSurfaceView.Renderer {
         glBindTexture(GL_TEXTURE_2D, tex[0]);
         glBindTexture(GL_TEXTURE_2D, tex[1]);
 
-        Matrix.setIdentityM(modelMat, 0);
+//        Matrix.setIdentityM(modelMat, 0);
         Matrix.setIdentityM(viewMat, 0);
         Matrix.setIdentityM(projectionMat, 0);
 
         rot += 2;
         rot %= 360;
-        Matrix.rotateM(modelMat, 0, rot, 0.5f, 1f, 0);
-        Matrix.translateM(viewMat, 0, 0, 0, -5f);
+//        Matrix.rotateM(modelMat, 0, rot, 0.5f, 1f, 0.2f);
+        Matrix.translateM(viewMat, 0, 0, 0, -10f);
         Matrix.perspectiveM(projectionMat, 0, 45.0f, width / height, 0.1f, 100.0f);
 
-        int loc = glGetUniformLocation(program, "model");
-        glUniformMatrix4fv(loc, 1, false, modelMat, 0);
+//        int loc = glGetUniformLocation(program, "model");
+//        glUniformMatrix4fv(loc, 1, false, modelMat, 0);
         int loc1 = glGetUniformLocation(program, "view");
         glUniformMatrix4fv(loc1, 1, false, viewMat, 0);
         int loc2 = glGetUniformLocation(program, "projection");
@@ -175,7 +188,15 @@ public class Simple3DRender implements GLSurfaceView.Renderer {
 
         glBindVertexArray(vao[0]);
 
-        glDrawArrays ( GL_TRIANGLES, 0, vertices.length );
+        for (int i = 0; i < cubePositions.length; i++) {
+            Matrix.setIdentityM(modelMat, 0);
+            Matrix.translateM(modelMat, 0, cubePositions[i][0], cubePositions[i][1], cubePositions[i][2]);
+            Matrix.rotateM(modelMat, 0, rot, 0.5f, 1f, 0.2f);
+            int loc = glGetUniformLocation(program, "model");
+            glUniformMatrix4fv(loc, 1, false, modelMat, 0);
+
+            glDrawArrays ( GL_TRIANGLES, 0, vertices.length );
+        }
 
     }
 }
