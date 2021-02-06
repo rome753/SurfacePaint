@@ -3,6 +3,7 @@ package cc.rome753.opengles3;
 import android.graphics.Bitmap;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
+import android.opengl.Matrix;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -121,6 +122,9 @@ public class SimpleRender implements GLSurfaceView.Renderer {
         glViewport(0, 0, width, height);
     }
 
+    float[] transform = new float[16];
+    float rot = 0f;
+
     @Override
     public void onDrawFrame(GL10 gl) {
         // Clear the color buffer
@@ -130,6 +134,15 @@ public class SimpleRender implements GLSurfaceView.Renderer {
         glUseProgram(program);
         glBindTexture(GL_TEXTURE_2D, tex[0]);
         glBindTexture(GL_TEXTURE_2D, tex[1]);
+
+        Matrix.setIdentityM(transform, 0);
+//        Matrix.translateM(transform, 0, 0, 0, 0);
+        rot += 1f;
+        Matrix.rotateM(transform, 0, rot, 0, 0, 1);
+
+        int loc = glGetUniformLocation(program, "transform");
+        glUniformMatrix4fv(loc, 1, false, transform, 0);
+
         glBindVertexArray(vao[0]);
 
 //            glDrawArrays ( GL_TRIANGLES, 0, vertices.length );
