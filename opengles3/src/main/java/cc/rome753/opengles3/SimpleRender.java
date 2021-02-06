@@ -5,23 +5,49 @@ import android.opengl.GLSurfaceView;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import static android.opengl.GLES30.*;
+import static android.opengl.GLES30.GL_ARRAY_BUFFER;
+import static android.opengl.GLES30.GL_COLOR_BUFFER_BIT;
+import static android.opengl.GLES30.GL_ELEMENT_ARRAY_BUFFER;
+import static android.opengl.GLES30.GL_FLOAT;
+import static android.opengl.GLES30.GL_STATIC_DRAW;
+import static android.opengl.GLES30.GL_TRIANGLES;
+import static android.opengl.GLES30.GL_UNSIGNED_INT;
+import static android.opengl.GLES30.glBindBuffer;
+import static android.opengl.GLES30.glBindVertexArray;
+import static android.opengl.GLES30.glBufferData;
+import static android.opengl.GLES30.glClear;
+import static android.opengl.GLES30.glClearColor;
+import static android.opengl.GLES30.glDrawElements;
+import static android.opengl.GLES30.glEnableVertexAttribArray;
+import static android.opengl.GLES30.glGenBuffers;
+import static android.opengl.GLES30.glGenVertexArrays;
+import static android.opengl.GLES30.glUseProgram;
+import static android.opengl.GLES30.glVertexAttribPointer;
+import static android.opengl.GLES30.glViewport;
 
 public class SimpleRender implements GLSurfaceView.Renderer {
 
-        private final float[] vertexPoints = new float[]{
-                0.0f, 0.5f, 0.0f,
-                -0.5f, -0.5f, 0.0f,
-                0.5f, -0.5f, 0.0f
+        float vertices[] = {
+                0.5f, 0.5f, 0.0f,   // 右上角
+                0.5f, -0.5f, 0.0f,  // 右下角
+                -0.5f, -0.5f, 0.0f, // 左下角
+                -0.5f, 0.5f, 0.0f   // 左上角
+        };
+
+        final int indices[] = { // 注意索引从0开始!
+                0, 1, 3, // 第一个三角形
+                1, 2, 3  // 第二个三角形
         };
 
         int program;
         FloatBuffer vertexBuffer;
         FloatBuffer colorBuffer;
+        IntBuffer intBuffer;
         int[] vao;
 
         @Override
@@ -29,11 +55,11 @@ public class SimpleRender implements GLSurfaceView.Renderer {
 
             program = ShaderUtils.loadProgram();
             //分配内存空间,每个浮点型占4字节空间
-            vertexBuffer = ByteBuffer.allocateDirect(vertexPoints.length * 4)
+            vertexBuffer = ByteBuffer.allocateDirect(vertices.length * 4)
                     .order(ByteOrder.nativeOrder())
                     .asFloatBuffer();
             //传入指定的坐标数据
-            vertexBuffer.put(vertexPoints);
+            vertexBuffer.put(vertices);
             vertexBuffer.position(0);
 
             vao = new int[1];
@@ -43,8 +69,20 @@ public class SimpleRender implements GLSurfaceView.Renderer {
             int[] vbo = new int[1];
             glGenBuffers(1, vbo, 0);
             glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-            glBufferData(GL_ARRAY_BUFFER, vertexPoints.length * 4, vertexBuffer, GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, vertices.length * 4, vertexBuffer, GL_STATIC_DRAW);
 
+
+//            intBuffer = ByteBuffer.allocate(indices.length * 4)
+//                    .order(ByteOrder.nativeOrder())
+//                    .asIntBuffer(); // 这样创建会变成null，native找不到，崩溃
+            intBuffer = IntBuffer.allocate(indices.length * 4);
+            intBuffer.put(indices);
+            intBuffer.position(0);
+
+            int[] ebo = new int[1];
+            glGenBuffers(1, ebo, 0);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[0]);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.length * 4, intBuffer, GL_STATIC_DRAW);
 
             // Load the vertex data
 //            glVertexAttribPointer ( 0, 3, GL_FLOAT, false, 0, vertexBuffer );
@@ -71,7 +109,8 @@ public class SimpleRender implements GLSurfaceView.Renderer {
             glUseProgram ( program );
             glBindVertexArray(vao[0]);
 
-            glDrawArrays ( GL_TRIANGLES, 0, 3 );
+//            glDrawArrays ( GL_TRIANGLES, 0, vertices.length );
+            glDrawElements ( GL_TRIANGLES, vertices.length, GL_UNSIGNED_INT, 0 );
 
         }
     }
