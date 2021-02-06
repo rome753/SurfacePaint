@@ -11,7 +11,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import static android.opengl.GLES30.*;
 
-public class MyRender implements GLSurfaceView.Renderer {
+public class SimpleRender implements GLSurfaceView.Renderer {
 
         private final float[] vertexPoints = new float[]{
                 0.0f, 0.5f, 0.0f,
@@ -45,8 +45,15 @@ public class MyRender implements GLSurfaceView.Renderer {
             colorBuffer.put(color);
             colorBuffer.position(0);
 
-            program = ShaderUtils.loadProgram();
+//            int[] vbo = new int[2];
+//            glGenBuffers(2, vbo, 0);
+//            glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+//            glBufferData(GL_ARRAY_BUFFER, vertexPoints.length * 4, vertexBuffer, GL_STATIC_DRAW);
+//
+//            glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+//            glBufferData(GL_ARRAY_BUFFER, color.length * 4, colorBuffer, GL_STATIC_DRAW);
 
+            program = ShaderUtils.loadProgram();
 
             glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
         }
@@ -66,9 +73,11 @@ public class MyRender implements GLSurfaceView.Renderer {
 
             // Load the vertex data
             glVertexAttribPointer ( 0, 3, GL_FLOAT, false, 0, vertexBuffer );
+//            glVertexAttribPointer ( 0, 3, GL_FLOAT, false, 0, 0 );
             glEnableVertexAttribArray ( 0 );
 
             glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, colorBuffer);
+//            glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, 0);
             glEnableVertexAttribArray ( 1 );
 
             glDrawArrays ( GL_TRIANGLES, 0, 3 );
