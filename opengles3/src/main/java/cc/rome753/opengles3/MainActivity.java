@@ -15,7 +15,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(glSurfaceView);
 
         glSurfaceView.setEGLContextClientVersion(3);
-        glSurfaceView.setRenderer(new SimpleRender());
+        glSurfaceView.setRenderer(new Simple3DRender());
+//        glSurfaceView.setRenderer(new SimpleRender());
 //        glSurfaceView.setRenderer(new ParticleSystemRenderer(this));
 
     }
