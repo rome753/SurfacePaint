@@ -13,60 +13,56 @@ import java.nio.IntBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import static android.opengl.GLES30.GL_ARRAY_BUFFER;
-import static android.opengl.GLES30.GL_COLOR_BUFFER_BIT;
-import static android.opengl.GLES30.GL_ELEMENT_ARRAY_BUFFER;
-import static android.opengl.GLES30.GL_FLOAT;
-import static android.opengl.GLES30.GL_LINEAR;
-import static android.opengl.GLES30.GL_REPEAT;
-import static android.opengl.GLES30.GL_STATIC_DRAW;
-import static android.opengl.GLES30.GL_TEXTURE0;
-import static android.opengl.GLES30.GL_TEXTURE1;
-import static android.opengl.GLES30.GL_TEXTURE_2D;
-import static android.opengl.GLES30.GL_TEXTURE_MAG_FILTER;
-import static android.opengl.GLES30.GL_TEXTURE_MIN_FILTER;
-import static android.opengl.GLES30.GL_TEXTURE_WRAP_S;
-import static android.opengl.GLES30.GL_TEXTURE_WRAP_T;
-import static android.opengl.GLES30.GL_TRIANGLES;
-import static android.opengl.GLES30.GL_UNSIGNED_INT;
-import static android.opengl.GLES30.glActiveTexture;
-import static android.opengl.GLES30.glBindBuffer;
-import static android.opengl.GLES30.glBindTexture;
-import static android.opengl.GLES30.glBindVertexArray;
-import static android.opengl.GLES30.glBufferData;
-import static android.opengl.GLES30.glClear;
-import static android.opengl.GLES30.glClearColor;
-import static android.opengl.GLES30.glDrawElements;
-import static android.opengl.GLES30.glEnableVertexAttribArray;
-import static android.opengl.GLES30.glGenBuffers;
-import static android.opengl.GLES30.glGenTextures;
-import static android.opengl.GLES30.glGenVertexArrays;
-import static android.opengl.GLES30.glGenerateMipmap;
-import static android.opengl.GLES30.glGetUniformLocation;
-import static android.opengl.GLES30.glTexParameteri;
-import static android.opengl.GLES30.glUniform1i;
-import static android.opengl.GLES30.glUniformMatrix4fv;
-import static android.opengl.GLES30.glUseProgram;
-import static android.opengl.GLES30.glVertexAttribPointer;
+import static android.opengl.GLES30.*;
 
 public class Simple3DRender implements GLSurfaceView.Renderer {
 
     float vertices[] = {
-//     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
-            0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,   // 右上
-            0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,   // 右下
-            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,   // 左下
-            -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f    // 左上
-    };
+            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+            0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 
-    final int indices[] = { // 注意索引从0开始!
-            0, 1, 3, // 第一个三角形
-            1, 2, 3  // 第二个三角形
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+            -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+            0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
 
     int program;
     FloatBuffer vertexBuffer;
-    IntBuffer intBuffer;
     int[] vao;
     int[] tex;
     float width, height;
@@ -91,19 +87,6 @@ public class Simple3DRender implements GLSurfaceView.Renderer {
         glGenBuffers(1, vbo, 0);
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
         glBufferData(GL_ARRAY_BUFFER, vertices.length * 4, vertexBuffer, GL_STATIC_DRAW);
-
-
-//            intBuffer = ByteBuffer.allocate(indices.length * 4)
-//                    .order(ByteOrder.nativeOrder())
-//                    .asIntBuffer(); // 这样创建会变成null，native找不到，崩溃
-        intBuffer = IntBuffer.allocate(indices.length * 4);
-        intBuffer.put(indices);
-        intBuffer.position(0);
-
-        int[] ebo = new int[1];
-        glGenBuffers(1, ebo, 0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[0]);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.length * 4, intBuffer, GL_STATIC_DRAW);
 
         tex = new int[2];
         glGenTextures(2, tex, 0);
@@ -136,19 +119,18 @@ public class Simple3DRender implements GLSurfaceView.Renderer {
         glUniform1i(loc1, 1);
 
         // Load the vertex data
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, 8 * 4, 0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, 5 * 4, 0);
         glEnableVertexAttribArray(0);
 
-        glVertexAttribPointer(1, 3, GL_FLOAT, false, 8 * 4, 3 * 4);
+        glVertexAttribPointer(1, 2, GL_FLOAT, false, 5 * 4, 3 * 4);
         glEnableVertexAttribArray(1);
 
-        glVertexAttribPointer(2, 2, GL_FLOAT, false, 8 * 4, 6 * 4);
-        glEnableVertexAttribArray(2);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
         glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
+        glEnable(GL_DEPTH_TEST);
     }
 
     @Override
@@ -162,10 +144,12 @@ public class Simple3DRender implements GLSurfaceView.Renderer {
     float[] viewMat = new float[16];
     float[] projectionMat = new float[16];
 
+    int rot;
+
     @Override
     public void onDrawFrame(GL10 gl) {
         // Clear the color buffer
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Use the program object
         glUseProgram(program);
@@ -176,7 +160,9 @@ public class Simple3DRender implements GLSurfaceView.Renderer {
         Matrix.setIdentityM(viewMat, 0);
         Matrix.setIdentityM(projectionMat, 0);
 
-        Matrix.rotateM(modelMat, 0, -55f, 1, 0, 0);
+        rot += 2;
+        rot %= 360;
+        Matrix.rotateM(modelMat, 0, rot, 0.5f, 1f, 0);
         Matrix.translateM(viewMat, 0, 0, 0, -5f);
         Matrix.perspectiveM(projectionMat, 0, 45.0f, width / height, 0.1f, 100.0f);
 
@@ -189,8 +175,7 @@ public class Simple3DRender implements GLSurfaceView.Renderer {
 
         glBindVertexArray(vao[0]);
 
-//            glDrawArrays ( GL_TRIANGLES, 0, vertices.length );
-        glDrawElements(GL_TRIANGLES, vertices.length, GL_UNSIGNED_INT, 0);
+        glDrawArrays ( GL_TRIANGLES, 0, vertices.length );
 
     }
 }
