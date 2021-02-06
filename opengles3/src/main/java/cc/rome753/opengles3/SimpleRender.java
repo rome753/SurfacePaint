@@ -33,15 +33,14 @@ import static android.opengl.GLES30.glViewport;
 public class SimpleRender implements GLSurfaceView.Renderer {
 
         float vertices[] = {
-                0.5f, 0.5f, 0.0f,   // 右上角
-                0.5f, -0.5f, 0.0f,  // 右下角
-                -0.5f, -0.5f, 0.0f, // 左下角
-                -0.5f, 0.5f, 0.0f   // 左上角
+                // 位置              // 颜色
+                0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // 右下
+                -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // 左下
+                0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // 顶部
         };
 
         final int indices[] = { // 注意索引从0开始!
-                0, 1, 3, // 第一个三角形
-                1, 2, 3  // 第二个三角形
+                0, 1, 2, // 第一个三角形
         };
 
         int program;
@@ -85,9 +84,11 @@ public class SimpleRender implements GLSurfaceView.Renderer {
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.length * 4, intBuffer, GL_STATIC_DRAW);
 
             // Load the vertex data
-//            glVertexAttribPointer ( 0, 3, GL_FLOAT, false, 0, vertexBuffer );
-            glVertexAttribPointer ( 0, 3, GL_FLOAT, false, 12, 0 );
+            glVertexAttribPointer ( 0, 3, GL_FLOAT, false, 6 * 4, 0 );
             glEnableVertexAttribArray ( 0 );
+
+            glVertexAttribPointer ( 1, 3, GL_FLOAT, false, 6 * 4, 3 * 4 );
+            glEnableVertexAttribArray ( 1 );
 
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             glBindVertexArray(0);
