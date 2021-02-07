@@ -81,6 +81,12 @@ public class Simple3DRender implements GLSurfaceView.Renderer {
     int[] tex;
     float width, height;
 
+    OurCamera ourCamera = new OurCamera(new float[]{0.0f, 0.0f, 3.0f});
+
+    public OurCamera getOurCamera() {
+        return ourCamera;
+    }
+
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 
@@ -176,12 +182,9 @@ public class Simple3DRender implements GLSurfaceView.Renderer {
 
         rot += 2;
         rot %= 360;
-//        Matrix.rotateM(modelMat, 0, rot, 0.5f, 1f, 0.2f);
-        Matrix.translateM(viewMat, 0, 0, 0, -10f);
-        Matrix.perspectiveM(projectionMat, 0, 45.0f, width / height, 0.1f, 100.0f);
+        Matrix.perspectiveM(projectionMat, 0, OurCamera.radians(ourCamera.Zoom), width / height, 0.1f, 100.0f);
+        ourCamera.GetViewMatrix(viewMat);
 
-//        int loc = glGetUniformLocation(program, "model");
-//        glUniformMatrix4fv(loc, 1, false, modelMat, 0);
         int loc1 = glGetUniformLocation(program, "view");
         glUniformMatrix4fv(loc1, 1, false, viewMat, 0);
         int loc2 = glGetUniformLocation(program, "projection");
