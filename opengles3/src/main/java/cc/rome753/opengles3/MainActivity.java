@@ -4,6 +4,9 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import cc.rome753.opengles3.shader.LightingRender;
+import cc.rome753.opengles3.shader.Simple3DRender;
+
 public class MainActivity extends AppCompatActivity {
 
     GLSurfaceView glSurfaceView;
@@ -15,7 +18,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(glSurfaceView);
 
         glSurfaceView.setEGLContextClientVersion(3);
-        glSurfaceView.setRenderer(new Simple3DRender());
+
+        glSurfaceView.setRenderer(new LightingRender());
+//        glSurfaceView.setRenderer(new Simple3DRender());
 //        glSurfaceView.setRenderer(new SimpleRender());
 //        glSurfaceView.setRenderer(new ParticleSystemRenderer(this));
 

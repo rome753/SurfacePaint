@@ -1,19 +1,27 @@
-package cc.rome753.opengles3;
+package cc.rome753.opengles3.shader;
 import android.util.Log;
+
+import cc.rome753.opengles3.Utils;
 
 import static android.opengl.GLES30.*;
 
 public class ShaderUtils {
 
     public static int loadProgram() {
-        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, Utils.loadAssets("vShader.txt"));
-        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, Utils.loadAssets("fShader.txt"));
+        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, Utils.loadAssets("shader_base_v.txt"));
+        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, Utils.loadAssets("shader_base_f.txt"));
         return linkProgram(vShader, fShader);
     }
 
     public static int loadProgram3D() {
-        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, Utils.loadAssets("3dvShader.txt"));
-        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, Utils.loadAssets("3dfShader.txt"));
+        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, Utils.loadAssets("shader3d_v.txt"));
+        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, Utils.loadAssets("shader3d_f.txt"));
+        return linkProgram(vShader, fShader);
+    }
+
+    public static int loadProgram3DLighting() {
+        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, Utils.loadAssets("shader_lighting_v.txt"));
+        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, Utils.loadAssets("shader_lighting_f.txt"));
         return linkProgram(vShader, fShader);
     }
 

@@ -1,4 +1,4 @@
-package cc.rome753.opengles3;
+package cc.rome753.opengles3.shader;
 
 import android.graphics.Bitmap;
 import android.opengl.GLSurfaceView;
@@ -8,14 +8,50 @@ import android.opengl.Matrix;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import static android.opengl.GLES30.*;
+import cc.rome753.opengles3.Utils;
 
-public class Simple3DRender implements GLSurfaceView.Renderer {
+import static android.opengl.GLES30.GL_ARRAY_BUFFER;
+import static android.opengl.GLES30.GL_COLOR_BUFFER_BIT;
+import static android.opengl.GLES30.GL_DEPTH_BUFFER_BIT;
+import static android.opengl.GLES30.GL_DEPTH_TEST;
+import static android.opengl.GLES30.GL_FLOAT;
+import static android.opengl.GLES30.GL_LINEAR;
+import static android.opengl.GLES30.GL_REPEAT;
+import static android.opengl.GLES30.GL_STATIC_DRAW;
+import static android.opengl.GLES30.GL_TEXTURE0;
+import static android.opengl.GLES30.GL_TEXTURE1;
+import static android.opengl.GLES30.GL_TEXTURE_2D;
+import static android.opengl.GLES30.GL_TEXTURE_MAG_FILTER;
+import static android.opengl.GLES30.GL_TEXTURE_MIN_FILTER;
+import static android.opengl.GLES30.GL_TEXTURE_WRAP_S;
+import static android.opengl.GLES30.GL_TEXTURE_WRAP_T;
+import static android.opengl.GLES30.GL_TRIANGLES;
+import static android.opengl.GLES30.glActiveTexture;
+import static android.opengl.GLES30.glBindBuffer;
+import static android.opengl.GLES30.glBindTexture;
+import static android.opengl.GLES30.glBindVertexArray;
+import static android.opengl.GLES30.glBufferData;
+import static android.opengl.GLES30.glClear;
+import static android.opengl.GLES30.glClearColor;
+import static android.opengl.GLES30.glDrawArrays;
+import static android.opengl.GLES30.glEnable;
+import static android.opengl.GLES30.glEnableVertexAttribArray;
+import static android.opengl.GLES30.glGenBuffers;
+import static android.opengl.GLES30.glGenTextures;
+import static android.opengl.GLES30.glGenVertexArrays;
+import static android.opengl.GLES30.glGenerateMipmap;
+import static android.opengl.GLES30.glGetUniformLocation;
+import static android.opengl.GLES30.glTexParameteri;
+import static android.opengl.GLES30.glUniform1i;
+import static android.opengl.GLES30.glUniformMatrix4fv;
+import static android.opengl.GLES30.glUseProgram;
+import static android.opengl.GLES30.glVertexAttribPointer;
+
+public class LightingRender implements GLSurfaceView.Renderer {
 
     float vertices[] = {
             -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -83,7 +119,7 @@ public class Simple3DRender implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 
-        program = ShaderUtils.loadProgram3D();
+        program = ShaderUtils.loadProgram3DLighting();
         //分配内存空间,每个浮点型占4字节空间
         vertexBuffer = ByteBuffer.allocateDirect(vertices.length * 4)
                 .order(ByteOrder.nativeOrder())

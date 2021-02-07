@@ -1,4 +1,4 @@
-package cc.rome753.opengles3;
+package cc.rome753.opengles3.shader;
 
 import android.graphics.Bitmap;
 import android.opengl.GLSurfaceView;
@@ -12,6 +12,8 @@ import java.nio.IntBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+
+import cc.rome753.opengles3.Utils;
 
 import static android.opengl.GLES30.*;
 

@@ -36,7 +36,7 @@
 //    using a vertex shader and point sprites.
 //
 
-package cc.rome753.opengles3;
+package cc.rome753.opengles3.shader;
 
 import java.io.IOException;
 import java.io.InputStream;
