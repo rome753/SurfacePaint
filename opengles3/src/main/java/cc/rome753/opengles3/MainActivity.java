@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onScaleBegin(ScaleGestureDetector detector) {
-                isHandleScale = true;
                 Log.d("chao", "scaleGestureDetector.onScaleBegin");
                 fx = detector.getFocusX();
                 fy = detector.getFocusY();
@@ -72,17 +71,10 @@ public class MainActivity extends AppCompatActivity {
 
     float x, y;
 
-    // 是否在处理多指缩放，是的话本次ACTION_DOWN|ACTION_CANCEL前的动作都由scaleGestureDetector处理
-    // （防止）
-    boolean isHandleScale;
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         // 多指缩放视图
-        if (event.getPointerCount() > 1 || isHandleScale) {
-            if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_CANCEL) {
-                isHandleScale = false;
-            }
+        if (event.getPointerCount() > 1) {
             return scaleGestureDetector.onTouchEvent(event);
         }
         // 单指移动视角
