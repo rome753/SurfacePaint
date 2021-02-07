@@ -1,0 +1,64 @@
+#version 300 es
+layout (location = 0) in vec2 vPosition;
+
+out vec3 aColor;
+
+vec3 generateColor(int k) {
+    int r, g, b;
+
+    if (k < 16) {
+        g = 0;
+        b = 16 * k - 1;
+        r = b;
+    } else if (k < 32) {
+        g = 16 * (k - 16);
+        b = 16 * (32 - k) - 1;
+        r = g;
+    } else if (k < 64) {
+        g = 8 * (64 - k) - 1;
+        r = g;
+        b = 0;
+    } else { // range is 64 - 127
+        r = 0;
+        g = 0;
+        b = 0;
+    }
+    return vec3(float(r) / 255.0, float(g) / 255.0, float(b) / 255.0);
+}
+
+void add(vec2 z, vec2 c){
+    z.x += c.x;
+    z.y += c.y;
+}
+
+void mul(vec2 z, vec2 c){
+    float temp = z.x * c.x - z.y * c.y;
+    z.y = z.y * c.x + z.x * c.y;
+    z.x = temp;
+}
+
+float square(vec2 z){
+    return z.x*z.x + z.y*z.y;
+}
+
+void main() {
+    gl_Position  = vec4((vPosition - 50.0) / 50.0, 0.0, 1.0);
+    gl_PointSize = 5.0;
+
+    vec2 c = vec2(0.285, 0.01);
+
+    float width = 100.0;
+    float height = 100.0;
+
+    vec2 z = vec2(vPosition.x / width, vPosition.y / height);
+
+    int k = 0;
+    for (; k < 64; k++) {
+        if (square(z) > 4.0) break;
+        mul(z,z);
+        add(z,c);
+    }
+
+    aColor = generateColor(k);
+    //aColor = vec3(0.5f,1f,1f);
+}

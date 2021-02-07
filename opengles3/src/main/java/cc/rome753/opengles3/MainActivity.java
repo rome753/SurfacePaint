@@ -7,8 +7,10 @@ import android.view.MotionEvent;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import cc.rome753.opengles3.shader.FractorRender;
 import cc.rome753.opengles3.shader.LightingRender;
 import cc.rome753.opengles3.shader.OurCamera;
+import cc.rome753.opengles3.shader.ParticleSystemRenderer;
 import cc.rome753.opengles3.shader.Simple3DRender;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,11 +31,12 @@ public class MainActivity extends AppCompatActivity {
         Simple3DRender render;
 
 //        glSurfaceView.setRenderer(new LightingRender());
-        glSurfaceView.setRenderer(render = new Simple3DRender());
+//        glSurfaceView.setRenderer(render = new Simple3DRender());
 //        glSurfaceView.setRenderer(new SimpleRender());
 //        glSurfaceView.setRenderer(new ParticleSystemRenderer(this));
+        glSurfaceView.setRenderer(new FractorRender());
 
-        ourCamera = render.getOurCamera();
+//        ourCamera = render.getOurCamera();
 
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleGestureDetector.OnScaleGestureListener() {
             @Override
@@ -73,6 +76,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (ourCamera == null) {
+            return false;
+        }
         // 多指缩放视图
         if (event.getPointerCount() > 1) {
             return scaleGestureDetector.onTouchEvent(event);

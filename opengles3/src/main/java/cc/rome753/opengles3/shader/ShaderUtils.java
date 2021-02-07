@@ -19,6 +19,12 @@ public class ShaderUtils {
         return linkProgram(vShader, fShader);
     }
 
+    public static int loadProgramFractor() {
+        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, Utils.loadAssets("shader_fractor_v.txt"));
+        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, Utils.loadAssets("shader_fractor_f.txt"));
+        return linkProgram(vShader, fShader);
+    }
+
     public static int loadProgram3DLighting() {
         int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, Utils.loadAssets("shader_lighting_v.txt"));
         int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, Utils.loadAssets("shader_lighting_f.txt"));
