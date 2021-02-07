@@ -187,11 +187,13 @@ public class Simple3DRender implements GLSurfaceView.Renderer {
         glUniformMatrix4fv(loc2, 1, false, projectionMat, 0);
 
         glBindVertexArray(vao[0]);
-
+//Matrix.setLookAtM();
         for (int i = 0; i < cubePositions.length; i++) {
             Matrix.setIdentityM(modelMat, 0);
             Matrix.translateM(modelMat, 0, cubePositions[i][0], cubePositions[i][1], cubePositions[i][2]);
-            Matrix.rotateM(modelMat, 0, rot, 0.5f, 1f, 0.2f);
+            if (i % 3 == 0) {
+                Matrix.rotateM(modelMat, 0, rot, 0.5f, 1f, 0.2f);
+            }
             int loc = glGetUniformLocation(program, "model");
             glUniformMatrix4fv(loc, 1, false, modelMat, 0);
 
