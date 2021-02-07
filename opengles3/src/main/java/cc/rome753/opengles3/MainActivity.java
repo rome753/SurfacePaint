@@ -41,63 +41,70 @@ public class MainActivity extends AppCompatActivity {
                 float factor = detector.getScaleFactor();
                 ourCamera.ProcessMouseScroll((1 - factor) * 2000);
                 Log.d("chao", "scaleGestureDetector.onScale " + factor);
+
+                float dx = detector.getFocusX() - fx;
+                float dy = detector.getFocusY() - fy;
+                ourCamera.ProcessMouseMovement(-dx, dy, true);
+                fx = detector.getFocusX();
+                fy = detector.getFocusY();
                 return true;
             }
 
             @Override
             public boolean onScaleBegin(ScaleGestureDetector detector) {
+                isHandleScale = true;
                 Log.d("chao", "scaleGestureDetector.onScaleBegin");
+                fx = detector.getFocusX();
+                fy = detector.getFocusY();
                 return true;
             }
 
             @Override
             public void onScaleEnd(ScaleGestureDetector detector) {
-
+                Log.d("chao", "scaleGestureDetector.onScaleEnd");
             }
         });
     }
 
+    float fx, fy;
+
     ScaleGestureDetector scaleGestureDetector;
 
     float x, y;
-    long t;
 
-    // 移动方向，在第一次ACTION_MOVE触发确定
-    Boolean isMoveHorizontal;
+    // 是否在处理多指缩放，是的话本次ACTION_DOWN|ACTION_CANCEL前的动作都由scaleGestureDetector处理
+    // （防止）
+    boolean isHandleScale;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         // 多指缩放视图
-        if (event.getPointerCount() > 1) {
+        if (event.getPointerCount() > 1 || isHandleScale) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_CANCEL) {
+                isHandleScale = false;
+            }
             return scaleGestureDetector.onTouchEvent(event);
         }
         // 单指移动视角
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                isMoveHorizontal = null;
                 x = event.getRawX();
                 y = event.getRawY();
-                t = System.currentTimeMillis();
                 break;
             case MotionEvent.ACTION_MOVE:
                 float dx = event.getRawX() - x;
                 float dy = event.getRawY() - y;
-                float dt = (System.currentTimeMillis() - t) / 500f;
-                if (isMoveHorizontal == null) {
-                    int trigger = 20;
-                    // 防止第一次移动距离太小，分不清方向
-                    if (Math.abs(dx) < trigger && Math.abs(dy) < trigger) break;
-                    isMoveHorizontal = Math.abs(dx) > Math.abs(dy);
-                }
-//                ourCamera.ProcessMouseMovement(-dx, dy, true);
-                if (isMoveHorizontal) {
+                // dt用固定值，如果用时间差值会造成视图莫名其妙的跳动
+                float dt = 1f / 60;
+
+                if (Math.abs(dx) > 5) {
                     ourCamera.ProcessKeyboard(dx > 0 ? OurCamera.Camera_Movement.LEFT : OurCamera.Camera_Movement.RIGHT, dt);
-                } else {
+                }
+                if (Math.abs(dy) > 5) {
                     ourCamera.ProcessKeyboard(dy > 0 ? OurCamera.Camera_Movement.BACKWARD : OurCamera.Camera_Movement.FORWARD, dt);
                 }
                 x = event.getRawX();
                 y = event.getRawY();
-                t = System.currentTimeMillis();
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
