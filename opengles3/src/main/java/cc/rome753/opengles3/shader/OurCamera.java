@@ -22,7 +22,8 @@ public class OurCamera {
     static final float PITCH = 0.0f;
     static final float SPEED = 2.5f;
     static final float SENSITIVITY = 0.1f;
-    static final float ZOOM = 4000.0f;
+//    static final float ZOOM = 45.0f;
+    static final float ZOOM = 2000.0f;
 
 
     // An abstract camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
@@ -125,14 +126,16 @@ public class OurCamera {
         Front[1] = (float) Math.sin(radians(Pitch));
         Front[2] = (float) (Math.sin(radians(Yaw)) * Math.cos(radians(Pitch)));
 
-        // todo 矩阵的normalize实现
         // Front = glm::normalize (front);
+        normalize(Front);
         // also re-calculate the Right and Up vector
         // Right = glm::normalize (glm::cross (Front, WorldUp))
         cross(Right, Front, WorldUp);
+        normalize(Right);
         // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
         // Up = glm::normalize (glm::cross (Right, Front));
         cross(Up, Right, Front);
+        normalize(Up);
     }
 
     // 参数转换
@@ -165,4 +168,12 @@ public class OurCamera {
         f[1] = a[2] * b[0] - b[2] * a[0];
         f[2] = a[0] * b[1] - b[0] * a[1];
     }
+
+    public static void normalize(float[] v) {
+        float length_of_v = (float) Math.sqrt((v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2]));
+        v[0] /= length_of_v;
+        v[1] /= length_of_v;
+        v[2] /= length_of_v;
+    }
+
 }
