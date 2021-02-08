@@ -56,7 +56,7 @@ import static android.opengl.GLES30.glViewport;
 
 public class FractorRender implements GLSurfaceView.Renderer {
 
-    float vertices[] = new float[100 * 100 * 2];
+    float vertices[] = new float[400 * 400 * 2];
 
     int program;
     FloatBuffer vertexBuffer;
@@ -66,8 +66,8 @@ public class FractorRender implements GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 
         int p = 0;
-        for (int i = 0; i < 100; i++) {
-            for (int j = 0; j < 100; j++) {
+        for (int i = -200; i < 200; i++) {
+            for (int j = -200; j < 200; j++) {
                 vertices[p] = i;
                 vertices[p + 1] = j;
                 p += 2;

@@ -21,7 +21,7 @@ vec3 generateColor(int k) {
     } else { // range is 64 - 127
         r = 0;
         g = 0;
-        b = 200;
+        b = 0;
     }
     return vec3(float(r) / 255.0, float(g) / 255.0, float(b) / 255.0);
 }
@@ -31,15 +31,11 @@ vec2 mul(vec2 z, vec2 c){
 }
 
 void main() {
-    gl_Position  = vec4((vPosition - 50.0) / 50.0, 0.0, 1.0);
+    gl_Position  = vec4(vPosition / 200.0, 0.0, 1.0);
     gl_PointSize = 5.0;
 
     vec2 c = vec2(0.285, 0.01);
-
-    float width = 100.0;
-    float height = 100.0;
-
-    vec2 z = vec2(vPosition.x / width, vPosition.y / height);
+    vec2 z = vPosition / 200.0;
 
     int k = 0;
     for (; k < 64; k++) {
@@ -48,5 +44,4 @@ void main() {
     }
 
     aColor = generateColor(k);
-    //aColor = vec3(0.5f,1f,1f);
 }
