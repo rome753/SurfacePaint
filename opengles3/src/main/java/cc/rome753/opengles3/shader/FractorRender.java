@@ -65,11 +65,12 @@ public class FractorRender implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 
+        int p = 0;
         for (int i = 0; i < 100; i++) {
             for (int j = 0; j < 100; j++) {
-                int p = (i * 100 + j) * 2;
                 vertices[p] = i;
                 vertices[p + 1] = j;
+                p += 2;
             }
         }
 
@@ -90,7 +91,6 @@ public class FractorRender implements GLSurfaceView.Renderer {
         glGenBuffers(1, vbo, 0);
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
         glBufferData(GL_ARRAY_BUFFER, vertices.length * 4, vertexBuffer, GL_STATIC_DRAW);
-
 
         // Load the vertex data
         glVertexAttribPointer(0, 2, GL_FLOAT, false, 2 * 4, 0);

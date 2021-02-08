@@ -21,24 +21,13 @@ vec3 generateColor(int k) {
     } else { // range is 64 - 127
         r = 0;
         g = 0;
-        b = 0;
+        b = 200;
     }
     return vec3(float(r) / 255.0, float(g) / 255.0, float(b) / 255.0);
 }
 
-void add(vec2 z, vec2 c){
-    z.x += c.x;
-    z.y += c.y;
-}
-
-void mul(vec2 z, vec2 c){
-    float temp = z.x * c.x - z.y * c.y;
-    z.y = z.y * c.x + z.x * c.y;
-    z.x = temp;
-}
-
-float square(vec2 z){
-    return z.x*z.x + z.y*z.y;
+vec2 mul(vec2 z, vec2 c){
+    return vec2(z.x * c.x - z.y * c.y, z.y * c.x + z.x * c.y);
 }
 
 void main() {
@@ -54,9 +43,8 @@ void main() {
 
     int k = 0;
     for (; k < 64; k++) {
-        if (square(z) > 4.0) break;
-        mul(z,z);
-        add(z,c);
+        if (z.x * z.x + z.y * z.y > 4.0) break;
+        z = mul(z,z) + c;
     }
 
     aColor = generateColor(k);
