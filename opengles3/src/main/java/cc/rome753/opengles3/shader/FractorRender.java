@@ -17,6 +17,8 @@ import cc.rome753.opengles3.Utils;
 
 import static android.opengl.GLES20.GL_POINTS;
 import static android.opengl.GLES20.glDrawArrays;
+import static android.opengl.GLES20.glGetProgramiv;
+import static android.opengl.GLES20.glUniform2fv;
 import static android.opengl.GLES30.GL_ARRAY_BUFFER;
 import static android.opengl.GLES30.GL_COLOR_BUFFER_BIT;
 import static android.opengl.GLES30.GL_ELEMENT_ARRAY_BUFFER;
@@ -107,6 +109,9 @@ public class FractorRender implements GLSurfaceView.Renderer {
         glViewport(0, 0, width, height);
     }
 
+//    float[] c = {0.285f, 0.01f};
+    float[] c = {0.185f, 0.01f};
+
     @Override
     public void onDrawFrame(GL10 gl) {
         // Clear the color buffer
@@ -114,6 +119,11 @@ public class FractorRender implements GLSurfaceView.Renderer {
 
         // Use the program object
         glUseProgram(program);
+
+        c[0] += 0.0001f;
+//        c[1] += 0.00001f;
+        int loc = glGetUniformLocation(program, "c");
+        glUniform2fv(loc, 1, c, 0);
 
         glBindVertexArray(vao[0]);
 
