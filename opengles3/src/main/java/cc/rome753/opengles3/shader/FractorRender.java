@@ -16,6 +16,7 @@ import javax.microedition.khronos.opengles.GL10;
 import cc.rome753.opengles3.Utils;
 
 import static android.opengl.GLES20.GL_POINTS;
+import static android.opengl.GLES20.GL_TRIANGLE_STRIP;
 import static android.opengl.GLES20.glDrawArrays;
 import static android.opengl.GLES20.glGetProgramiv;
 import static android.opengl.GLES20.glUniform2fv;
@@ -58,23 +59,26 @@ import static android.opengl.GLES30.glViewport;
 
 public class FractorRender implements GLSurfaceView.Renderer {
 
-    float vertices[] = new float[400 * 400 * 2];
+    float vertices[] = new float[401 * 401 * 2];
 
     int program;
     FloatBuffer vertexBuffer;
     int[] vao;
 
+    IntBuffer intBuffer;
+
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 
         int p = 0;
-        for (int i = -200; i < 200; i++) {
-            for (int j = -200; j < 200; j++) {
+        for (int i = -200; i <= 200; i++) {
+            for (int j = -200; j <= 200; j++) {
                 vertices[p] = i;
                 vertices[p + 1] = j;
                 p += 2;
             }
         }
+
 
         program = ShaderUtils.loadProgramFractor();
         //分配内存空间,每个浮点型占4字节空间
@@ -93,6 +97,19 @@ public class FractorRender implements GLSurfaceView.Renderer {
         glGenBuffers(1, vbo, 0);
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
         glBufferData(GL_ARRAY_BUFFER, vertices.length * 4, vertexBuffer, GL_STATIC_DRAW);
+
+
+        int[] indices = strip(401, 401);
+
+        intBuffer = IntBuffer.allocate(indices.length * 4);
+        intBuffer.put(indices);
+        intBuffer.position(0);
+
+        int[] ebo = new int[1];
+        glGenBuffers(1, ebo, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[0]);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.length * 4, intBuffer, GL_STATIC_DRAW);
+
 
         // Load the vertex data
         glVertexAttribPointer(0, 2, GL_FLOAT, false, 2 * 4, 0);
@@ -128,7 +145,23 @@ public class FractorRender implements GLSurfaceView.Renderer {
         glBindVertexArray(vao[0]);
 
 //            glDrawArrays ( GL_TRIANGLES, 0, vertices.length );
-        glDrawArrays(GL_POINTS, 0, vertices.length);
+            glDrawElements(GL_TRIANGLE_STRIP, vertices.length, GL_UNSIGNED_INT, 0);
 
+    }
+
+    // 用GL_TRIANGLE_STRIP方式把平面上所有点转化成一个三角形条带
+    public static int[] strip(int w, int h) {
+        int[] a = new int[w * (h - 1) * 2];
+        int k = 0;
+        boolean reverse = false; // 偶数行反向
+        for (int j = 0; j < h - 1; j++) {
+            for (int i = 0; i < w; i++) {
+                int p = j * w + (reverse ? w - 1 - i : i);
+                a[k++] = p;
+                a[k++] = p + w;
+            }
+            reverse = !reverse;
+        }
+        return a;
     }
 }

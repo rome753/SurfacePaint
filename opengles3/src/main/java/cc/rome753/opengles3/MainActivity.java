@@ -31,10 +31,10 @@ public class MainActivity extends AppCompatActivity {
         Simple3DRender render = null;
 
 //        glSurfaceView.setRenderer(new LightingRender());
-        glSurfaceView.setRenderer(render = new Simple3DRender());
+//        glSurfaceView.setRenderer(render = new Simple3DRender());
 //        glSurfaceView.setRenderer(new SimpleRender());
 //        glSurfaceView.setRenderer(new ParticleSystemRenderer(this));
-//        glSurfaceView.setRenderer(new FractorRender());
+        glSurfaceView.setRenderer(new FractorRender());
 
         ourCamera = render == null ? null : render.getOurCamera();
 
