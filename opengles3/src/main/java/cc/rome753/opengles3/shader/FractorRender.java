@@ -9,16 +9,23 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import cc.rome753.opengles3.Utils;
 
+import static android.opengl.GLES20.GL_BACK;
+import static android.opengl.GLES20.GL_CULL_FACE;
 import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
+import static android.opengl.GLES20.GL_FRONT;
 import static android.opengl.GLES20.GL_POINTS;
 import static android.opengl.GLES20.GL_TRIANGLE_STRIP;
+import static android.opengl.GLES20.glCullFace;
 import static android.opengl.GLES20.glDrawArrays;
+import static android.opengl.GLES20.glEnable;
 import static android.opengl.GLES20.glGetProgramiv;
 import static android.opengl.GLES20.glUniform2fv;
 import static android.opengl.GLES30.GL_ARRAY_BUFFER;
@@ -120,6 +127,9 @@ public class FractorRender implements GLSurfaceView.Renderer {
         glBindVertexArray(0);
 
         glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
+
+//        glCullFace(GL_BACK);
+//        glEnable(GL_CULL_FACE);
     }
 
     @Override
@@ -130,7 +140,7 @@ public class FractorRender implements GLSurfaceView.Renderer {
 
     float width, height;
 //    float[] c = {0.285f, 0.01f};
-    float[] c = {0.185f, 0.01f};
+    float[] c = {0.225f, 0.01f};
 
     float[] modelMat = new float[16];
     float[] viewMat = new float[16];
@@ -183,16 +193,34 @@ public class FractorRender implements GLSurfaceView.Renderer {
 
     // 用GL_TRIANGLE_STRIP方式把平面上所有点转化成一个三角形条带
     public static int[] strip(int w, int h) {
-        int[] a = new int[w * (h - 1) * 2];
+        List<Integer> list = new ArrayList<>();
         int k = 0;
-        boolean reverse = false; // 偶数行反向
+        boolean reverse = false;
         for (int j = 0; j < h - 1; j++) {
             for (int i = 0; i < w; i++) {
-                int p = j * w + (reverse ? w - 1 - i : i);
-                a[k++] = p;
-                a[k++] = p + w;
+                if (reverse) {
+                    int p = j * w + w - 1 - i;
+                    if (i == 0) {
+                        list.add(p);
+                        list.add(p + w);
+                    }
+                    list.add(p + w);
+                    list.add(p);
+                    if (i == w - 1) {
+                        list.add(p);
+                        list.add(p + w);
+                    }
+                } else {
+                    int p = j * w + i;
+                    list.add(p);
+                    list.add(p + w);
+                }
             }
             reverse = !reverse;
+        }
+        int[] a = new int[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            a[i] = list.get(i);
         }
         return a;
     }
