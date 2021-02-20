@@ -15,6 +15,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import cc.rome753.opengles3.Utils;
 
+import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
 import static android.opengl.GLES20.GL_POINTS;
 import static android.opengl.GLES20.GL_TRIANGLE_STRIP;
 import static android.opengl.GLES20.glDrawArrays;
@@ -123,16 +124,30 @@ public class FractorRender implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-        glViewport(0, 0, width, height);
+        this.width = width;
+        this.height = height;
     }
 
+    float width, height;
 //    float[] c = {0.285f, 0.01f};
     float[] c = {0.185f, 0.01f};
+
+    float[] modelMat = new float[16];
+    float[] viewMat = new float[16];
+    float[] projectionMat = new float[16];
+
+    OurCamera ourCamera = new OurCamera(new float[]{0.0f, 0.0f, 3.0f});
+
+    public OurCamera getOurCamera() {
+        return ourCamera;
+    }
+
+    public float rot = 0;
 
     @Override
     public void onDrawFrame(GL10 gl) {
         // Clear the color buffer
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Use the program object
         glUseProgram(program);
@@ -141,6 +156,23 @@ public class FractorRender implements GLSurfaceView.Renderer {
 //        c[1] += 0.00001f;
         int loc = glGetUniformLocation(program, "c");
         glUniform2fv(loc, 1, c, 0);
+
+//        Matrix.setIdentityM(modelMat, 0);
+        Matrix.setIdentityM(viewMat, 0);
+        Matrix.setIdentityM(projectionMat, 0);
+
+        Matrix.perspectiveM(projectionMat, 0, OurCamera.radians(ourCamera.Zoom), width / height, 0.1f, 100.0f);
+        ourCamera.GetViewMatrix(viewMat);
+
+        int loc1 = glGetUniformLocation(program, "view");
+        glUniformMatrix4fv(loc1, 1, false, viewMat, 0);
+        int loc2 = glGetUniformLocation(program, "projection");
+        glUniformMatrix4fv(loc2, 1, false, projectionMat, 0);
+        Matrix.setIdentityM(modelMat, 0);
+        Matrix.translateM(modelMat, 0, 0, 0, 0);
+        Matrix.rotateM(modelMat, 0, rot, 1.0f, 0.0f, 0.0f);
+        int loc3 = glGetUniformLocation(program, "model");
+        glUniformMatrix4fv(loc3, 1, false, modelMat, 0);
 
         glBindVertexArray(vao[0]);
 

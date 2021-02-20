@@ -1,30 +1,21 @@
 #version 300 es
+// 热度渐变色 64
+const int[] colors = int[](-16777216,-16318464,-15859712,-15400960,-14876672,-14417920,-13959168,-13500416,-12976128,-12517376,-12058624,-11599872,-11075584,-10158080,-9240576,-8323072,-7405568,-6488064,-5570560,-4653056,-3735552,-2818048,-1900544,-983040,-65536,-61440,-57088,-52736,-48640,-44288,-39936,-35840,-31488,-27136,-23040,-18688,-14336,-13312,-12032,-11008,-9728,-8704,-7424,-6144,-5120,-3840,-2816,-1536,-256,-235,-214,-193,-171,-150,-129,-108,-86,-65,-44,-23,-1,-1,-1,-1);
 layout (location = 0) in vec2 vPosition;
 
 uniform vec2 c;
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
 out vec3 aColor;
 
 vec3 generateColor(int k) {
-    int r, g, b;
-
-    if (k < 16) {
-        g = 0;
-        b = 16 * k - 1;
-        r = b;
-    } else if (k < 32) {
-        g = 16 * (k - 16);
-        b = 16 * (32 - k) - 1;
-        r = g;
-    } else if (k < 64) {
-        g = 8 * (64 - k) - 1;
-        r = g;
-        b = 0;
-    } else { // range is 64 - 127
-        r = 0;
-        g = 0;
-        b = 0;
-    }
-    return vec3(float(r) / 255.0, float(g) / 255.0, float(b) / 255.0);
+    int c = colors[k];
+    int r = (c >> 16) & 0xff;
+    int g = (c >> 8) & 0xff;
+    int b = c & 0xff;
+    return vec3(float(r)/255.0f, float(g)/255.0f, float(b)/255.0f);
 }
 
 vec2 mul(vec2 z, vec2 c){
@@ -32,16 +23,16 @@ vec2 mul(vec2 z, vec2 c){
 }
 
 void main() {
-    gl_Position  = vec4(vPosition / 200.0, 0.0, 1.0);
     // gl_PointSize = 6.0;
 
     vec2 z = vPosition / 200.0;
 
     int k = 0;
-    for (; k < 64; k++) {
+    for (; k < 63; k++) {
         if (z.x * z.x + z.y * z.y > 4.0) break;
         z = mul(z,z) + c;
     }
 
     aColor = generateColor(k);
+    gl_Position  = projection * view * model * vec4(vPosition / 200.0, float(k) / 100.0, 1.0);
 }

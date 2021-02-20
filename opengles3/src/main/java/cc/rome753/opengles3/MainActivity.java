@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
 
     GLSurfaceView glSurfaceView;
     OurCamera ourCamera;
-
+    FractorRender render;
 
 
     @Override
@@ -28,13 +28,13 @@ public class MainActivity extends AppCompatActivity {
 
         glSurfaceView.setEGLContextClientVersion(3);
 
-        Simple3DRender render = null;
+        render = null;
 
 //        glSurfaceView.setRenderer(new LightingRender());
 //        glSurfaceView.setRenderer(render = new Simple3DRender());
 //        glSurfaceView.setRenderer(new SimpleRender());
 //        glSurfaceView.setRenderer(new ParticleSystemRenderer(this));
-        glSurfaceView.setRenderer(new FractorRender());
+        glSurfaceView.setRenderer(render = new FractorRender());
 
         ourCamera = render == null ? null : render.getOurCamera();
 
@@ -92,8 +92,11 @@ public class MainActivity extends AppCompatActivity {
             case MotionEvent.ACTION_MOVE:
                 float dx = event.getRawX() - x;
                 float dy = event.getRawY() - y;
-                ourCamera.ProcessKeyboard(dx > 0 ? OurCamera.Camera_Movement.LEFT : OurCamera.Camera_Movement.RIGHT, Math.abs(dx) / 1000);
-                ourCamera.ProcessKeyboard(dy > 0 ? OurCamera.Camera_Movement.BACKWARD : OurCamera.Camera_Movement.FORWARD, Math.abs(dy) / 1000);
+//                ourCamera.ProcessKeyboard(dx > 0 ? OurCamera.Camera_Movement.LEFT : OurCamera.Camera_Movement.RIGHT, Math.abs(dx) / 1000);
+//                ourCamera.ProcessKeyboard(dy > 0 ? OurCamera.Camera_Movement.BACKWARD : OurCamera.Camera_Movement.FORWARD, Math.abs(dy) / 1000);
+                render.rot += dy / 5f;
+                render.rot %= 360;
+
                 x = event.getRawX();
                 y = event.getRawY();
                 break;
