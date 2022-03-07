@@ -94,11 +94,15 @@ public class MainActivity extends AppCompatActivity {
                 float dy = event.getRawY() - y;
 //                ourCamera.ProcessKeyboard(dx > 0 ? OurCamera.Camera_Movement.LEFT : OurCamera.Camera_Movement.RIGHT, Math.abs(dx) / 1000);
 //                ourCamera.ProcessKeyboard(dy > 0 ? OurCamera.Camera_Movement.BACKWARD : OurCamera.Camera_Movement.FORWARD, Math.abs(dy) / 1000);
-                render.rot += dy / 5f;
-                render.rot %= 360;
 
                 x = event.getRawX();
                 y = event.getRawY();
+
+                // 防止多指跳动
+                if (Math.abs(dx) > 100 || Math.abs(dy) > 100) return true;
+
+                render.rot += dy / 5f;
+                render.rot %= 360;
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:

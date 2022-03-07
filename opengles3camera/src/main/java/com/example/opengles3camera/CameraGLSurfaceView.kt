@@ -14,7 +14,7 @@ class CameraGLSurfaceView(context: Context?) : GLSurfaceView(context), GLSurface
     var textureId = 0
     var surfaceTexture: SurfaceTexture? = null
 
-    constructor(context: Context?, attrs: AttributeSet)
+    constructor(context: Context?, attrs: AttributeSet) : this(context)
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         glDisable(GL_DITHER)
