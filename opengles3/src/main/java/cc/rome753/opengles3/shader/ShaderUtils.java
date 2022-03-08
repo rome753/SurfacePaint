@@ -8,26 +8,26 @@ import static android.opengl.GLES30.*;
 public class ShaderUtils {
 
     public static int loadProgram() {
-        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, Utils.loadAssets("shader_base_v.txt"));
-        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, Utils.loadAssets("shader_base_f.txt"));
+        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, Utils.loadAssets("shader_base_v.glsl"));
+        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, Utils.loadAssets("shader_base_f.glsl"));
         return linkProgram(vShader, fShader);
     }
 
     public static int loadProgram3D() {
-        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, Utils.loadAssets("shader3d_v.txt"));
-        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, Utils.loadAssets("shader3d_f.txt"));
+        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, Utils.loadAssets("shader3d_v.glsl"));
+        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, Utils.loadAssets("shader3d_f.glsl"));
         return linkProgram(vShader, fShader);
     }
 
     public static int loadProgramFractor() {
-        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, Utils.loadAssets("shader_fractor_v.txt"));
-        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, Utils.loadAssets("shader_fractor_f.txt"));
+        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, Utils.loadAssets("shader_fractor_v.glsl"));
+        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, Utils.loadAssets("shader_fractor_f.glsl"));
         return linkProgram(vShader, fShader);
     }
 
     public static int loadProgram3DLighting() {
-        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, Utils.loadAssets("shader_lighting_v.txt"));
-        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, Utils.loadAssets("shader_lighting_f.txt"));
+        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, Utils.loadAssets("shader_lighting_v.glsl"));
+        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, Utils.loadAssets("shader_lighting_f.glsl"));
         return linkProgram(vShader, fShader);
     }
 
