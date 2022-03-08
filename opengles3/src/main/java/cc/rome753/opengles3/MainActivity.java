@@ -101,8 +101,11 @@ public class MainActivity extends AppCompatActivity {
                 // 防止多指跳动
                 if (Math.abs(dx) > 100 || Math.abs(dy) > 100) return true;
 
-                render.rot += dy / 5f;
-                render.rot %= 360;
+                render.rx += dx / 5f;
+                render.rx %= 360;
+                render.ry += dy / 5f;
+                render.ry %= 360;
+
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:

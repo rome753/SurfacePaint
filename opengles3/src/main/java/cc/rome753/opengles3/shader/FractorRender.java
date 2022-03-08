@@ -152,7 +152,8 @@ public class FractorRender implements GLSurfaceView.Renderer {
         return ourCamera;
     }
 
-    public float rot = 0;
+    public float rx = 0;
+    public float ry = 0;
 
     @Override
     public void onDrawFrame(GL10 gl) {
@@ -180,7 +181,8 @@ public class FractorRender implements GLSurfaceView.Renderer {
         glUniformMatrix4fv(loc2, 1, false, projectionMat, 0);
         Matrix.setIdentityM(modelMat, 0);
         Matrix.translateM(modelMat, 0, 0, 0, 0);
-        Matrix.rotateM(modelMat, 0, rot, 1.0f, 0.0f, 0.0f);
+        Matrix.rotateM(modelMat, 0, rx, 0.0f, 1.0f, 0.0f);
+        Matrix.rotateM(modelMat, 0, ry, 1.0f, 0.0f, 0.0f);
         int loc3 = glGetUniformLocation(program, "model");
         glUniformMatrix4fv(loc3, 1, false, modelMat, 0);
 
