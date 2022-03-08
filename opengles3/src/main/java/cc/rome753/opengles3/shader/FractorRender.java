@@ -65,7 +65,12 @@ import static android.opengl.GLES30.glUseProgram;
 import static android.opengl.GLES30.glVertexAttribPointer;
 import static android.opengl.GLES30.glViewport;
 
-public class FractorRender implements GLSurfaceView.Renderer {
+public class FractorRender extends BaseRender {
+
+    @Override
+    public OurCamera getOurCamera() {
+        return ourCamera;
+    }
 
     float vertices[] = new float[401 * 401 * 2];
 
@@ -86,7 +91,6 @@ public class FractorRender implements GLSurfaceView.Renderer {
                 p += 2;
             }
         }
-
 
         program = ShaderUtils.loadProgramFractor();
         //分配内存空间,每个浮点型占4字节空间
@@ -145,15 +149,6 @@ public class FractorRender implements GLSurfaceView.Renderer {
     float[] modelMat = new float[16];
     float[] viewMat = new float[16];
     float[] projectionMat = new float[16];
-
-    OurCamera ourCamera = new OurCamera(new float[]{0.0f, 0.0f, 3.0f});
-
-    public OurCamera getOurCamera() {
-        return ourCamera;
-    }
-
-    public float rx = 0;
-    public float ry = 0;
 
     @Override
     public void onDrawFrame(GL10 gl) {

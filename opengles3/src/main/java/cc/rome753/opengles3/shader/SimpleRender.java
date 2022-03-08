@@ -17,7 +17,7 @@ import cc.rome753.opengles3.Utils;
 
 import static android.opengl.GLES30.*;
 
-public class SimpleRender implements GLSurfaceView.Renderer {
+public class SimpleRender extends BaseRender {
 
     float vertices[] = {
 //     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -

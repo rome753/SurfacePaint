@@ -16,7 +16,12 @@ import cc.rome753.opengles3.Utils;
 
 import static android.opengl.GLES30.*;
 
-public class Simple3DRender implements GLSurfaceView.Renderer {
+public class Simple3DRender extends BaseRender {
+
+    @Override
+    public OurCamera getOurCamera() {
+        return ourCamera;
+    }
 
     float vertices[] = {
             -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -80,12 +85,6 @@ public class Simple3DRender implements GLSurfaceView.Renderer {
     int[] vao;
     int[] tex;
     float width, height;
-
-    OurCamera ourCamera = new OurCamera(new float[]{0.0f, 0.0f, 3.0f});
-
-    public OurCamera getOurCamera() {
-        return ourCamera;
-    }
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {

@@ -51,7 +51,7 @@ import static android.opengl.GLES30.glUniformMatrix4fv;
 import static android.opengl.GLES30.glUseProgram;
 import static android.opengl.GLES30.glVertexAttribPointer;
 
-public class LightingRender implements GLSurfaceView.Renderer {
+public class LightingRender extends BaseRender {
 
     float vertices[] = {
             -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,

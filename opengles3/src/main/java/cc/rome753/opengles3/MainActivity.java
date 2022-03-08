@@ -1,11 +1,19 @@
 package cc.rome753.opengles3;
 
+import android.content.Intent;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import cc.rome753.opengles3.shader.FractorRender;
 import cc.rome753.opengles3.shader.LightingRender;
@@ -14,115 +22,31 @@ import cc.rome753.opengles3.shader.ParticleSystemRenderer;
 import cc.rome753.opengles3.shader.Simple3DRender;
 
 public class MainActivity extends AppCompatActivity {
+    ListView mListView;
 
-    GLSurfaceView glSurfaceView;
-    OurCamera ourCamera;
-    FractorRender render;
-
+    List<String> mData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        glSurfaceView = new GLSurfaceView(this);
-        setContentView(glSurfaceView);
+        setContentView(R.layout.activity_main);
 
-        glSurfaceView.setEGLContextClientVersion(3);
-
-        render = null;
-
-//        glSurfaceView.setRenderer(new LightingRender());
-//        glSurfaceView.setRenderer(render = new Simple3DRender());
-//        glSurfaceView.setRenderer(new SimpleRender());
-//        glSurfaceView.setRenderer(new ParticleSystemRenderer(this));
-        glSurfaceView.setRenderer(render = new FractorRender());
-
-        ourCamera = render == null ? null : render.getOurCamera();
-
-        scaleGestureDetector = new ScaleGestureDetector(this, new ScaleGestureDetector.OnScaleGestureListener() {
+        mData = new ArrayList<>();
+        mData.add("Simple");
+        mData.add("Simple3D");
+        mData.add("Fractal");
+        mData.add("Lighting");
+        mData.add("ParticleSystem");
+        mListView = (ListView) findViewById(R.id.lv);
+        mListView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mData));
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public boolean onScale(ScaleGestureDetector detector) {
-                float factor = detector.getScaleFactor();
-                ourCamera.ProcessMouseScroll((1 - factor) * 2000);
-                Log.d("chao", "scaleGestureDetector.onScale " + factor);
-
-                float dx = detector.getFocusX() - fx;
-                float dy = detector.getFocusY() - fy;
-                ourCamera.ProcessMouseMovement(-dx / 2, dy / 2, true);
-                fx = detector.getFocusX();
-                fy = detector.getFocusY();
-                return true;
-            }
-
-            @Override
-            public boolean onScaleBegin(ScaleGestureDetector detector) {
-                Log.d("chao", "scaleGestureDetector.onScaleBegin");
-                fx = detector.getFocusX();
-                fy = detector.getFocusY();
-                return true;
-            }
-
-            @Override
-            public void onScaleEnd(ScaleGestureDetector detector) {
-                Log.d("chao", "scaleGestureDetector.onScaleEnd");
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = new Intent(MainActivity.this, GLActivity.class);
+                i.putExtra("render", mData.get(position));
+                startActivity(i);
             }
         });
     }
 
-    float fx, fy;
-
-    ScaleGestureDetector scaleGestureDetector;
-
-    float x, y;
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (ourCamera == null) {
-            return false;
-        }
-        // 多指缩放视图
-        if (event.getPointerCount() > 1) {
-            return scaleGestureDetector.onTouchEvent(event);
-        }
-        // 单指移动视角
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                x = event.getRawX();
-                y = event.getRawY();
-                break;
-            case MotionEvent.ACTION_MOVE:
-                float dx = event.getRawX() - x;
-                float dy = event.getRawY() - y;
-//                ourCamera.ProcessKeyboard(dx > 0 ? OurCamera.Camera_Movement.LEFT : OurCamera.Camera_Movement.RIGHT, Math.abs(dx) / 1000);
-//                ourCamera.ProcessKeyboard(dy > 0 ? OurCamera.Camera_Movement.BACKWARD : OurCamera.Camera_Movement.FORWARD, Math.abs(dy) / 1000);
-
-                x = event.getRawX();
-                y = event.getRawY();
-
-                // 防止多指跳动
-                if (Math.abs(dx) > 100 || Math.abs(dy) > 100) return true;
-
-                render.rx += dx / 5f;
-                render.rx %= 360;
-                render.ry += dy / 5f;
-                render.ry %= 360;
-
-                break;
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-                break;
-        }
-        return true;
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        glSurfaceView.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        glSurfaceView.onResume();
-    }
 }

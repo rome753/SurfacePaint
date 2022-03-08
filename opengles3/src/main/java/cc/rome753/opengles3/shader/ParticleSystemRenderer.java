@@ -55,8 +55,7 @@ import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
 import android.os.SystemClock;
 
-public class ParticleSystemRenderer implements GLSurfaceView.Renderer
-{
+public class ParticleSystemRenderer extends BaseRender {
 
    ///
    // Constructor
