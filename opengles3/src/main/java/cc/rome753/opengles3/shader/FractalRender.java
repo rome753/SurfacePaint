@@ -65,7 +65,7 @@ import static android.opengl.GLES30.glUseProgram;
 import static android.opengl.GLES30.glVertexAttribPointer;
 import static android.opengl.GLES30.glViewport;
 
-public class FractorRender extends BaseRender {
+public class FractalRender extends BaseRender {
 
     @Override
     public OurCamera getOurCamera() {

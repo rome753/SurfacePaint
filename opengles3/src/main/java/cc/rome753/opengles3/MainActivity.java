@@ -1,10 +1,7 @@
 package cc.rome753.opengles3;
 
 import android.content.Intent;
-import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -14,12 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import cc.rome753.opengles3.shader.FractorRender;
-import cc.rome753.opengles3.shader.LightingRender;
-import cc.rome753.opengles3.shader.OurCamera;
-import cc.rome753.opengles3.shader.ParticleSystemRenderer;
-import cc.rome753.opengles3.shader.Simple3DRender;
 
 public class MainActivity extends AppCompatActivity {
     ListView mListView;

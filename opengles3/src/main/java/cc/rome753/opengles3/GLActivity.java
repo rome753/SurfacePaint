@@ -1,6 +1,5 @@
 package cc.rome753.opengles3;
 
-import android.content.Intent;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,7 +8,7 @@ import android.view.MotionEvent;
 import androidx.appcompat.app.AppCompatActivity;
 
 import cc.rome753.opengles3.shader.BaseRender;
-import cc.rome753.opengles3.shader.FractorRender;
+import cc.rome753.opengles3.shader.FractalRender;
 import cc.rome753.opengles3.shader.LightingRender;
 import cc.rome753.opengles3.shader.OurCamera;
 import cc.rome753.opengles3.shader.ParticleSystemRenderer;
@@ -40,7 +39,7 @@ public class GLActivity extends AppCompatActivity {
                 glSurfaceView.setRenderer(render = new Simple3DRender());
                 break;
             case "Fractal":
-                glSurfaceView.setRenderer(render = new FractorRender());
+                glSurfaceView.setRenderer(render = new FractalRender());
                 break;
             case "Lighting":
                 glSurfaceView.setRenderer(render = new LightingRender());
