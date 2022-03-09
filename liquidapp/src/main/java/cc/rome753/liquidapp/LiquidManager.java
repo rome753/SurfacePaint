@@ -23,10 +23,14 @@ import com.google.fpl.liquidfun.PolygonShape;
 import com.google.fpl.liquidfun.Vec2;
 import com.google.fpl.liquidfun.World;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 import java.util.Random;
 
 public class LiquidManager {
 
+    public static int MAX_COUNT = 30;
     private static final float GRAVITY = 10f;
     private World world;
     private ParticleSystem particleSystem;
@@ -37,32 +41,28 @@ public class LiquidManager {
 //    private MouseJoint mouseJoint;
     private Body groundBody;
 
-    private Vec2 hitPoint = new Vec2();
-    private Paint paint = new Paint();
 
-    protected void onDraw(Canvas canvas) {
-        if (world == null) {
-            createWorld(0, 0);
-            createLiquid();
+    ByteBuffer mParticlePositionBuffer;
+
+    public LiquidManager() {
+        mParticlePositionBuffer = ByteBuffer
+                .allocateDirect(2 * 4 * MAX_COUNT)
+                .order(ByteOrder.nativeOrder());
+
+        createWorld(1000, 1000);
+        createLiquid();
+
+        for (int i = 0; i < 200; i++) {
+            step();
         }
 
-        long time = System.currentTimeMillis();
-        world.step(dt, 1, 1, 1);
-        long time1 = System.currentTimeMillis();
-        Log.d("chao", "step time " + (time1 - time));
-
-        // draw particles
-        for (int i = 0; i < particleSystem.getParticleCount(); i++) {
-            float x = meter2Pixel(particleSystem.getParticlePositionX(i));
-            float y = meter2Pixel(particleSystem.getParticlePositionY(i));
-            canvas.drawCircle(x, y, 15, paint);
-        }
-
-        long time2 = System.currentTimeMillis();
-        Log.d("chao", "draw time " + (time2 - time1));
+        particleSystem.copyPositionBuffer(0, MAX_COUNT, mParticlePositionBuffer);
 
     }
 
+    public void step() {
+        world.step(dt, 1, 1, 1);
+    }
 
     private void createLiquid() {
         ParticleSystemDef psd = new ParticleSystemDef();
@@ -71,7 +71,7 @@ public class LiquidManager {
         psd.setRadius(0.5f);
         psd.setRepulsiveStrength(0.5f);
         particleSystem = world.createParticleSystem(psd);
-        particleSystem.setMaxParticleCount(200);
+        particleSystem.setMaxParticleCount(MAX_COUNT);
 
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(8f, 8f, 10f, 10f, 0f);

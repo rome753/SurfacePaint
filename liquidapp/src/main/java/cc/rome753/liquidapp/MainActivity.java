@@ -15,8 +15,8 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("liquidfun_jni");
     }
 
-    private LiquidManager physicsLayout;
     private SensorManager sensorManager;
+    private LiquidManager liquidManager;
 
 
     GLSurfaceView glSurfaceView;
@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
             if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
                 float x = event.values[0] * 10;
                 float y = event.values[1] * 10;
-//                physicsLayout.setGravity(-x, y);
+                liquidManager.setGravity(-x, y);
             }
         }
 
@@ -47,10 +47,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(glSurfaceView);
 
         glSurfaceView.setEGLContextClientVersion(3);
-        glSurfaceView.setRenderer(render = new LiquidRender());
+        render = new LiquidRender();
+        glSurfaceView.setRenderer(render);
+        glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 
-//        setContentView(R.layout.activity_main);
-//        physicsLayout = findViewById(R.id.liq);
+        liquidManager = new LiquidManager();
+        render.liquidManager = liquidManager;
+
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
     }
 
