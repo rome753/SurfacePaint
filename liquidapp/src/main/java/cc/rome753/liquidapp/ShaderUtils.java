@@ -1,12 +1,25 @@
-package cc.rome753.opengles3.shader;
+package cc.rome753.liquidapp;
+
+import static android.opengl.GLES30.GL_COMPILE_STATUS;
+import static android.opengl.GLES30.GL_FRAGMENT_SHADER;
+import static android.opengl.GLES30.GL_LINK_STATUS;
+import static android.opengl.GLES30.GL_VERTEX_SHADER;
+import static android.opengl.GLES30.glAttachShader;
+import static android.opengl.GLES30.glCompileShader;
+import static android.opengl.GLES30.glCreateProgram;
+import static android.opengl.GLES30.glCreateShader;
+import static android.opengl.GLES30.glDeleteProgram;
+import static android.opengl.GLES30.glDeleteShader;
+import static android.opengl.GLES30.glGetProgramInfoLog;
+import static android.opengl.GLES30.glGetProgramiv;
+import static android.opengl.GLES30.glGetShaderInfoLog;
+import static android.opengl.GLES30.glGetShaderiv;
+import static android.opengl.GLES30.glLinkProgram;
+import static android.opengl.GLES30.glShaderSource;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
-
-import cc.rome753.opengles3.App;
-import cc.rome753.opengles3.Utils;
-
-import static android.opengl.GLES30.*;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;

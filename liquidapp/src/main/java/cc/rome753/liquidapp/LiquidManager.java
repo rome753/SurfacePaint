@@ -25,7 +25,7 @@ import com.google.fpl.liquidfun.World;
 
 import java.util.Random;
 
-public class LiquidLayout extends FrameLayout {
+public class LiquidManager {
 
     private static final float GRAVITY = 10f;
     private World world;
@@ -40,26 +40,9 @@ public class LiquidLayout extends FrameLayout {
     private Vec2 hitPoint = new Vec2();
     private Paint paint = new Paint();
 
-    public LiquidLayout(@NonNull Context context) {
-        this(context, null);
-    }
-
-    public LiquidLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public LiquidLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        setWillNotDraw(false);
-        paint.setColor(Color.RED);
-        paint.setStrokeWidth(5);
-        paint.setStyle(Paint.Style.STROKE);
-    }
-
-    @Override
     protected void onDraw(Canvas canvas) {
         if (world == null) {
-            createWorld();
+            createWorld(0, 0);
             createLiquid();
         }
 
@@ -78,7 +61,6 @@ public class LiquidLayout extends FrameLayout {
         long time2 = System.currentTimeMillis();
         Log.d("chao", "draw time " + (time2 - time1));
 
-        invalidate();
     }
 
 
@@ -89,7 +71,7 @@ public class LiquidLayout extends FrameLayout {
         psd.setRadius(0.5f);
         psd.setRepulsiveStrength(0.5f);
         particleSystem = world.createParticleSystem(psd);
-        particleSystem.setMaxParticleCount(1000);
+        particleSystem.setMaxParticleCount(200);
 
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(8f, 8f, 10f, 10f, 0f);
@@ -118,8 +100,8 @@ public class LiquidLayout extends FrameLayout {
         }
     }
 
-    private void createWorld() {
-        float w = pixel2Meter(getWidth()), h = pixel2Meter(getHeight());
+    private void createWorld(float wPx, float hPx) {
+        float w = pixel2Meter(wPx), h = pixel2Meter(hPx);
         Log.d("chao", "createWorld " + w + "," + h);
         float wall = 1f;
         world = new World(gravity.getX(), gravity.getY());
