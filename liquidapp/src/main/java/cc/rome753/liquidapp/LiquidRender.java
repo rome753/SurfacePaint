@@ -1,7 +1,10 @@
 package cc.rome753.liquidapp;
 
 import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
+import static android.opengl.GLES20.GL_DYNAMIC_DRAW;
 import static android.opengl.GLES20.GL_POINTS;
+import static android.opengl.GLES20.GL_STREAM_DRAW;
+import static android.opengl.GLES20.glBufferSubData;
 import static android.opengl.GLES20.glDrawArrays;
 import static android.opengl.GLES20.glGetProgramiv;
 import static android.opengl.GLES20.glUniform2fv;
@@ -34,6 +37,7 @@ public class LiquidRender implements GLSurfaceView.Renderer {
 
     int program;
     int[] vao;
+    int[] vbo;
 
     float[] vertices = {
             0.5f, 0.0f,
@@ -59,11 +63,11 @@ public class LiquidRender implements GLSurfaceView.Renderer {
         glGenVertexArrays(1, vao, 0);
         glBindVertexArray(vao[0]);
 
-        int[] vbo = new int[1];
+        vbo = new int[1];
         glGenBuffers(1, vbo, 0);
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 //        glBufferData(GL_ARRAY_BUFFER, vertices.length * 4, vertexBuffer, GL_STATIC_DRAW);
-        glBufferData(GL_ARRAY_BUFFER, LiquidManager.MAX_COUNT * 4 * 2, liquidManager.mParticlePositionBuffer, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, LiquidManager.MAX_COUNT * 4 * 2, liquidManager.mParticlePositionBuffer, GL_STREAM_DRAW);
 
         // Load the vertex data
         glVertexAttribPointer(0, 2, GL_FLOAT, false, 2 * 4, 0);
@@ -90,9 +94,16 @@ public class LiquidRender implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 gl) {
 
         liquidManager.step();
+        liquidManager.copyPos();
 
         // Clear the color buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // 刷新vbo数据
+        glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, LiquidManager.MAX_COUNT * 4 * 2,  liquidManager.mParticlePositionBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 
         // Use the program object
         glUseProgram(program);

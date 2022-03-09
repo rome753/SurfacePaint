@@ -30,7 +30,12 @@ import java.util.Random;
 
 public class LiquidManager {
 
-    public static int MAX_COUNT = 30;
+    // 超过2800个点会越界
+    //      Caused by: java.lang.ArrayIndexOutOfBoundsException: Particle index is out of bounds. Check startIndex and numParticles.
+    //        at com.google.fpl.liquidfun.liquidfunJNI.ParticleSystem_copyPositionBuffer(Native Method)
+    //        at com.google.fpl.liquidfun.ParticleSystem.copyPositionBuffer(ParticleSystem.java:93)
+    //        at cc.rome753.liquidapp.LiquidManager.copyPos(LiquidManager.java:65)
+    public static int MAX_COUNT = 2800;
     private static final float GRAVITY = 10f;
     private World world;
     private ParticleSystem particleSystem;
@@ -49,15 +54,20 @@ public class LiquidManager {
                 .allocateDirect(2 * 4 * MAX_COUNT)
                 .order(ByteOrder.nativeOrder());
 
-        createWorld(1000, 1000);
+        createWorld();
         createLiquid();
 
-        for (int i = 0; i < 200; i++) {
+        for (int i = 0; i < 250; i++) {
             step();
         }
 
-        particleSystem.copyPositionBuffer(0, MAX_COUNT, mParticlePositionBuffer);
+        copyPos();
 
+    }
+
+    public void copyPos() {
+        mParticlePositionBuffer.rewind();
+        particleSystem.copyPositionBuffer(0, MAX_COUNT, mParticlePositionBuffer);
     }
 
     public void step() {
@@ -68,13 +78,13 @@ public class LiquidManager {
         ParticleSystemDef psd = new ParticleSystemDef();
         psd.setDensity(1.2f);
         psd.setGravityScale(0.4f);
-        psd.setRadius(0.5f);
+        psd.setRadius(0.2f);
         psd.setRepulsiveStrength(0.5f);
         particleSystem = world.createParticleSystem(psd);
         particleSystem.setMaxParticleCount(MAX_COUNT);
 
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(8f, 8f, 10f, 10f, 0f);
+        shape.setAsBox(8f, 8f, 0f, 0f, 0f);
 
         ParticleGroupDef pd = new ParticleGroupDef();
         pd.setFlags(0);
@@ -100,8 +110,8 @@ public class LiquidManager {
         }
     }
 
-    private void createWorld(float wPx, float hPx) {
-        float w = pixel2Meter(wPx), h = pixel2Meter(hPx);
+    private void createWorld() {
+        float w = 20, h = 20;
         Log.d("chao", "createWorld " + w + "," + h);
         float wall = 1f;
         world = new World(gravity.getX(), gravity.getY());
@@ -115,21 +125,21 @@ public class LiquidManager {
         BodyDef bodyDef = new BodyDef();
         bodyDef.setType(BodyType.staticBody);
 
-        bodyDef.setPosition(0, -wall);
+        bodyDef.setPosition(0, -h / 2 -wall);
         Body top = world.createBody(bodyDef);
         top.createFixture(fixtureDef);
 
-        bodyDef.setPosition(0, h + wall);
+        bodyDef.setPosition(0, h / 2 + wall);
         groundBody = world.createBody(bodyDef);
         groundBody.createFixture(fixtureDef);
 
         wallShape.setAsBox(wall, h);
 
-        bodyDef.setPosition(-wall, 0);
+        bodyDef.setPosition(-wall - w / 2, 0);
         Body left = world.createBody(bodyDef);
         left.createFixture(fixtureDef);
 
-        bodyDef.setPosition(w + wall, 0);
+        bodyDef.setPosition(w / 2 + wall, 0);
         Body right = world.createBody(bodyDef);
         right.createFixture(fixtureDef);
 

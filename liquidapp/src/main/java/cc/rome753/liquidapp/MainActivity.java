@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
             if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
                 float x = event.values[0] * 10;
                 float y = event.values[1] * 10;
-                liquidManager.setGravity(-x, y);
+                liquidManager.setGravity(-x, -y);
             }
         }
 
