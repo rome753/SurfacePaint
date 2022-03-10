@@ -35,7 +35,7 @@ public class LiquidManager {
     //        at com.google.fpl.liquidfun.liquidfunJNI.ParticleSystem_copyPositionBuffer(Native Method)
     //        at com.google.fpl.liquidfun.ParticleSystem.copyPositionBuffer(ParticleSystem.java:93)
     //        at cc.rome753.liquidapp.LiquidManager.copyPos(LiquidManager.java:65)
-    public static int MAX_COUNT = 2800;
+    public static int MAX_COUNT = 2200;
     private static final float GRAVITY = 10f;
     private World world;
     private ParticleSystem particleSystem;
@@ -50,8 +50,17 @@ public class LiquidManager {
 
     public void initWorld(int w0, int h0) {
         if (world == null) {
-            createWorld(w0, h0);
-            createLiquid();
+            float h = 20;
+            float w = h * w0 / h0;
+            createWorld(w, h);
+            createLiquid(w, h);
+        }
+    }
+
+    public void setGravity(float x, float y) {
+        gravity.set(x, y);
+        if (world != null) {
+            world.setGravity(x, y);
         }
     }
 
@@ -62,7 +71,7 @@ public class LiquidManager {
         particleSystem.copyPositionBuffer(0, MAX_COUNT, buffer);
     }
 
-    private void createLiquid() {
+    private void createLiquid(float w, float h) {
         ParticleSystemDef psd = new ParticleSystemDef();
         psd.setDensity(1.2f);
         psd.setGravityScale(0.4f);
@@ -72,7 +81,7 @@ public class LiquidManager {
         particleSystem.setMaxParticleCount(MAX_COUNT);
 
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(8f, 8f, 0f, 0f, 0f);
+        shape.setAsBox(w / 2, h / 2, 0f, 0f, 0f);
 
         ParticleGroupDef pd = new ParticleGroupDef();
         pd.setFlags(0);
@@ -91,16 +100,7 @@ public class LiquidManager {
         Log.d("chao", "create particles " + particleSystem.getParticleCount());
     }
 
-    public void setGravity(float x, float y) {
-        gravity.set(x, y);
-        if (world != null) {
-            world.setGravity(x, y);
-        }
-    }
-
-    private void createWorld(int w0, int h0) {
-        float h = 20;
-        float w = h * w0 / h0;
+    private void createWorld(float w, float h) {
         Log.d("chao", "createWorld " + w + "," + h);
         float wall = 1f;
         world = new World(gravity.getX(), gravity.getY());
