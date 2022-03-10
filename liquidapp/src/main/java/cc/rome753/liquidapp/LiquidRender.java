@@ -8,6 +8,7 @@ import static android.opengl.GLES20.glBufferSubData;
 import static android.opengl.GLES20.glDrawArrays;
 import static android.opengl.GLES20.glGetProgramiv;
 import static android.opengl.GLES20.glUniform2fv;
+import static android.opengl.GLES20.glViewport;
 import static android.opengl.GLES30.GL_ARRAY_BUFFER;
 import static android.opengl.GLES30.GL_COLOR_BUFFER_BIT;
 import static android.opengl.GLES30.GL_FLOAT;
@@ -28,6 +29,8 @@ import static android.opengl.GLES30.glVertexAttribPointer;
 
 import android.opengl.GLSurfaceView;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -39,25 +42,21 @@ public class LiquidRender implements GLSurfaceView.Renderer {
     int[] vao;
     int[] vbo;
 
-    float[] vertices = {
-            0.5f, 0.0f,
-            -0.5f, 0.0f
-    };
-    FloatBuffer vertexBuffer;
+    ByteBuffer mParticlePositionBuffer;
 
     LiquidManager liquidManager;
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 
+        liquidManager = new LiquidManager();
+
         program = ShaderUtils.loadProgram();
+
 //        //分配内存空间,每个浮点型占4字节空间
-//        vertexBuffer = ByteBuffer.allocateDirect(vertices.length * 4)
-//                .order(ByteOrder.nativeOrder())
-//                .asFloatBuffer();
-//        //传入指定的坐标数据
-//        vertexBuffer.put(vertices);
-//        vertexBuffer.position(0);
+        mParticlePositionBuffer = ByteBuffer
+                .allocateDirect(2 * 4 * LiquidManager.MAX_COUNT)
+                .order(ByteOrder.nativeOrder());
 
         vao = new int[1];
         glGenVertexArrays(1, vao, 0);
@@ -67,7 +66,7 @@ public class LiquidRender implements GLSurfaceView.Renderer {
         glGenBuffers(1, vbo, 0);
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 //        glBufferData(GL_ARRAY_BUFFER, vertices.length * 4, vertexBuffer, GL_STATIC_DRAW);
-        glBufferData(GL_ARRAY_BUFFER, LiquidManager.MAX_COUNT * 4 * 2, liquidManager.mParticlePositionBuffer, GL_STREAM_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, LiquidManager.MAX_COUNT * 4 * 2, mParticlePositionBuffer, GL_STREAM_DRAW);
 
         // Load the vertex data
         glVertexAttribPointer(0, 2, GL_FLOAT, false, 2 * 4, 0);
@@ -84,24 +83,24 @@ public class LiquidRender implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
+        glViewport(-(height - width) / 2, 0, height, height);
         this.width = width;
         this.height = height;
     }
 
-    float width, height;
+    int width, height;
 
     @Override
     public void onDrawFrame(GL10 gl) {
-
-        liquidManager.step();
-        liquidManager.copyPos();
+        liquidManager.initWorld(width, height);
+        liquidManager.updatePosition(mParticlePositionBuffer);
 
         // Clear the color buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // 刷新vbo数据
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, LiquidManager.MAX_COUNT * 4 * 2,  liquidManager.mParticlePositionBuffer);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, LiquidManager.MAX_COUNT * 4 * 2,  mParticlePositionBuffer);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 

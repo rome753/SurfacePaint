@@ -16,20 +16,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private SensorManager sensorManager;
-    private LiquidManager liquidManager;
-
 
     GLSurfaceView glSurfaceView;
-    LiquidRender render;
+    LiquidRender liquidRender;
 
-
-    private SensorEventListener sensorEventListener = new SensorEventListener() {
+    private final SensorEventListener sensorEventListener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
             if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
                 float x = event.values[0] * 10;
                 float y = event.values[1] * 10;
-                liquidManager.setGravity(-x, -y);
+                if (liquidRender.liquidManager != null) {
+                    liquidRender.liquidManager.setGravity(-x, -y);
+                }
             }
         }
 
@@ -47,12 +46,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(glSurfaceView);
 
         glSurfaceView.setEGLContextClientVersion(3);
-        render = new LiquidRender();
-        glSurfaceView.setRenderer(render);
+        liquidRender = new LiquidRender();
+        glSurfaceView.setRenderer(liquidRender);
         glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-
-        liquidManager = new LiquidManager();
-        render.liquidManager = liquidManager;
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
     }

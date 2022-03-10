@@ -42,36 +42,24 @@ public class LiquidManager {
     private Vec2 gravity = new Vec2(0, GRAVITY);
     private int ratio = 50;
     private float dt = 1f / 60f;
-    private Random random = new Random();
-//    private MouseJoint mouseJoint;
     private Body groundBody;
 
 
-    ByteBuffer mParticlePositionBuffer;
-
     public LiquidManager() {
-        mParticlePositionBuffer = ByteBuffer
-                .allocateDirect(2 * 4 * MAX_COUNT)
-                .order(ByteOrder.nativeOrder());
+    }
 
-        createWorld();
-        createLiquid();
-
-        for (int i = 0; i < 250; i++) {
-            step();
+    public void initWorld(int w0, int h0) {
+        if (world == null) {
+            createWorld(w0, h0);
+            createLiquid();
         }
-
-        copyPos();
-
     }
 
-    public void copyPos() {
-        mParticlePositionBuffer.rewind();
-        particleSystem.copyPositionBuffer(0, MAX_COUNT, mParticlePositionBuffer);
-    }
-
-    public void step() {
+    public void updatePosition(ByteBuffer buffer) {
         world.step(dt, 1, 1, 1);
+
+        buffer.rewind();
+        particleSystem.copyPositionBuffer(0, MAX_COUNT, buffer);
     }
 
     private void createLiquid() {
@@ -110,8 +98,9 @@ public class LiquidManager {
         }
     }
 
-    private void createWorld() {
-        float w = 20, h = 20;
+    private void createWorld(int w0, int h0) {
+        float h = 20;
+        float w = h * w0 / h0;
         Log.d("chao", "createWorld " + w + "," + h);
         float wall = 1f;
         world = new World(gravity.getX(), gravity.getY());
