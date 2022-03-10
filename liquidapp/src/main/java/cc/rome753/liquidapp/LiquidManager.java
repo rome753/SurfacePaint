@@ -84,6 +84,10 @@ public class LiquidManager {
         shape.setAsBox(w / 2, h / 2, 0f, 0f, 0f);
 
         ParticleGroupDef pd = new ParticleGroupDef();
+
+//        // 软体
+//        pd.setFlags(1 << 4);
+//        pd.setGroupFlags(1 << 0);
         pd.setFlags(0);
         pd.setGroupFlags(0);
         pd.setLinearVelocity(new Vec2(0,0));
