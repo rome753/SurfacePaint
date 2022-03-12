@@ -33,7 +33,6 @@ class CameraRender: GLSurfaceView.Renderer, Preview.SurfaceProvider {
 
     var program = 0
     var vertexBuffer: FloatBuffer? = null
-    var colorBuffer: FloatBuffer? = null
     var intBuffer: IntBuffer? = null
     var vao: IntArray = IntArray(1)
     var tex: IntArray = IntArray(1)
@@ -55,10 +54,6 @@ class CameraRender: GLSurfaceView.Renderer, Preview.SurfaceProvider {
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
         glBufferData(GL_ARRAY_BUFFER, vertices.size * 4, vertexBuffer, GL_STATIC_DRAW)
 
-
-//            intBuffer = ByteBuffer.allocate(indices.length * 4)
-//                    .order(ByteOrder.nativeOrder())
-//                    .asIntBuffer(); // 这样创建会变成null，native找不到，崩溃
         intBuffer = IntBuffer.allocate(indices.size * 4)
         intBuffer!!.put(indices)
         intBuffer!!.position(0)
@@ -66,8 +61,8 @@ class CameraRender: GLSurfaceView.Renderer, Preview.SurfaceProvider {
         glGenBuffers(1, ebo, 0)
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[0])
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size * 4, intBuffer, GL_STATIC_DRAW)
-        tex = IntArray(2)
-        glGenTextures(2, tex, 0)
+
+        glGenTextures(1, tex, 0)
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, tex[0])
         // 为当前绑定的纹理对象设置环绕、过滤方式
@@ -75,24 +70,13 @@ class CameraRender: GLSurfaceView.Renderer, Preview.SurfaceProvider {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-        val bitmap: Bitmap = ShaderUtils.loadImageAssets("wall.jpg")
+        val bitmap: Bitmap = ShaderUtils.loadImageAssets("face.png")
         GLUtils.texImage2D(GL_TEXTURE_2D, 0, bitmap, 0)
         glGenerateMipmap(GL_TEXTURE_2D)
-        glActiveTexture(GL_TEXTURE1)
-        glBindTexture(GL_TEXTURE_2D, tex[1])
-        // 为当前绑定的纹理对象设置环绕、过滤方式
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-        val bitmap1: Bitmap = ShaderUtils.loadImageAssets("face.png")
-        GLUtils.texImage2D(GL_TEXTURE_2D, 0, bitmap1, 0)
-        glGenerateMipmap(GL_TEXTURE_2D)
+
         glUseProgram(program)
         val loc0 = glGetUniformLocation(program, "texture1")
         glUniform1i(loc0, 0)
-        val loc1 = glGetUniformLocation(program, "texture2")
-        glUniform1i(loc1, 1)
 
         // Load the vertex data
         glVertexAttribPointer(0, 3, GL_FLOAT, false, 8 * 4, 0)
@@ -119,7 +103,7 @@ class CameraRender: GLSurfaceView.Renderer, Preview.SurfaceProvider {
         // Use the program object
         glUseProgram(program)
         glBindTexture(GL_TEXTURE_2D, tex[0])
-        glBindTexture(GL_TEXTURE_2D, tex[1])
+
         Matrix.setIdentityM(transform, 0)
         //        Matrix.translateM(transform, 0, 0, 0, 0);
 
