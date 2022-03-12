@@ -3,6 +3,7 @@ package com.example.opengles3camera
 import android.Manifest
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -28,18 +29,26 @@ class MainActivity : AppCompatActivity() {
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
 
+    lateinit var glSurfaceView: GLSurfaceView
+    lateinit var cameraRender: CameraRender
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        if (allPermissionsGranted()) {
-            startCamera()
-        } else {
-            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
-        }
+        glSurfaceView = GLSurfaceView(this)
+        setContentView(glSurfaceView)
 
-        camera_capture_button.setOnClickListener { takePhoto() }
+        glSurfaceView.setEGLContextClientVersion(3)
+        cameraRender = CameraRender()
+        glSurfaceView.setRenderer(cameraRender)
+
+//        if (allPermissionsGranted()) {
+//            startCamera()
+//        } else {
+//            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
+//        }
+
+//        camera_capture_button.setOnClickListener { takePhoto() }
 
         outputDirectory = getOutputDirectory()
 
@@ -100,7 +109,10 @@ class MainActivity : AppCompatActivity() {
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
-            val preview = Preview.Builder().build().also { it.setSurfaceProvider(viewFinder.createSurfaceProvider()) }
+            val preview = Preview.Builder().build().also {
+//                it.setSurfaceProvider(viewFinder.createSurfaceProvider())
+                it.setSurfaceProvider(cameraRender)
+            }
 
             // 2. 相机拍照
             imageCapture = ImageCapture.Builder().build()

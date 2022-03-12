@@ -4,7 +4,6 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import cc.rome753.opengles3.App;
-import cc.rome753.opengles3.Utils;
 
 import static android.opengl.GLES30.*;
 

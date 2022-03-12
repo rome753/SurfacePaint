@@ -1,7 +1,5 @@
 package com.example.opengles3camera;
 
-import android.util.Log;
-
 import static android.opengl.GLES30.GL_COMPILE_STATUS;
 import static android.opengl.GLES30.GL_FRAGMENT_SHADER;
 import static android.opengl.GLES30.GL_LINK_STATUS;
@@ -19,11 +17,42 @@ import static android.opengl.GLES30.glGetShaderiv;
 import static android.opengl.GLES30.glLinkProgram;
 import static android.opengl.GLES30.glShaderSource;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
+
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+
 public class ShaderUtils {
 
-    public static int loadProgramCamera() {
-        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, Utils.loadAssets("shader_camera_v.txt"));
-        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, Utils.loadAssets("shader_camera_f.txt"));
+    public static int loadProgram() {
+        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, loadAssets("shader_base_v.glsl"));
+        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, loadAssets("shader_base_f.glsl"));
+        return linkProgram(vShader, fShader);
+    }
+
+    public static int loadProgram3D() {
+        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, loadAssets("shader3d_v.glsl"));
+        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, loadAssets("shader3d_f.glsl"));
+        return linkProgram(vShader, fShader);
+    }
+
+    public static int loadProgramFractor() {
+        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, loadAssets("shader_fractal_v.glsl"));
+        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, loadAssets("shader_fractal_f.glsl"));
+        return linkProgram(vShader, fShader);
+    }
+
+    public static int loadProgram3DLighting() {
+        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, loadAssets("shader_lighting_v.glsl"));
+        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, loadAssets("shader_lighting_f.glsl"));
+        return linkProgram(vShader, fShader);
+    }
+
+    public static int loadProgram(String vs, String fs) {
+        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, vs);
+        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, fs);
         return linkProgram(vShader, fShader);
     }
 
@@ -66,5 +95,31 @@ public class ShaderUtils {
             return 0;
         }
         return program;
+    }
+
+
+    public static String loadAssets(String name) {
+        String s = null;
+        try {
+            InputStream is = App.Companion.getApp().getAssets().open(name);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            s = new String(buffer, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return s;
+    }
+
+    public static Bitmap loadImageAssets(String name) {
+        try {
+            InputStream is = App.Companion.getApp().getAssets().open(name);
+            return BitmapFactory.decodeStream(is);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

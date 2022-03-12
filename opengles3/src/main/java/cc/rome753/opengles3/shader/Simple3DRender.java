@@ -12,8 +12,6 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import cc.rome753.opengles3.Utils;
-
 import static android.opengl.GLES30.*;
 
 public class Simple3DRender extends BaseRender {
@@ -116,7 +114,7 @@ public class Simple3DRender extends BaseRender {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        Bitmap bitmap = Utils.loadImageAssets("wall.jpg");
+        Bitmap bitmap = ShaderUtils.loadImageAssets("wall.jpg");
         GLUtils.texImage2D(GL_TEXTURE_2D, 0, bitmap, 0);
         glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -127,7 +125,7 @@ public class Simple3DRender extends BaseRender {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        Bitmap bitmap1 = Utils.loadImageAssets("face.png");
+        Bitmap bitmap1 = ShaderUtils.loadImageAssets("face.png");
         GLUtils.texImage2D(GL_TEXTURE_2D, 0, bitmap1, 0);
         glGenerateMipmap(GL_TEXTURE_2D);
 
