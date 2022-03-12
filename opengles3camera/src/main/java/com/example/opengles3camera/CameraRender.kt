@@ -4,20 +4,23 @@ import android.graphics.Bitmap
 import android.graphics.SurfaceTexture
 import android.opengl.*
 import android.opengl.GLES20.*
+import android.view.Surface
 import androidx.camera.core.Preview
 import androidx.camera.core.SurfaceRequest
+import androidx.core.util.Consumer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
+import java.util.concurrent.Executors
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 class CameraRender: GLSurfaceView.Renderer, Preview.SurfaceProvider {
 
-    var textureId = 0
     var surfaceTexture: SurfaceTexture? = null
 
+    private val executor = Executors.newSingleThreadExecutor()
 
     var vertices = floatArrayOf( //     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
         0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  // 右上
@@ -62,17 +65,23 @@ class CameraRender: GLSurfaceView.Renderer, Preview.SurfaceProvider {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[0])
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size * 4, intBuffer, GL_STATIC_DRAW)
 
-        glGenTextures(1, tex, 0)
-        glActiveTexture(GL_TEXTURE0)
-        glBindTexture(GL_TEXTURE_2D, tex[0])
-        // 为当前绑定的纹理对象设置环绕、过滤方式
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-        val bitmap: Bitmap = ShaderUtils.loadImageAssets("face.png")
-        GLUtils.texImage2D(GL_TEXTURE_2D, 0, bitmap, 0)
-        glGenerateMipmap(GL_TEXTURE_2D)
+//        glGenTextures(1, tex, 0)
+//        glActiveTexture(GL_TEXTURE0)
+//        glBindTexture(GL_TEXTURE_2D, tex[0])
+//        // 为当前绑定的纹理对象设置环绕、过滤方式
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+//        val bitmap: Bitmap = ShaderUtils.loadImageAssets("face.png")
+//        GLUtils.texImage2D(GL_TEXTURE_2D, 0, bitmap, 0)
+//        glGenerateMipmap(GL_TEXTURE_2D)
+
+        tex = createOESTexture()
+        surfaceTexture = SurfaceTexture(tex[0])
+        surfaceTexture?.setOnFrameAvailableListener {
+//            requestRender()
+        }
 
         glUseProgram(program)
         val loc0 = glGetUniformLocation(program, "texture1")
@@ -100,6 +109,8 @@ class CameraRender: GLSurfaceView.Renderer, Preview.SurfaceProvider {
         // Clear the color buffer
         glClear(GL_COLOR_BUFFER_BIT)
 
+        surfaceTexture?.updateTexImage()
+
         // Use the program object
         glUseProgram(program)
         glBindTexture(GL_TEXTURE_2D, tex[0])
@@ -115,7 +126,7 @@ class CameraRender: GLSurfaceView.Renderer, Preview.SurfaceProvider {
         glDrawElements(GL_TRIANGLES, vertices.size, GL_UNSIGNED_INT, 0)
     }
 
-    fun createOESTextureId(): Int {
+    fun createOESTexture(): IntArray {
         val arr = IntArray(1)
         glGenTextures(1, arr, 0)
         glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, arr[0])
@@ -123,12 +134,16 @@ class CameraRender: GLSurfaceView.Renderer, Preview.SurfaceProvider {
         glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MAG_FILTER, GL_LINEAR.toFloat())
         glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE.toFloat())
         glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE.toFloat())
-        return arr[0]
+        return arr
     }
 
 
     override fun onSurfaceRequested(request: SurfaceRequest) {
-
+        val surface = Surface(surfaceTexture)
+        request.provideSurface(surface, executor, Consumer {
+            surfaceTexture?.release()
+            surface.release()
+        })
     }
 
 }
