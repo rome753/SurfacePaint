@@ -6,6 +6,8 @@ import android.net.Uri
 import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.util.Log
+import android.util.Size
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
@@ -36,6 +38,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         glSurfaceView = GLSurfaceView(this)
+        val screenW = resources.displayMetrics.widthPixels
+        glSurfaceView.layoutParams = FrameLayout.LayoutParams(screenW, screenW * 4 / 3)
         setContentView(glSurfaceView)
 
         glSurfaceView.setEGLContextClientVersion(3)
@@ -110,7 +114,9 @@ class MainActivity : AppCompatActivity() {
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
-            val preview = Preview.Builder().build().also {
+            val preview = Preview.Builder()
+                .setTargetResolution(Size(480, 640))
+                .build().also {
 //                it.setSurfaceProvider(viewFinder.createSurfaceProvider())
                 it.setSurfaceProvider(cameraRender)
             }

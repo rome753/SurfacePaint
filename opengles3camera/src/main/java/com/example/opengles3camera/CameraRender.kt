@@ -23,14 +23,14 @@ class CameraRender: GLSurfaceView.Renderer, Preview.SurfaceProvider {
     private val executor = Executors.newSingleThreadExecutor()
 
     var vertices = floatArrayOf( //     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
-        0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  // 右上
-        0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,  // 右下
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,  // 左下
-        -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f // 左上
+        -1f, -1f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,  // 左下
+        1f, -1f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,  // 右下
+        -1f, 1f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, // 左上
+        1f, 1f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f  // 右上
     )
 
     val indices = intArrayOf( // 注意索引从0开始!
-        0, 1, 3,  // 第一个三角形
+        0, 1, 2,  // 第一个三角形
         1, 2, 3 // 第二个三角形
     )
 
@@ -110,15 +110,16 @@ class CameraRender: GLSurfaceView.Renderer, Preview.SurfaceProvider {
         glClear(GL_COLOR_BUFFER_BIT)
 
         surfaceTexture?.updateTexImage()
+        surfaceTexture?.getTransformMatrix(transform)
 
         // Use the program object
         glUseProgram(program)
         glBindTexture(GL_TEXTURE_2D, tex[0])
 
-        Matrix.setIdentityM(transform, 0)
-        //        Matrix.translateM(transform, 0, 0, 0, 0);
+//        Matrix.setIdentityM(transform, 0)
+//        Matrix.translateM(transform, 1, 1f, 0f, 0f);
 
-        val loc = glGetUniformLocation(program, "transform")
+        var loc = glGetUniformLocation(program, "transform")
         glUniformMatrix4fv(loc, 1, false, transform, 0)
         GLES30.glBindVertexArray(vao[0])
 
@@ -139,6 +140,8 @@ class CameraRender: GLSurfaceView.Renderer, Preview.SurfaceProvider {
 
 
     override fun onSurfaceRequested(request: SurfaceRequest) {
+        val size = request.resolution
+        surfaceTexture?.setDefaultBufferSize(size.width, size.height)
         val surface = Surface(surfaceTexture)
         request.provideSurface(surface, executor, Consumer {
             surfaceTexture?.release()
