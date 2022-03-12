@@ -8,7 +8,7 @@ out vec2 aTexCoord;
 uniform mat4 transform;
 
 void main() {
-     gl_Position  = transform * vec4(vPosition + 1.0f, 1.0f);
+     gl_Position = vec4(vPosition, 1.0f);
      aColor = vColor;
-     aTexCoord = vTexCoord;
+     aTexCoord = (transform * vec4(vTexCoord, 1.0f, 1.0f)).xy;
 }
