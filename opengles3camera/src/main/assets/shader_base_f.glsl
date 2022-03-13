@@ -10,5 +10,30 @@ out vec4 fragColor;
 uniform samplerExternalOES texture1;
 
 void main() {
-     fragColor = mix(texture(texture1, aTexCoord), vec4(aColor, 1.0f), 0.2f);
+
+     // 正常画面
+     fragColor = texture(texture1, aTexCoord);
+
+//     // 彩色滤镜效果
+//     fragColor = mix(texture(texture1, aTexCoord), vec4(aColor, 1.0f), 0.5f);
+
+//     // 四分屏效果
+//     float s = aTexCoord.s;
+//     float t = aTexCoord.t;
+//     if (s > 0.5f) {
+//          s = s - 0.5f;
+//     }
+//     if (t > 0.5f) {
+//          t = t - 0.5f;
+//     }
+//     fragColor = texture(texture1, vec2(s, t));
+
+//     // 马赛克效果
+//     float s = aTexCoord.s;
+//     float t = aTexCoord.t;
+//     float msk = 50.0f;
+//     s = float(int(s * msk)) / msk;
+//     t = float(int(t * msk)) / msk;
+//     fragColor = texture(texture1, vec2(s, t));
+
 }
