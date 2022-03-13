@@ -35,7 +35,8 @@ public class LiquidManager {
     //        at com.google.fpl.liquidfun.liquidfunJNI.ParticleSystem_copyPositionBuffer(Native Method)
     //        at com.google.fpl.liquidfun.ParticleSystem.copyPositionBuffer(ParticleSystem.java:93)
     //        at cc.rome753.liquidapp.LiquidManager.copyPos(LiquidManager.java:65)
-    public static int MAX_COUNT = 2200;
+    public static int MAX_COUNT = 8000;
+    private float PARTICAL_RADIUS = 0.1f;
     private static final float GRAVITY = 10f;
     private World world;
     private ParticleSystem particleSystem;
@@ -75,7 +76,7 @@ public class LiquidManager {
         ParticleSystemDef psd = new ParticleSystemDef();
         psd.setDensity(1.2f);
         psd.setGravityScale(0.4f);
-        psd.setRadius(0.2f);
+        psd.setRadius(PARTICAL_RADIUS);
         psd.setRepulsiveStrength(0.5f);
         particleSystem = world.createParticleSystem(psd);
         particleSystem.setMaxParticleCount(MAX_COUNT);
