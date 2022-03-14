@@ -4,9 +4,12 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.audiofx.Equalizer;
 import android.media.audiofx.Visualizer;
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ViewGroup;
+
+import cc.rome753.opengles3.shader.AudioRender;
 
 public class GLAudioActivity extends GLActivity {
 
@@ -16,6 +19,7 @@ public class GLAudioActivity extends GLActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
@@ -48,6 +52,9 @@ public class GLAudioActivity extends GLActivity {
             public void onWaveFormDataCapture(Visualizer visualizer, byte[] bytes,
                                               int samplingRate) {
 //                mVisualizerView.updateVisualizer(bytes);
+                AudioRender render = (AudioRender) GLAudioActivity.this.render;
+                render.update(bytes);
+                glSurfaceView.requestRender();
             }
 
             public void onFftDataCapture(Visualizer visualizer, byte[] bytes, int samplingRate) {

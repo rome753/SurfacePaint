@@ -7,6 +7,8 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+uniform int lineNum;
+
 out vec3 aColor;
 
 vec3 generateColor(int k) {
@@ -19,7 +21,7 @@ vec3 generateColor(int k) {
 
 void main() {
     // gl_PointSize = 6.0;
-    int w = 28;
+    int w = 128;
     float fw = float(w);
     int y = gl_VertexID / w;
     int x = gl_VertexID - y * w;

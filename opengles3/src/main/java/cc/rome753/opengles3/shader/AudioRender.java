@@ -3,7 +3,9 @@ package cc.rome753.opengles3.shader;
 import static android.opengl.GLES20.GL_CULL_FACE;
 import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
 import static android.opengl.GLES20.GL_DEPTH_TEST;
+import static android.opengl.GLES20.glBufferSubData;
 import static android.opengl.GLES20.glEnable;
+import static android.opengl.GLES20.glUniform1i;
 import static android.opengl.GLES20.glUniform2fv;
 import static android.opengl.GLES30.GL_ARRAY_BUFFER;
 import static android.opengl.GLES30.GL_COLOR_BUFFER_BIT;
@@ -46,16 +48,17 @@ public class AudioRender extends BaseRender {
         return ourCamera;
     }
 
-    static int W = 28, H = 28;
-    int lineNum = 0;
+    static int W = 128, H = 128;
 
     int[] indices;
 
     int program;
     ByteBuffer vertexBuffer;
     byte[] lineBytes = new byte[W];
+    int lineNum = 0;
 
     int[] vao;
+    int[] vbo;
 
     IntBuffer intBuffer;
 
@@ -69,14 +72,14 @@ public class AudioRender extends BaseRender {
                 .order(ByteOrder.nativeOrder());
         vertexBuffer.position(0);
 
-        updateBuffer();
+//        updateBuffer();
         vertexBuffer.position(0);
 
         vao = new int[1];
         glGenVertexArrays(1, vao, 0);
         glBindVertexArray(vao[0]);
 
-        int[] vbo = new int[1];
+        vbo = new int[1];
         glGenBuffers(1, vbo, 0);
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
         glBufferData(GL_ARRAY_BUFFER, W * H, vertexBuffer, GL_STATIC_DRAW);
@@ -133,10 +136,22 @@ public class AudioRender extends BaseRender {
         }
     }
 
+    public void update(byte[] bytes) {
+        vertexBuffer.position(lineNum * W);
+        vertexBuffer.put(bytes);
+        lineNum = (lineNum + 1) % H;
+    }
+
     @Override
     public void onDrawFrame(GL10 gl) {
         // Clear the color buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        vertexBuffer.position(0);
+        // 刷新vbo数据
+        glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, W * H, vertexBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         // Use the program object
         glUseProgram(program);
@@ -158,6 +173,9 @@ public class AudioRender extends BaseRender {
         Matrix.rotateM(modelMat, 0, ry, 1.0f, 0.0f, 0.0f);
         int loc3 = glGetUniformLocation(program, "model");
         glUniformMatrix4fv(loc3, 1, false, modelMat, 0);
+
+        int loc = glGetUniformLocation(program, "lineNum");
+        glUniform1i(loc, lineNum);
 
         glBindVertexArray(vao[0]);
 
