@@ -7,6 +7,7 @@ import android.view.MotionEvent;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import cc.rome753.opengles3.shader.AudioRender;
 import cc.rome753.opengles3.shader.BaseRender;
 import cc.rome753.opengles3.shader.FractalRender;
 import cc.rome753.opengles3.shader.LightingRender;
@@ -40,6 +41,9 @@ public class GLActivity extends AppCompatActivity {
                 break;
             case "Fractal":
                 glSurfaceView.setRenderer(render = new FractalRender());
+                break;
+            case "Audio":
+                glSurfaceView.setRenderer(render = new AudioRender());
                 break;
             case "Lighting":
                 glSurfaceView.setRenderer(render = new LightingRender());

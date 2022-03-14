@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
         mData.add("Simple");
         mData.add("Simple3D");
         mData.add("Fractal");
+        mData.add("Audio");
         mData.add("Lighting");
         mData.add("ParticleSystem");
         mListView = (ListView) findViewById(R.id.lv);
