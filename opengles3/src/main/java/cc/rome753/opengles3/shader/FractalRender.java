@@ -71,6 +71,7 @@ public class FractalRender extends BaseRender {
     }
 
     float vertices[] = new float[401 * 401 * 2];
+    int[] indices;
 
     int program;
     FloatBuffer vertexBuffer;
@@ -108,8 +109,7 @@ public class FractalRender extends BaseRender {
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
         glBufferData(GL_ARRAY_BUFFER, vertices.length * 4, vertexBuffer, GL_STATIC_DRAW);
 
-
-        int[] indices = strip(401, 401);
+        indices = strip(401, 401);
 
         intBuffer = IntBuffer.allocate(indices.length * 4);
         intBuffer.put(indices);
@@ -181,37 +181,23 @@ public class FractalRender extends BaseRender {
 
         glBindVertexArray(vao[0]);
 
-//            glDrawArrays ( GL_TRIANGLES, 0, vertices.length );
-            glDrawElements(GL_TRIANGLE_STRIP, vertices.length, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
 
     }
 
     // 用GL_TRIANGLE_STRIP方式把平面上所有点转化成一个三角形条带
     public static int[] strip(int w, int h) {
         List<Integer> list = new ArrayList<>();
-        int k = 0;
-        boolean reverse = false;
         for (int j = 0; j < h - 1; j++) {
-            for (int i = 0; i < w; i++) {
-                if (reverse) {
-                    int p = j * w + w - 1 - i;
-                    if (i == 0) {
-                        list.add(p);
-                        list.add(p + w);
-                    }
-                    list.add(p + w);
-                    list.add(p);
-                    if (i == w - 1) {
-                        list.add(p);
-                        list.add(p + w);
-                    }
-                } else {
-                    int p = j * w + i;
-                    list.add(p);
-                    list.add(p + w);
-                }
+            for (int i = 0; i < w - 1; i++) {
+                int p = j * w + i;
+                list.add(p);
+                list.add(p + w);
+                list.add(p + 1);
+                list.add(p + 1);
+                list.add(p + w);
+                list.add(p + w + 1);
             }
-            reverse = !reverse;
         }
         int[] a = new int[list.size()];
         for (int i = 0; i < list.size(); i++) {
