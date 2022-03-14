@@ -27,10 +27,10 @@ void main() {
     if (h < 0) {
         h = 0;
     }
-    if (h > 127) {
-        h = 127;
+    if (h >= 128) {
+        h = h % 128;
     }
 
-    aColor = generateColor(h / 4);
+    aColor = generateColor(h / 2);
     gl_Position  = projection * view * model * vec4(float(x) / fw - 0.5f, float(y) / fw - 0.5f, float(h) / 128.0f, 1.0f);
 }
