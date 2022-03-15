@@ -19,11 +19,12 @@ public class GLAudioActivity extends GLActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         // Create the MediaPlayer
-        mMediaPlayer = MediaPlayer.create(this, R.raw.test_cbr);
+        mMediaPlayer = MediaPlayer.create(this, R.raw.jay);
 
         setupVisualizerFxAndUI();
         // Make sure the visualizer is enabled only when you actually want to receive data, and
@@ -50,14 +51,15 @@ public class GLAudioActivity extends GLActivity {
         mVisualizer.setDataCaptureListener(new Visualizer.OnDataCaptureListener() {
             public void onWaveFormDataCapture(Visualizer visualizer, byte[] bytes,
                                               int samplingRate) {
-//                mVisualizerView.updateVisualizer(bytes);
-                AudioRender render = (AudioRender) GLAudioActivity.this.render;
-                render.update(bytes);
-                glSurfaceView.requestRender();
+//                AudioRender render = (AudioRender) GLAudioActivity.this.render;
+//                render.update(bytes);
+//                glSurfaceView.requestRender();
             }
 
             public void onFftDataCapture(Visualizer visualizer, byte[] bytes, int samplingRate) {
-//                mVisualizerView.updateVisualizer(bytes);
+                AudioRender render = (AudioRender) GLAudioActivity.this.render;
+                render.update(bytes);
+                glSurfaceView.requestRender();
             }
         }, Visualizer.getMaxCaptureRate() / 2, true, true);
     }

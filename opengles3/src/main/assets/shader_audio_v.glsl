@@ -25,7 +25,7 @@ void main() {
     // gl_PointSize = 6.0;
     float fw = float(w);
     int y = gl_VertexID / w;
-    int x = gl_VertexID - y * w;
+    int x = gl_VertexID % w;
 //    if (y < lineNum) { // 新数据，移到下面
 //        y = y + (h - lineNum);
 //    } else { // 旧数据，移到上面
@@ -40,5 +40,7 @@ void main() {
     }
 
     aColor = generateColor(h / 2);
-    gl_Position  = projection * view * model * vec4(float(x) / fw - 0.5f, float(y) / fw - 0.5f, float(h) / 128.0f, 1.0f);
+    float fx = float(x) / fw - 0.5f;
+    float fy = 0.5f - float(y) / fw;
+    gl_Position  = projection * view * model * vec4(fx, fy, float(h) / 128.0f / 10.0f, 1.0f);
 }
