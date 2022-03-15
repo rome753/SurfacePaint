@@ -48,6 +48,23 @@ void main() {
     gl_Position  = projection * view * model * vec4(fx, fy, float(h) / 256.0f, 1.0f);
 
 
+
+
+
+//    // 频谱
+//    h = a;
+//    if (h == 255) {
+//        h = 0;
+//    }
+//
+//    int k = h > 16 ? 63 : h * 4;
+//    aColor = generateColor(k);
+//    gl_Position  = projection * view * model * vec4(fx, fy, float(h) / 1280.0f, 1.0f);
+
+
+
+
+
 //    // 检查数值范围
 //    if (a < 96) {
 //        aColor = vec3(1.0f, 0.0f, 0.0f);
