@@ -145,10 +145,12 @@ public class AudioRender extends BaseRender {
         // Clear the color buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        vertexBuffer.position(0);
         // 刷新vbo数据
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, w * h, vertexBuffer);
+        vertexBuffer.position(lineNum * w);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, (h - lineNum) * w, vertexBuffer);
+        vertexBuffer.position(0);
+        glBufferSubData(GL_ARRAY_BUFFER, (h - lineNum) * w, lineNum * w, vertexBuffer);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         // Use the program object

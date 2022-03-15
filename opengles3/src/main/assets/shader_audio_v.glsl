@@ -26,11 +26,11 @@ void main() {
     float fw = float(w);
     int y = gl_VertexID / w;
     int x = gl_VertexID - y * w;
-    if (y < lineNum) { // 新数据，移到下面
-        y = y + (h - lineNum);
-    } else { // 旧数据，移到上面
-        y = y - lineNum;
-    }
+//    if (y < lineNum) { // 新数据，移到下面
+//        y = y + (h - lineNum);
+//    } else { // 旧数据，移到上面
+//        y = y - lineNum;
+//    }
     int h = vPosition;
     if (h < 0) {
         h = 0;

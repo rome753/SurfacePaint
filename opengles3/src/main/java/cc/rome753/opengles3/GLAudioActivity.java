@@ -19,7 +19,6 @@ public class GLAudioActivity extends GLActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
