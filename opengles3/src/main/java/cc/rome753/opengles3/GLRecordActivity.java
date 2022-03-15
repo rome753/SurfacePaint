@@ -22,7 +22,8 @@ public class GLRecordActivity extends GLActivity {
     private static final int mChannelConfig= AudioFormat.CHANNEL_CONFIGURATION_MONO; //单声道
     //指定音频量化位数 ,在AudioFormaat类中指定了以下各种可能的常量。通常我们选择ENCODING_PCM_16BIT和ENCODING_PCM_8BIT PCM代表的是脉冲编码调制，它实际上是原始音频样本。
     //因此可以设置每个样本的分辨率为16位或者8位，16位将占用更多的空间和处理能力,表示的音频也更加接近真实。
-    private static final int mAudioFormat=AudioFormat.ENCODING_PCM_16BIT;
+    private static final int mAudioFormat=AudioFormat.ENCODING_PCM_8BIT;
+//    private static final int mAudioFormat=AudioFormat.ENCODING_PCM_16BIT;
     //指定缓冲区大小。调用AudioRecord类的getMinBufferSize方法可以获得。
     private int mBufferSizeInBytes= AudioRecord.getMinBufferSize(mSampleRateInHz,mChannelConfig, mAudioFormat);//计算最小缓冲区
     //创建AudioRecord。AudioRecord类实际上不会保存捕获的音频，因此需要手动创建文件并保存下载。
@@ -34,6 +35,10 @@ public class GLRecordActivity extends GLActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        // 根据数据长度设置绘制宽度
+        AudioRender.w = mBufferSizeInBytes;
+
         super.onCreate(savedInstanceState);
         glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
@@ -53,7 +58,11 @@ public class GLRecordActivity extends GLActivity {
                 while(start && mAudioRecord.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
                     byte[] buffer = new byte[mBufferSizeInBytes];
                     int result = mAudioRecord.read(buffer, 0, mBufferSizeInBytes);
-                    mAudioTrack.write(buffer, 0, mBufferSizeInBytes);
+//                    mAudioTrack.write(buffer, 0, mBufferSizeInBytes);
+
+                    AudioRender render = (AudioRender) GLRecordActivity.this.render;
+                    render.update(buffer);
+                    glSurfaceView.requestRender();
                 }
             }
         }.start();
@@ -84,9 +93,9 @@ public class GLRecordActivity extends GLActivity {
         mVisualizer.setDataCaptureListener(new Visualizer.OnDataCaptureListener() {
             public void onWaveFormDataCapture(Visualizer visualizer, byte[] bytes,
                                               int samplingRate) {
-                AudioRender render = (AudioRender) GLRecordActivity.this.render;
-                render.update(bytes);
-                glSurfaceView.requestRender();
+//                AudioRender render = (AudioRender) GLRecordActivity.this.render;
+//                render.update(bytes);
+//                glSurfaceView.requestRender();
             }
 
             public void onFftDataCapture(Visualizer visualizer, byte[] bytes, int samplingRate) {

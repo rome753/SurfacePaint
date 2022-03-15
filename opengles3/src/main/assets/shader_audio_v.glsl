@@ -26,21 +26,35 @@ void main() {
     float fw = float(w);
     int y = gl_VertexID / w;
     int x = gl_VertexID % w;
-//    if (y < lineNum) { // 新数据，移到下面
-//        y = y + (h - lineNum);
-//    } else { // 旧数据，移到上面
-//        y = y - lineNum;
-//    }
+    float fx = float(x) / fw - 0.5f;
+    float fy = 0.5f - float(y) / fw;
+
     int h = vPosition;
+
+    // 128 ~ 160
+    int a = (h >> 24) & 0xff;
+//    int r = (h >> 16) & 0xff;
+//    int g = (h >> 8) & 0xff;
+//    int b = h & 0xff;
+
+
+    h = a - 128;
     if (h < 0) {
         h = 0;
     }
-    if (h >= 128) {
-        h = h % 128;
-    }
 
-    aColor = generateColor(h / 2);
-    float fx = float(x) / fw - 0.5f;
-    float fy = 0.5f - float(y) / fw;
-    gl_Position  = projection * view * model * vec4(fx, fy, float(h) / 128.0f / 10.0f, 1.0f);
+    int k = h > 31 ? 63 : h * 2;
+    aColor = generateColor(k);
+    gl_Position  = projection * view * model * vec4(fx, fy, float(h) / 256.0f, 1.0f);
+
+
+//    // 检查数值范围
+//    if (a < 96) {
+//        aColor = vec3(1.0f, 0.0f, 0.0f);
+//    } else if (a > 160) {
+//        aColor = vec3(0.0f, 1.0f, 0.0f);
+//    } else {
+//        aColor = vec3(0.0f, 0.0f, 0.0f);
+//    }
+//    gl_Position  = projection * view * model * vec4(fx, fy, 0.0f / 10.0f, 1.0f);
 }

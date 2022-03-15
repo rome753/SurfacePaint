@@ -46,7 +46,7 @@ public class AudioRender extends BaseRender {
         return ourCamera;
     }
 
-    static int w = 128, h = 128;
+    public static int w = 128, h = 128;
 
     int[] indices;
 
@@ -67,7 +67,7 @@ public class AudioRender extends BaseRender {
 
         //分配内存空间,每个浮点型占4字节空间
         vertexBuffer = ByteBuffer.allocateDirect(w * h)
-                .order(ByteOrder.nativeOrder());
+                .order(ByteOrder.LITTLE_ENDIAN);
         vertexBuffer.position(0);
 
 //        updateBuffer();

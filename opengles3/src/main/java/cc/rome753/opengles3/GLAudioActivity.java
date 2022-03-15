@@ -18,6 +18,9 @@ public class GLAudioActivity extends GLActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // 根据数据长度设置绘制宽度
+        AudioRender.w = Visualizer.getCaptureSizeRange()[0];
+
         super.onCreate(savedInstanceState);
         glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
@@ -51,15 +54,15 @@ public class GLAudioActivity extends GLActivity {
         mVisualizer.setDataCaptureListener(new Visualizer.OnDataCaptureListener() {
             public void onWaveFormDataCapture(Visualizer visualizer, byte[] bytes,
                                               int samplingRate) {
-//                AudioRender render = (AudioRender) GLAudioActivity.this.render;
-//                render.update(bytes);
-//                glSurfaceView.requestRender();
-            }
-
-            public void onFftDataCapture(Visualizer visualizer, byte[] bytes, int samplingRate) {
                 AudioRender render = (AudioRender) GLAudioActivity.this.render;
                 render.update(bytes);
                 glSurfaceView.requestRender();
+            }
+
+            public void onFftDataCapture(Visualizer visualizer, byte[] bytes, int samplingRate) {
+//                AudioRender render = (AudioRender) GLAudioActivity.this.render;
+//                render.update(bytes);
+//                glSurfaceView.requestRender();
             }
         }, Visualizer.getMaxCaptureRate() / 2, true, true);
     }
