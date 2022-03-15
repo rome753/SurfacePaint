@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         mData.add("Simple3D");
         mData.add("Fractal");
         mData.add("Audio");
+        mData.add("Record");
         mData.add("Lighting");
         mData.add("ParticleSystem");
         mListView = (ListView) findViewById(R.id.lv);
@@ -37,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
                 Class clazz = GLActivity.class;
                 if (mData.get(position).equals("Audio")) {
                     clazz = GLAudioActivity.class;
+                } else if (mData.get(position).equals("Record")) {
+                    clazz = GLRecordActivity.class;
                 }
                 Intent i = new Intent(MainActivity.this, clazz);
                 i.putExtra("render", mData.get(position));

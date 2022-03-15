@@ -43,6 +43,7 @@ public class GLActivity extends AppCompatActivity {
                 glSurfaceView.setRenderer(render = new FractalRender());
                 break;
             case "Audio":
+            case "Record":
                 glSurfaceView.setRenderer(render = new AudioRender());
                 break;
             case "Lighting":
