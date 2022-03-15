@@ -8,6 +8,8 @@ uniform mat4 view;
 uniform mat4 projection;
 
 uniform int lineNum;
+uniform int w;
+uniform int h;
 
 out vec3 aColor;
 
@@ -21,10 +23,14 @@ vec3 generateColor(int k) {
 
 void main() {
     // gl_PointSize = 6.0;
-    int w = 128;
     float fw = float(w);
     int y = gl_VertexID / w;
     int x = gl_VertexID - y * w;
+    if (y < lineNum) { // 新数据，移到下面
+        y = y + (h - lineNum);
+    } else { // 旧数据，移到上面
+        y = y - lineNum;
+    }
     int h = vPosition;
     if (h < 0) {
         h = 0;

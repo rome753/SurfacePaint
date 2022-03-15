@@ -1,6 +1,5 @@
 package cc.rome753.opengles3.shader;
 
-import static android.opengl.GLES20.GL_CULL_FACE;
 import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
 import static android.opengl.GLES20.GL_DEPTH_TEST;
 import static android.opengl.GLES20.glBufferSubData;
@@ -32,7 +31,6 @@ import android.opengl.Matrix;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,13 +46,13 @@ public class AudioRender extends BaseRender {
         return ourCamera;
     }
 
-    static int W = 128, H = 128;
+    static int w = 128, h = 128;
 
     int[] indices;
 
     int program;
     ByteBuffer vertexBuffer;
-    byte[] lineBytes = new byte[W];
+    byte[] lineBytes = new byte[w];
     int lineNum = 0;
 
     int[] vao;
@@ -68,7 +66,7 @@ public class AudioRender extends BaseRender {
         program = ShaderUtils.loadProgramAudio();
 
         //分配内存空间,每个浮点型占4字节空间
-        vertexBuffer = ByteBuffer.allocateDirect(W * H)
+        vertexBuffer = ByteBuffer.allocateDirect(w * h)
                 .order(ByteOrder.nativeOrder());
         vertexBuffer.position(0);
 
@@ -82,9 +80,9 @@ public class AudioRender extends BaseRender {
         vbo = new int[1];
         glGenBuffers(1, vbo, 0);
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-        glBufferData(GL_ARRAY_BUFFER, W * H, vertexBuffer, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, w * h, vertexBuffer, GL_STATIC_DRAW);
 
-        indices = strip(W, H);
+        indices = strip(w, h);
 
         intBuffer = IntBuffer.allocate(indices.length * 4);
         intBuffer.put(indices);
@@ -126,20 +124,20 @@ public class AudioRender extends BaseRender {
 
     private void updateBuffer() {
         vertexBuffer.position(0);
-        for (int i = 0; i < H; i++) {
+        for (int i = 0; i < h; i++) {
             r.nextBytes(lineBytes);
 //            for (int j = 0; j < W; j++) {
 //                lineBytes[j] = (byte) r.nextInt(128);
 //            }
-            vertexBuffer.position(i * W);
+            vertexBuffer.position(i * w);
             vertexBuffer.put(lineBytes);
         }
     }
 
     public void update(byte[] bytes) {
-        vertexBuffer.position(lineNum * W);
+        vertexBuffer.position(lineNum * w);
         vertexBuffer.put(bytes);
-        lineNum = (lineNum + 1) % H;
+        lineNum = (lineNum + 1) % h;
     }
 
     @Override
@@ -150,7 +148,7 @@ public class AudioRender extends BaseRender {
         vertexBuffer.position(0);
         // 刷新vbo数据
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, W * H, vertexBuffer);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, w * h, vertexBuffer);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         // Use the program object
@@ -176,6 +174,10 @@ public class AudioRender extends BaseRender {
 
         int loc = glGetUniformLocation(program, "lineNum");
         glUniform1i(loc, lineNum);
+        loc = glGetUniformLocation(program, "w");
+        glUniform1i(loc, w);
+        loc = glGetUniformLocation(program, "h");
+        glUniform1i(loc, h);
 
         glBindVertexArray(vao[0]);
 
