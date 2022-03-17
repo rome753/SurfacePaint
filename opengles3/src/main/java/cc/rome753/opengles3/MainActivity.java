@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
         mData.add("Audio");
         mData.add("Record");
         mData.add("Lighting");
+        mData.add("Group");
         mData.add("ParticleSystem");
         mListView = (ListView) findViewById(R.id.lv);
         mListView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mData));

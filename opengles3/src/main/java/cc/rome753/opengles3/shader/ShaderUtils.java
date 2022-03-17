@@ -36,6 +36,12 @@ public class ShaderUtils {
         return linkProgram(vShader, fShader);
     }
 
+    public static int loadProgramGroup() {
+        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, loadAssets("shader_group_v.glsl"));
+        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, loadAssets("shader_group_f.glsl"));
+        return linkProgram(vShader, fShader);
+    }
+
     public static int loadProgram3DLighting() {
         int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, loadAssets("shader_lighting_v.glsl"));
         int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, loadAssets("shader_lighting_f.glsl"));
