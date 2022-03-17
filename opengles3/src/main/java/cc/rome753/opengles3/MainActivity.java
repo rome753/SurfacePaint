@@ -47,6 +47,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+
+
+        Intent i = new Intent(MainActivity.this, GLActivity.class);
+        i.putExtra("render", "Group");
+        startActivity(i);
     }
 
 }

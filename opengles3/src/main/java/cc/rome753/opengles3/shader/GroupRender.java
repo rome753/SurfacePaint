@@ -46,7 +46,7 @@ public class GroupRender extends BaseRender {
     int[] vao;
     int[] vbo;
 
-    static int MAX_COUNT = 100;
+    static int MAX_COUNT = 20;
     static int BOUND = 1024;
 
     float[] pos = new float[MAX_COUNT * 2];
@@ -127,37 +127,14 @@ public class GroupRender extends BaseRender {
     float dt = 1f / 60;
     float speed = 200.0f;
 
-    void initPos() {
-        for (int i = 0; i < pos.length; i++) {
-            pos[i] = r.nextInt(BOUND);
-            vel[i] = (r.nextFloat() - 0.5f) * speed;
-        }
-    }
-
-    void update() {
-        for (int i = 0; i < pos.length; i++) {
-            float next = pos[i] + dt * vel[i];
-            if (next < 0) {
-                vel[i] = -vel[i];
-            } else if (next > BOUND) {
-                vel[i] = -vel[i];
-            } else {
-                pos[i] = next;
-            }
-        }
-        posBuffer.position(0);
-        posBuffer.asFloatBuffer().put(pos);
-    }
-
-
-
-    int visiDis = 200;
-    int closeDis = 50;
+    int visiDis = 200 * 200;
+    int closeDis = 50 * 50;
 
     void initAll() {
         for (int i = 0; i < pos.length; i++) {
             pos[i] = r.nextInt(BOUND);
             vel[i] = (r.nextFloat() - 0.5f) * speed;
+            controlSpeed(i);
         }
 
         for (int i = 0; i < pos.length - 1; i+=2) {
@@ -166,31 +143,71 @@ public class GroupRender extends BaseRender {
         }
     }
 
+    void controlSpeed(int i) {
+        float speed = vel[i];
+        float smax = 100f;
+        float smin = 80f;
+        if (speed >= 0) {
+            speed = Math.min(speed, smax);
+            speed = Math.max(speed, smin);
+        } else {
+            speed = Math.max(speed, -smax);
+            speed = Math.min(speed, -smin);
+        }
+        vel[i] = speed;
+    }
+
     Part findPart(int posIndex) {
         float x = pos[posIndex];
         float y = pos[posIndex + 1];
         int px = (int)x / partW;
         int py = (int)y / partW;
-        int i = px * py;
-        Part p = partMap.get(i);
+        int partIndex = px + py * PARTS;
+        Part p = partMap.get(partIndex);
         if (p == null) {
             p = new Part();
-            partMap.put(i, p);
-            Log.d("chao", "create part " + i);
+            partMap.put(partIndex, p);
+            Log.d("chao", "create part " + partIndex);
         }
         return p;
+    }
+
+    int[] neighbors = {
+            -1, -1, 0, -1, 1, -1,
+            -1,  0, 0,  0, 1,  0,
+            -1,  1, 0,  1, 1,  1,
+    };
+
+    HashSet<Integer> findNeighborParts(int posIndex) {
+        HashSet<Integer> all = new HashSet<>();
+        float x = pos[posIndex];
+        float y = pos[posIndex + 1];
+        int px = (int)x / partW;
+        int py = (int)y / partW;
+        for (int i = 0; i < neighbors.length - 1; i+=2) {
+            int rx = px + neighbors[i];
+            int ry = py + neighbors[i + 1];
+            if (rx >= 0 && rx < PARTS && ry >= 0 && ry < PARTS) {
+                int partIndex = rx + ry * PARTS;
+                Part p = partMap.get(partIndex);
+                if (p != null) {
+                    all.addAll(p.set);
+                }
+            }
+        }
+        return all;
     }
 
     void updateAll() {
         float[] tempPos = new float[pos.length];
 
         for (int i = 0; i < pos.length - 1; i+=2) {
-            Part part = findPart(i);
+            HashSet<Integer> set = findNeighborParts(i);
             boolean hasUpdate = false;
 
             int jMin = -1;
             float disMin = Float.MAX_VALUE;
-            for (Integer j : part.set) {
+            for (Integer j : set) {
                 if (i != j) {
                     float dx = pos[i] - pos[j];
                     float dy = pos[i + 1] - pos[j + 1];
@@ -212,9 +229,12 @@ public class GroupRender extends BaseRender {
                         vel[i + 1] = -vel[i + 1];
                     }
                 } else { // 速度方向追随目标
-                    float mul = 1.0f;
-                    vel[i] += (pos[j] - pos[i]) * mul;
-                    vel[i + 1] += (pos[j + 1] - pos[i + 1]) * mul;
+                    float red = 0.6f;
+                    float mul = 0.6f;
+                    vel[i] = vel[i] * red + (pos[j] - pos[i]) * mul;
+                    vel[i + 1] = vel[i + 1] * red + (pos[j + 1] - pos[i + 1]) * mul;
+                    controlSpeed(i);
+                    controlSpeed(i + 1);
                 }
 
                 float x1 = pos[i] + dt * vel[i];
