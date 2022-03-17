@@ -4,6 +4,8 @@ import android.opengl.GLSurfaceView;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
 
 import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
@@ -43,7 +45,7 @@ public class GroupRender extends BaseRender {
     int[] vbo;
 
     static int MAX_COUNT = 1000;
-    static int bound = 1024;
+    static int BOUND = 1024;
 
     float[] pos = new float[MAX_COUNT * 2];
     float[] vel = new float[MAX_COUNT * 2];
@@ -122,7 +124,7 @@ public class GroupRender extends BaseRender {
 
     void initPos() {
         for (int i = 0; i < pos.length; i++) {
-            pos[i] = r.nextInt(bound);
+            pos[i] = r.nextInt(BOUND);
             vel[i] = (r.nextFloat() - 0.5f) * 1000.0f;
         }
     }
@@ -132,7 +134,7 @@ public class GroupRender extends BaseRender {
             float next = pos[i] + dt * vel[i];
             if (next < 0) {
                 vel[i] = -vel[i];
-            } else if (next > bound) {
+            } else if (next > BOUND) {
                 vel[i] = -vel[i];
             } else {
                 pos[i] = next;
@@ -140,6 +142,52 @@ public class GroupRender extends BaseRender {
         }
         posBuffer.position(0);
         posBuffer.asFloatBuffer().put(pos);
+    }
+
+
+
+    int[] tempPos;
+    void updateAll() {
+        tempPos = new int[pos.length];
+        for (int i = 0; i < pos.length - 1; i+=2) {
+            int iPart = posMap.get(i);
+            Part part = partMap.get(iPart);
+        }
+
+
+    }
+
+
+    static int PARTS = 8; // 8 * 8
+    static int partW = BOUND / PARTS;
+
+    // pos index -> PART index
+    HashMap<Integer, Integer> posMap = new HashMap<>();
+
+    // PART index -> Part
+    HashMap<Integer, Part> partMap = new HashMap<>();
+
+    static class Part {
+
+        int lowX, lowY, highX, highY;
+
+        public Part(int partIndex) {
+            int px = partIndex % PARTS;
+            int py = partIndex % PARTS;
+            lowX = px * partW;
+            highX = lowX + partW;
+
+            lowY = py * partW;
+            highY = lowY + partW;
+
+            set = new HashSet<>();
+        }
+
+        HashSet<Integer> set;
+
+        boolean isInPart(float x, float y) {
+            return x >= lowX && x < highX && y >= lowY && y < highY;
+        }
     }
 
 }
