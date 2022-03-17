@@ -1,11 +1,13 @@
 package cc.rome753.opengles3.shader;
 
 import android.opengl.GLSurfaceView;
+import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Random;
 
 import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
@@ -44,7 +46,7 @@ public class GroupRender extends BaseRender {
     int[] vao;
     int[] vbo;
 
-    static int MAX_COUNT = 1000;
+    static int MAX_COUNT = 100;
     static int BOUND = 1024;
 
     float[] pos = new float[MAX_COUNT * 2];
@@ -56,7 +58,8 @@ public class GroupRender extends BaseRender {
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 
-        initPos();
+//        initPos();
+        initAll();
 
         program = ShaderUtils.loadProgramGroup();
 
@@ -101,7 +104,8 @@ public class GroupRender extends BaseRender {
     @Override
     public void onDrawFrame(GL10 gl) {
 
-        update();
+//        update();
+        updateAll();
 
         // Clear the color buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -121,11 +125,12 @@ public class GroupRender extends BaseRender {
 
     Random r = new Random();
     float dt = 1f / 60;
+    float speed = 200.0f;
 
     void initPos() {
         for (int i = 0; i < pos.length; i++) {
             pos[i] = r.nextInt(BOUND);
-            vel[i] = (r.nextFloat() - 0.5f) * 1000.0f;
+            vel[i] = (r.nextFloat() - 0.5f) * speed;
         }
     }
 
@@ -146,48 +151,135 @@ public class GroupRender extends BaseRender {
 
 
 
-    int[] tempPos;
-    void updateAll() {
-        tempPos = new int[pos.length];
-        for (int i = 0; i < pos.length - 1; i+=2) {
-            int iPart = posMap.get(i);
-            Part part = partMap.get(iPart);
+    int visiDis = 200;
+    int closeDis = 50;
+
+    void initAll() {
+        for (int i = 0; i < pos.length; i++) {
+            pos[i] = r.nextInt(BOUND);
+            vel[i] = (r.nextFloat() - 0.5f) * speed;
         }
 
+        for (int i = 0; i < pos.length - 1; i+=2) {
+            Part p = findPart(i);
+            p.set.add(i);
+        }
+    }
 
+    Part findPart(int posIndex) {
+        float x = pos[posIndex];
+        float y = pos[posIndex + 1];
+        int px = (int)x / partW;
+        int py = (int)y / partW;
+        int i = px * py;
+        Part p = partMap.get(i);
+        if (p == null) {
+            p = new Part();
+            partMap.put(i, p);
+            Log.d("chao", "create part " + i);
+        }
+        return p;
+    }
+
+    void updateAll() {
+        float[] tempPos = new float[pos.length];
+
+        for (int i = 0; i < pos.length - 1; i+=2) {
+            Part part = findPart(i);
+            boolean hasUpdate = false;
+
+            int jMin = -1;
+            float disMin = Float.MAX_VALUE;
+            for (Integer j : part.set) {
+                if (i != j) {
+                    float dx = pos[i] - pos[j];
+                    float dy = pos[i + 1] - pos[j + 1];
+                    float dis = dx * dx + dy * dy;
+                    if (dis < disMin) {
+                        disMin = dis;
+                        jMin = j;
+                    }
+                }
+            }
+            if (disMin <= visiDis) {
+                int j = jMin;
+                if (disMin <= closeDis) {
+                    // 距离太近且速度方向是靠近的，速度就需要反向
+                    if (vel[i] * (pos[i] - pos[j]) < 0) {
+                        vel[i] = -vel[i];
+                    }
+                    if (vel[i + 1] * (pos[i + 1] - pos[j + 1]) < 0) {
+                        vel[i + 1] = -vel[i + 1];
+                    }
+                } else { // 速度方向追随目标
+                    float mul = 1.0f;
+                    vel[i] += (pos[j] - pos[i]) * mul;
+                    vel[i + 1] += (pos[j + 1] - pos[i + 1]) * mul;
+                }
+
+                float x1 = pos[i] + dt * vel[i];
+                float y1 = pos[i + 1] + dt * vel[i + 1];
+                if (x1 >= 0 && x1 < BOUND && y1 >= 0 && y1 < BOUND) {
+                    tempPos[i] = x1;
+                    tempPos[i + 1] = y1;
+                    hasUpdate = true;
+                }
+            }
+
+            if (!hasUpdate) {
+                float x1 = pos[i] + dt * vel[i];
+                float y1 = pos[i + 1] + dt * vel[i + 1];
+                boolean out = false;
+                if (x1 < 0 || x1 >= BOUND) {
+                    vel[i] = -vel[i];
+                    out = true;
+                }
+                if (y1 < 0 || y1 >= BOUND) {
+                    vel[i + 1] = -vel[i + 1];
+                    out = true;
+                }
+                if (out) {
+                    tempPos[i] = pos[i];
+                    tempPos[i + 1] = pos[i + 1];
+                } else {
+                    tempPos[i] = x1;
+                    tempPos[i + 1] = y1;
+                }
+            }
+        }
+
+        // 更新Part
+        for (int i = 0; i < pos.length - 1; i+=2) {
+            Part p0 = findPart(i);
+            pos[i] = tempPos[i];
+            pos[i + 1] = tempPos[i + 1];
+            Part p1 = findPart(i);
+            if (p0 == p1) {
+                continue;
+            }
+            p0.set.remove(i);
+            p1.set.add(i);
+        }
+
+        posBuffer.position(0);
+        posBuffer.asFloatBuffer().put(pos);
     }
 
 
     static int PARTS = 8; // 8 * 8
     static int partW = BOUND / PARTS;
 
-    // pos index -> PART index
-    HashMap<Integer, Integer> posMap = new HashMap<>();
-
     // PART index -> Part
     HashMap<Integer, Part> partMap = new HashMap<>();
 
     static class Part {
 
-        int lowX, lowY, highX, highY;
-
-        public Part(int partIndex) {
-            int px = partIndex % PARTS;
-            int py = partIndex % PARTS;
-            lowX = px * partW;
-            highX = lowX + partW;
-
-            lowY = py * partW;
-            highY = lowY + partW;
-
+        public Part() {
             set = new HashSet<>();
         }
 
         HashSet<Integer> set;
 
-        boolean isInPart(float x, float y) {
-            return x >= lowX && x < highX && y >= lowY && y < highY;
-        }
     }
 
 }
