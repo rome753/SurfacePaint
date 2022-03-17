@@ -14,8 +14,22 @@ void main() {
      // 正常画面
      fragColor = texture(texture1, aTexCoord);
 
+//     // 反相效果
+//     fragColor = 1.0f - texture(texture1, aTexCoord);
+
 //     // 彩色滤镜效果
 //     fragColor = mix(texture(texture1, aTexCoord), vec4(aColor, 1.0f), 0.5f);
+
+//     // 灰色效果
+//     vec4 c = texture(texture1, aTexCoord);
+//     float h = c.r*0.299f + c.g*0.587f + c.b*0.114f;
+//     fragColor = vec4(h, h, h, 1.0f);
+
+//    // 二值化效果
+//    vec4 c = texture(texture1, aTexCoord);
+//    float h = c.r*0.299f + c.g*0.587f + c.b*0.114f;
+//    h = h > 0.4f ? 1.0f : 0.0f;
+//    fragColor = vec4(h, h, h, 1.0f);
 
 //     // 四分屏效果
 //     float s = aTexCoord.s;
