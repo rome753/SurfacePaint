@@ -1,9 +1,12 @@
 package cc.rome753.opengles3;
 
+import android.graphics.Color;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,12 +27,18 @@ public class GLActivity extends AppCompatActivity {
     OurCamera ourCamera;
     BaseRender render;
 
+    TextView fpsTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         glSurfaceView = new GLSurfaceView(this);
         setContentView(glSurfaceView);
+
+        FrameLayout content = findViewById(android.R.id.content);
+        fpsTextView = new TextView(this);
+        fpsTextView.setTextColor(Color.RED);
+        content.addView(fpsTextView);
 
         glSurfaceView.setEGLContextClientVersion(3);
 
@@ -64,6 +73,7 @@ public class GLActivity extends AppCompatActivity {
                 break;
         }
 
+        render.setFpsTextView(fpsTextView);
         ourCamera = render.getOurCamera();
 
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleGestureDetector.OnScaleGestureListener() {

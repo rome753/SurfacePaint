@@ -129,7 +129,7 @@ public class Group3DRender extends BaseRender {
 
     @Override
     public void onDrawFrame(GL10 gl) {
-
+        super.onDrawFrame(gl);
 //        update();
         updateAll();
 
