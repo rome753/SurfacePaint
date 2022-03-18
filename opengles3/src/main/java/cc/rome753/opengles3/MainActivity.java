@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         mData.add("Record");
         mData.add("Lighting");
         mData.add("Group");
+        mData.add("Group3D");
         mData.add("ParticleSystem");
         mListView = (ListView) findViewById(R.id.lv);
         mListView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mData));
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         Intent i = new Intent(MainActivity.this, GLActivity.class);
-        i.putExtra("render", "Group");
+        i.putExtra("render", "Group3D");
         startActivity(i);
     }
 

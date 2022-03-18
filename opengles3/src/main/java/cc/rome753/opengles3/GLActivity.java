@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import cc.rome753.opengles3.shader.AudioRender;
 import cc.rome753.opengles3.shader.BaseRender;
 import cc.rome753.opengles3.shader.FractalRender;
+import cc.rome753.opengles3.shader.Group3DRender;
 import cc.rome753.opengles3.shader.GroupRender;
 import cc.rome753.opengles3.shader.LightingRender;
 import cc.rome753.opengles3.shader.OurCamera;
@@ -52,6 +53,10 @@ public class GLActivity extends AppCompatActivity {
                 break;
             case "Group":
                 glSurfaceView.setRenderer(render = new GroupRender());
+                glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+                break;
+            case "Group3D":
+                glSurfaceView.setRenderer(render = new Group3DRender());
                 glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
                 break;
             case "ParticleSystem":
