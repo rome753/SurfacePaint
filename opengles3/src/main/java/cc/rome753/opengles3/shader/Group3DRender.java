@@ -9,11 +9,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
 
+import static android.opengl.GLES20.GL_BLEND;
 import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
 import static android.opengl.GLES20.GL_DEPTH_TEST;
+import static android.opengl.GLES20.GL_FALSE;
+import static android.opengl.GLES20.GL_ONE_MINUS_SRC_ALPHA;
 import static android.opengl.GLES20.GL_POINTS;
+import static android.opengl.GLES20.GL_SRC_ALPHA;
 import static android.opengl.GLES20.GL_STREAM_DRAW;
+import static android.opengl.GLES20.glBlendFunc;
 import static android.opengl.GLES20.glBufferSubData;
+import static android.opengl.GLES20.glDepthMask;
 import static android.opengl.GLES20.glDrawArrays;
 import static android.opengl.GLES20.glEnable;
 import static android.opengl.GLES20.glGetProgramiv;
@@ -115,6 +121,10 @@ public class Group3DRender extends BaseRender {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
         glEnable(GL_DEPTH_TEST);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 //        glCullFace(GL_BACK);
 //        glEnable(GL_CULL_FACE);
     }
@@ -171,7 +181,13 @@ public class Group3DRender extends BaseRender {
         glBindVertexArray(vao[0]);
         glDrawArrays(GL_POINTS, 0, MAX_COUNT);
 
+        // 先画不透明的物体
+        // 设置标志位
+        glDepthMask(false);
+        // 再画半透明物体
         boxShader.draw(modelMat, viewMat, projectionMat);
+        // 重置标志位
+        glDepthMask(true);
     }
 
     void initAll() {
