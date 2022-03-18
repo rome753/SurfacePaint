@@ -1,17 +1,14 @@
 package cc.rome753.opengles3.shader;
 
-import android.opengl.GLSurfaceView;
 import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Random;
 
 import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
-import static android.opengl.GLES20.GL_DYNAMIC_DRAW;
 import static android.opengl.GLES20.GL_POINTS;
 import static android.opengl.GLES20.GL_STREAM_DRAW;
 import static android.opengl.GLES20.glBufferSubData;
@@ -22,7 +19,6 @@ import static android.opengl.GLES20.glViewport;
 import static android.opengl.GLES30.GL_ARRAY_BUFFER;
 import static android.opengl.GLES30.GL_COLOR_BUFFER_BIT;
 import static android.opengl.GLES30.GL_FLOAT;
-import static android.opengl.GLES30.GL_STATIC_DRAW;
 import static android.opengl.GLES30.glBindBuffer;
 import static android.opengl.GLES30.glBindVertexArray;
 import static android.opengl.GLES30.glBufferData;
@@ -46,7 +42,7 @@ public class GroupRender extends BaseRender {
     int[] vao;
     int[] vbo;
 
-    static int MAX_COUNT = 20;
+    static int MAX_COUNT = 200;
     static int BOUND = 1024;
 
     float[] pos = new float[MAX_COUNT * 2];
@@ -125,36 +121,37 @@ public class GroupRender extends BaseRender {
 
     Random r = new Random();
     float dt = 1f / 60;
-    float speed = 200.0f;
+    float vmax = 200.0f;
+    float vmin = 160.0f;
 
-    int visiDis = 200 * 200;
-    int closeDis = 50 * 50;
+    int visiDis = 300 * 300;
+    int closeDis = 120 * 120;
 
     void initAll() {
         for (int i = 0; i < pos.length; i++) {
             pos[i] = r.nextInt(BOUND);
-            vel[i] = (r.nextFloat() - 0.5f) * speed;
-            controlSpeed(i);
+            vel[i] = r.nextFloat() - 0.5f;
         }
 
         for (int i = 0; i < pos.length - 1; i+=2) {
+            controlSpeed(i);
             Part p = findPart(i);
             p.set.add(i);
         }
     }
 
     void controlSpeed(int i) {
-        float speed = vel[i];
-        float smax = 100f;
-        float smin = 80f;
-        if (speed >= 0) {
-            speed = Math.min(speed, smax);
-            speed = Math.max(speed, smin);
-        } else {
-            speed = Math.max(speed, -smax);
-            speed = Math.min(speed, -smin);
+        float vx = vel[i];
+        float vy = vel[i + 1];
+        float vv = (float) Math.sqrt(vx * vx + vy * vy);
+        float mul = 1f;
+        if (vv >= vmax) {
+            mul = vmax / vv;
+        } else if (vv < vmin) {
+            mul = vmin / vv;
         }
-        vel[i] = speed;
+        vel[i] *= mul;
+        vel[i + 1] *= mul;
     }
 
     Part findPart(int posIndex) {
@@ -198,77 +195,67 @@ public class GroupRender extends BaseRender {
         return all;
     }
 
+    float[] tempPos = new float[pos.length];
+
     void updateAll() {
+        long time = System.currentTimeMillis();
         float[] tempPos = new float[pos.length];
 
         for (int i = 0; i < pos.length - 1; i+=2) {
             HashSet<Integer> set = findNeighborParts(i);
-            boolean hasUpdate = false;
 
-            int jMin = -1;
-            float disMin = Float.MAX_VALUE;
+            // 计算群速度：可见的别的点的速度和
+            float vxSum = 0;
+            float vySum = 0;
+            float count = 0;
             for (Integer j : set) {
                 if (i != j) {
                     float dx = pos[i] - pos[j];
                     float dy = pos[i + 1] - pos[j + 1];
                     float dis = dx * dx + dy * dy;
-                    if (dis < disMin) {
-                        disMin = dis;
-                        jMin = j;
+                    if (dis < visiDis) {
+                        vxSum += pos[j] - pos[i];
+                        vySum += pos[j + 1] - pos[i + 1];
+                        count++;
+                    } else if (dis < closeDis) {
+                        vxSum -= pos[j] - pos[i];
+                        vySum -= pos[j + 1] - pos[i + 1];
+                        count++;
                     }
                 }
             }
-            if (disMin <= visiDis) {
-                int j = jMin;
-                if (disMin <= closeDis) {
-                    // 距离太近且速度方向是靠近的，速度就需要反向
-                    if (vel[i] * (pos[i] - pos[j]) < 0) {
-                        vel[i] = -vel[i];
-                    }
-                    if (vel[i + 1] * (pos[i + 1] - pos[j + 1]) < 0) {
-                        vel[i + 1] = -vel[i + 1];
-                    }
-                } else { // 速度方向追随目标
-                    float red = 0.6f;
-                    float mul = 0.6f;
-                    vel[i] = vel[i] * red + (pos[j] - pos[i]) * mul;
-                    vel[i + 1] = vel[i + 1] * red + (pos[j + 1] - pos[i + 1]) * mul;
-                    controlSpeed(i);
-                    controlSpeed(i + 1);
-                }
 
-                float x1 = pos[i] + dt * vel[i];
-                float y1 = pos[i + 1] + dt * vel[i + 1];
-                if (x1 >= 0 && x1 < BOUND && y1 >= 0 && y1 < BOUND) {
-                    tempPos[i] = x1;
-                    tempPos[i + 1] = y1;
-                    hasUpdate = true;
-                }
+            // 改变速度
+            if (count > 0) {
+                float vxAve = vxSum / count;
+                float vyAve = vySum / count;
+                vel[i] = vel[i] * 0.8f + vxAve * 0.2f;
+                vel[i + 1] = vel[i + 1] * 0.8f + vyAve * 0.2f;
+                controlSpeed(i);
             }
 
-            if (!hasUpdate) {
-                float x1 = pos[i] + dt * vel[i];
-                float y1 = pos[i + 1] + dt * vel[i + 1];
-                boolean out = false;
-                if (x1 < 0 || x1 >= BOUND) {
-                    vel[i] = -vel[i];
-                    out = true;
-                }
-                if (y1 < 0 || y1 >= BOUND) {
-                    vel[i + 1] = -vel[i + 1];
-                    out = true;
-                }
-                if (out) {
-                    tempPos[i] = pos[i];
-                    tempPos[i + 1] = pos[i + 1];
-                } else {
-                    tempPos[i] = x1;
-                    tempPos[i + 1] = y1;
-                }
+            // 更新位置，保存到temp里
+            float x1 = pos[i] + dt * vel[i];
+            float y1 = pos[i + 1] + dt * vel[i + 1];
+            boolean out = false;
+            if (x1 < 0 || x1 >= BOUND) {
+                vel[i] = -vel[i];
+                out = true;
+            }
+            if (y1 < 0 || y1 >= BOUND) {
+                vel[i + 1] = -vel[i + 1];
+                out = true;
+            }
+            if (out) {
+                tempPos[i] = pos[i];
+                tempPos[i + 1] = pos[i + 1];
+            } else {
+                tempPos[i] = x1;
+                tempPos[i + 1] = y1;
             }
         }
 
-        // 更新Part
+        // 更新Part，写入新速度
         for (int i = 0; i < pos.length - 1; i+=2) {
             Part p0 = findPart(i);
             pos[i] = tempPos[i];
@@ -283,6 +270,9 @@ public class GroupRender extends BaseRender {
 
         posBuffer.position(0);
         posBuffer.asFloatBuffer().put(pos);
+
+        time = System.currentTimeMillis() - time;
+        Log.d("chao", "updae time " + time);
     }
 
 
