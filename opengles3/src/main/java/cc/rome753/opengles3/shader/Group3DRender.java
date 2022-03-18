@@ -51,7 +51,7 @@ public class Group3DRender extends BaseRender {
     int[] vao;
     int[] vbo;
 
-    static int MAX_COUNT = 200;
+    static int MAX_COUNT = 300;
     static int BOUND = 1024;
 
     float[] pos = new float[MAX_COUNT * 3];
@@ -61,11 +61,11 @@ public class Group3DRender extends BaseRender {
 
     Random r = new Random();
     float dt = 1f / 60;
-    float vmax = 200.0f;
-    float vmin = 160.0f;
+    float vmax = 240.0f;
+    float vmin = 200.0f;
 
-    int visiDis = 300 * 300;
-    int closeDis = 120 * 120;
+    int visiDis = 60 * 60 * 60;
+    int closeDis = 30 * 30 * 30;
 
     static int PARTS = 16; // 16 * 16 * 16
     static int partW = BOUND / PARTS;
@@ -82,7 +82,6 @@ public class Group3DRender extends BaseRender {
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 
-//        initPos();
         initAll();
 
         program = ShaderUtils.loadProgramGroup3D();
@@ -109,7 +108,7 @@ public class Group3DRender extends BaseRender {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
-        glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
         glEnable(GL_DEPTH_TEST);
 //        glCullFace(GL_BACK);
@@ -118,13 +117,11 @@ public class Group3DRender extends BaseRender {
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-//        glViewport(0, 0, width, height);
-//        glViewport(-(height - width) / 2, 0, height, height);
         this.width = width;
         this.height = height;
     }
 
-    int width, height;
+    float width, height;
 
     float[] modelMat = new float[16];
     float[] viewMat = new float[16];
@@ -152,8 +149,8 @@ public class Group3DRender extends BaseRender {
         Matrix.setIdentityM(viewMat, 0);
         Matrix.setIdentityM(projectionMat, 0);
 
-//        Matrix.perspectiveM(projectionMat, 0, OurCamera.radians(ourCamera.Zoom), width / height, 0.1f, 100.0f);
-//        ourCamera.GetViewMatrix(viewMat);
+        Matrix.perspectiveM(projectionMat, 0, OurCamera.radians(ourCamera.Zoom), width / height, 0.1f, 100.0f);
+        ourCamera.GetViewMatrix(viewMat);
 
         int loc1 = glGetUniformLocation(program, "view");
         glUniformMatrix4fv(loc1, 1, false, viewMat, 0);
