@@ -152,6 +152,7 @@ public class FractalRender extends BaseRender {
 
     @Override
     public void onDrawFrame(GL10 gl) {
+        super.onDrawFrame(gl);
         // Clear the color buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

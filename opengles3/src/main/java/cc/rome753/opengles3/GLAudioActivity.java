@@ -1,5 +1,7 @@
 package cc.rome753.opengles3;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.audiofx.Equalizer;
@@ -8,6 +10,10 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import cc.rome753.opengles3.shader.AudioRender;
 
@@ -29,10 +35,10 @@ public class GLAudioActivity extends GLActivity {
         // Create the MediaPlayer
         mMediaPlayer = MediaPlayer.create(this, R.raw.jay);
 
-        setupVisualizerFxAndUI();
-        // Make sure the visualizer is enabled only when you actually want to receive data, and
-        // when it makes sense to receive data.
-        mVisualizer.setEnabled(true);
+//        setupVisualizerFxAndUI();
+//        // Make sure the visualizer is enabled only when you actually want to receive data, and
+//        // when it makes sense to receive data.
+//        mVisualizer.setEnabled(true);
 
         // When the stream ends, we don't need to collect any more data. We don't do this in
         // setupVisualizerFxAndUI because we likely want to have more, non-Visualizer related code
@@ -44,6 +50,23 @@ public class GLAudioActivity extends GLActivity {
         });
 
         mMediaPlayer.start();
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+            setupVisualizerFxAndUI();
+            mVisualizer.setEnabled(true);
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, 0);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 0) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+                setupVisualizerFxAndUI();
+                mVisualizer.setEnabled(true);
+            }
+        }
     }
 
     private void setupVisualizerFxAndUI() {

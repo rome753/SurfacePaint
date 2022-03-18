@@ -234,6 +234,7 @@ public class ParticleSystemRenderer extends BaseRender {
    //
    public void onDrawFrame ( GL10 glUnused )
    {
+      super.onDrawFrame(glUnused);
       update();
 
       // Set the viewport
