@@ -79,10 +79,14 @@ public class Group3DRender extends BaseRender {
     int[] neighborsDir = {-1, -1, -1, -1, -1, 0, -1, -1, 1, -1, 0, -1, -1, 0, 0, -1, 0, 1, -1, 1, -1, -1, 1, 0, -1, 1, 1, 0, -1, -1, 0, -1, 0, 0, -1, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 1, -1, 0, 1, 0, 0, 1, 1, 1, -1, -1, 1, -1, 0, 1, -1, 1, 1, 0, -1, 1, 0, 0, 1, 0, 1, 1, 1, -1, 1, 1, 0, 1, 1, 1};
     int[] neighbors = new int[pos.length / 3 + 1];
 
+    BoxShader boxShader;
+
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 
         initAll();
+
+        boxShader = new BoxShader();
 
         program = ShaderUtils.loadProgramGroup3D();
 
@@ -166,6 +170,8 @@ public class Group3DRender extends BaseRender {
 
         glBindVertexArray(vao[0]);
         glDrawArrays(GL_POINTS, 0, MAX_COUNT);
+
+        boxShader.draw(modelMat, viewMat, projectionMat);
     }
 
     void initAll() {
@@ -332,7 +338,7 @@ public class Group3DRender extends BaseRender {
         posBuffer.asFloatBuffer().put(pos);
 
         time = System.currentTimeMillis() - time;
-        Log.d("chao", "updae time " + time);
+//        Log.d("chao", "updae time " + time);
     }
 
     static class Part {

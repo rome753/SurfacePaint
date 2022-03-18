@@ -18,6 +18,12 @@ public class ShaderUtils {
         return linkProgram(vShader, fShader);
     }
 
+    public static int loadProgramBox() {
+        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, loadAssets("box_v.glsl"));
+        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, loadAssets("box_f.glsl"));
+        return linkProgram(vShader, fShader);
+    }
+
     public static int loadProgram3D() {
         int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, loadAssets("shader3d_v.glsl"));
         int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, loadAssets("shader3d_f.glsl"));
