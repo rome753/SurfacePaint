@@ -50,6 +50,28 @@ public class GroupRender extends BaseRender {
 
     ByteBuffer posBuffer;
 
+    Random r = new Random();
+    float dt = 1f / 60;
+    float vmax = 200.0f;
+    float vmin = 160.0f;
+
+    int visiDis = 300 * 300;
+    int closeDis = 120 * 120;
+
+    static int PARTS = 16; // 8 * 8
+    static int partW = BOUND / PARTS;
+
+    // PART index -> Part
+    HashMap<Integer, Part> partMap = new HashMap<>();
+
+    float[] tempPos = new float[pos.length];
+
+    int[] neighborsDir = {
+            -1, -1, 0, -1, 1, -1,
+            -1,  0, 0,  0, 1,  0,
+            -1,  1, 0,  1, 1,  1,
+    };
+    int[] neighbors = new int[pos.length / 2 + 1];
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -119,14 +141,6 @@ public class GroupRender extends BaseRender {
         glDrawArrays(GL_POINTS, 0, MAX_COUNT);
     }
 
-    Random r = new Random();
-    float dt = 1f / 60;
-    float vmax = 200.0f;
-    float vmin = 160.0f;
-
-    int visiDis = 300 * 300;
-    int closeDis = 120 * 120;
-
     void initAll() {
         for (int i = 0; i < pos.length; i++) {
             pos[i] = r.nextInt(BOUND);
@@ -169,59 +183,57 @@ public class GroupRender extends BaseRender {
         return p;
     }
 
-    int[] neighbors = {
-            -1, -1, 0, -1, 1, -1,
-            -1,  0, 0,  0, 1,  0,
-            -1,  1, 0,  1, 1,  1,
-    };
-
-    HashSet<Integer> findNeighborParts(int posIndex) {
-        HashSet<Integer> all = new HashSet<>();
+    void findNeighborParts(int posIndex) {
         float x = pos[posIndex];
         float y = pos[posIndex + 1];
         int px = (int)x / partW;
         int py = (int)y / partW;
-        for (int i = 0; i < neighbors.length - 1; i+=2) {
-            int rx = px + neighbors[i];
-            int ry = py + neighbors[i + 1];
+        int iNeighbor = 0;
+        for (int i = 0; i < neighborsDir.length - 1; i+=2) {
+            int rx = px + neighborsDir[i];
+            int ry = py + neighborsDir[i + 1];
             if (rx >= 0 && rx < PARTS && ry >= 0 && ry < PARTS) {
                 int partIndex = rx + ry * PARTS;
                 Part p = partMap.get(partIndex);
                 if (p != null) {
-                    all.addAll(p.set);
+                    for (Integer iPos: p.set) {
+                        neighbors[iNeighbor++] = iPos;
+                    }
                 }
             }
         }
-        return all;
+        neighbors[iNeighbor] = -1; // 结尾标志
     }
-
-    float[] tempPos = new float[pos.length];
 
     void updateAll() {
         long time = System.currentTimeMillis();
-        float[] tempPos = new float[pos.length];
 
         for (int i = 0; i < pos.length - 1; i+=2) {
-            HashSet<Integer> set = findNeighborParts(i);
+
+            findNeighborParts(i);
 
             // 计算群速度：可见的别的点的速度和
             float vxSum = 0;
             float vySum = 0;
             float count = 0;
-            for (Integer j : set) {
-                if (i != j) {
-                    float dx = pos[i] - pos[j];
-                    float dy = pos[i + 1] - pos[j + 1];
-                    float dis = dx * dx + dy * dy;
-                    if (dis < visiDis) {
-                        vxSum += pos[j] - pos[i];
-                        vySum += pos[j + 1] - pos[i + 1];
-                        count++;
-                    } else if (dis < closeDis) {
-                        vxSum -= pos[j] - pos[i];
-                        vySum -= pos[j + 1] - pos[i + 1];
-                        count++;
-                    }
+            for (Integer j : neighbors) {
+                if (j == -1) {
+                    break;
+                }
+                if (j == i) {
+                    continue;
+                }
+                float dx = pos[i] - pos[j];
+                float dy = pos[i + 1] - pos[j + 1];
+                float dis = dx * dx + dy * dy;
+                if (dis < visiDis) {
+                    vxSum += -dx;
+                    vySum += -dy;
+                    count++;
+                } else if (dis < closeDis) {
+                    vxSum -= dx;
+                    vySum -= dy;
+                    count++;
                 }
             }
 
@@ -274,13 +286,6 @@ public class GroupRender extends BaseRender {
         time = System.currentTimeMillis() - time;
         Log.d("chao", "updae time " + time);
     }
-
-
-    static int PARTS = 8; // 8 * 8
-    static int partW = BOUND / PARTS;
-
-    // PART index -> Part
-    HashMap<Integer, Part> partMap = new HashMap<>();
 
     static class Part {
 
