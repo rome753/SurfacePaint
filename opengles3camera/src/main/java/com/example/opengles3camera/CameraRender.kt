@@ -114,7 +114,8 @@ class CameraRender: GLSurfaceView.Renderer, Preview.SurfaceProvider {
 
         // Use the program object
         glUseProgram(program)
-        glBindTexture(GL_TEXTURE_2D, tex[0])
+//        glBindTexture(GL_TEXTURE_2D, tex[0])
+        glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, tex[0])
 
 //        Matrix.setIdentityM(transform, 0)
 //        Matrix.translateM(transform, 1, 1f, 0f, 0f);
