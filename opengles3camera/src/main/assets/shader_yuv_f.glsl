@@ -11,15 +11,15 @@ uniform sampler2D tex2;
 
 void main() {
 
-//     float y = texture(tex0, aTexCoord).r;
-//     float u = texture(tex1, aTexCoord).r - 0.5;
-//     float v = texture(tex1, aTexCoord).a - 0.5;
-
      float y = texture(tex0, aTexCoord).r;
-     float u = texture(tex2, aTexCoord).r - 0.5;
-     float v = texture(tex1, aTexCoord).r - 0.5;
+     float u = texture(tex1, aTexCoord).r - 0.5;
+     float v = texture(tex1, aTexCoord).a - 0.5;
 
-    vec3 yuv = vec3(y, u, v);
+//     float y = texture(tex0, aTexCoord).r;
+//     float u = texture(tex2, aTexCoord).r - 0.5;
+//     float v = texture(tex1, aTexCoord).r - 0.5;
+
+    vec3 yuv = vec3(y, v, u);
 
     // 下面两种视觉上差异不大
 

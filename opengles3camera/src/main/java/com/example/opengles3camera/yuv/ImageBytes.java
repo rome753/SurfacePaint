@@ -23,7 +23,9 @@ public class ImageBytes {
         int v0 = u0;
 
         bufY = ByteBuffer.allocate(r0).put(bytes, 0, r0);
-        bufU = ByteBuffer.allocate(u0).put(bytes, r0, u0);
+        // camera1的nv21格式，需要把uv全部放到bufU中，否则画面只有一半正常
+        // 实际上bufU只使用了一半，这跟相机画面扫描的方向有关
+        bufU = ByteBuffer.allocate(u0 + v0).put(bytes, r0, u0 + v0);
         bufV = ByteBuffer.allocate(v0).put(bytes, r0 + u0, v0);
 
         bufY.position(0);
