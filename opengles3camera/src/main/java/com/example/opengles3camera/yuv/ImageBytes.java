@@ -17,6 +17,18 @@ public class ImageBytes {
         this.bytes = bytes;
         this.width = width;
         this.height = height;
+
+        int r0 = width * height;
+        int u0 = r0 / 4;
+        int v0 = u0;
+
+        bufY = ByteBuffer.allocate(r0).put(bytes, 0, r0);
+        bufU = ByteBuffer.allocate(u0).put(bytes, r0, u0);
+        bufV = ByteBuffer.allocate(v0).put(bytes, r0 + u0, v0);
+
+        bufY.position(0);
+        bufU.position(0);
+        bufV.position(0);
     }
 
     public ImageBytes(Image image) {

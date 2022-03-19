@@ -96,18 +96,22 @@ public class YUVDetectView extends FrameLayout {
     }
 
     public void inputAsync(final byte[] data, int width, int height) {
-        final int w = isFlip ? height : width;
-        final int h = isFlip ? width : height;
+//        final int w = isFlip ? height : width;
+//        final int h = isFlip ? width : height;
+//
+//        if (isShowing) return;
+//        isShowing = true;
+//        new Thread() {
+//            @Override
+//            public void run() {
+//                displayImage(data, w, h);
+//                isShowing = false;
+//            }
+//        }.start();
 
-        if (isShowing) return;
-        isShowing = true;
-        new Thread() {
-            @Override
-            public void run() {
-                displayImage(data, w, h);
-                isShowing = false;
-            }
-        }.start();
+        yuvRender.setImageBytes(new ImageBytes(data, width, height));
+        gls.requestRender();
+
     }
 
     private void displayImage(byte[] data, int w, int h) {

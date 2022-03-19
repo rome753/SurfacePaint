@@ -106,11 +106,13 @@ class YUVShader {
 
         glActiveTexture(tex[1])
         glBindTexture(GL_TEXTURE_2D, tex[1])
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, w1, h1, 0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, ib.bufU)
+//        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, w1, h1, 0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, ib.bufU)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, w1, h1, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, ib.bufU)
 
         glActiveTexture(tex[2])
         glBindTexture(GL_TEXTURE_2D, tex[2])
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, w1, h1, 0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, ib.bufV)
+//        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, w1, h1, 0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, ib.bufV)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, w1, h1, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, ib.bufV)
 
         val loc = glGetUniformLocation(program, "transform")
         glUniformMatrix4fv(loc, 1, false, transform, 0)
