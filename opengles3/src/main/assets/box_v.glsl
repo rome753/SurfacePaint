@@ -11,12 +11,12 @@ void main() {
      gl_Position  = projection * view * model * vec4(vPosition, 1.0);
      int mod = gl_VertexID % 4;
      if (mod == 0) {
-          aColor = vec4(1.0f, 0.0f, 0.0f, 0.05f);
+          aColor = vec4(1.0f, 0.0f, 0.0f, 0.15f);
      } else if (mod == 1) {
-          aColor = vec4(0.0f, 1.0f, 0.0f, 0.05f);
+          aColor = vec4(0.0f, 1.0f, 0.0f, 0.15f);
      } else if (mod == 2) {
-          aColor = vec4(0.0f, 0.0f, 1.0f, 0.05f);
+          aColor = vec4(0.0f, 0.0f, 1.0f, 0.15f);
      } else if (mod == 3) {
-          aColor = vec4(1.0f, 1.0f, 1.0f, 0.05f);
+          aColor = vec4(1.0f, 1.0f, 1.0f, 0.15f);
      }
 }
