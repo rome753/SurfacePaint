@@ -96,6 +96,9 @@ class MainActivity : AppCompatActivity() {
 //            image.close()
 
 
+            // 暂时用SurfaceTexture中获取的变换矩阵
+            this@MainActivity.yuvDetectView.yuvRender.yuvShader.transform = this@MainActivity.cameraRender.transform
+
             this@MainActivity.yuvDetectView.input(image.image!!)
             image.close()
         }

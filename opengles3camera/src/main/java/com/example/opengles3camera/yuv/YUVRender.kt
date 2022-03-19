@@ -8,7 +8,7 @@ import javax.microedition.khronos.opengles.GL10
 
 class YUVRender: GLSurfaceView.Renderer {
 
-    private var yuvShader = YUVShader()
+    var yuvShader = YUVShader()
     var imageBytes: ImageBytes? = null
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
@@ -17,6 +17,7 @@ class YUVRender: GLSurfaceView.Renderer {
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
+        GLES20.glViewport(0, 0, width, height)
     }
 
     override fun onDrawFrame(gl: GL10?) {

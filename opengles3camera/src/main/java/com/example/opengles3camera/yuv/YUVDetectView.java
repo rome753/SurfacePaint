@@ -28,7 +28,7 @@ public class YUVDetectView extends FrameLayout {
     byte[] buf;
 
     GLSurfaceView gls;
-    YUVRender yuvRender;
+    public YUVRender yuvRender;
 
     public YUVDetectView(@NonNull Context context) {
         this(context, null);

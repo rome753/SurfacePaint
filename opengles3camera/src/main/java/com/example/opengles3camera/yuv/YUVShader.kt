@@ -5,6 +5,7 @@ import android.opengl.GLES20.*
 import android.opengl.GLES30
 import android.opengl.GLES30.glBindVertexArray
 import android.opengl.GLES30.glGenVertexArrays
+import android.opengl.Matrix
 import com.example.opengles3camera.ShaderUtils
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -32,6 +33,7 @@ class YUVShader {
 
     var tex: IntArray = IntArray(3) // yuv
 
+    var transform = FloatArray(16)
 
     fun init() {
         program = ShaderUtils.loadProgramYUV()
@@ -86,6 +88,9 @@ class YUVShader {
 
         glBindBuffer(GL_ARRAY_BUFFER, 0)
         glBindVertexArray(0)
+
+        Matrix.setIdentityM(transform, 0)
+
     }
 
     fun draw(ib: ImageBytes) {
@@ -106,6 +111,9 @@ class YUVShader {
         glActiveTexture(tex[2])
         glBindTexture(GL_TEXTURE_2D, tex[2])
         glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, w1, h1, 0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, ib.bufV)
+
+        val loc = glGetUniformLocation(program, "transform")
+        glUniformMatrix4fv(loc, 1, false, transform, 0)
 
         glBindVertexArray(vao[0])
         glDrawElements(GL_TRIANGLES, vertices.size, GL_UNSIGNED_INT, 0)
