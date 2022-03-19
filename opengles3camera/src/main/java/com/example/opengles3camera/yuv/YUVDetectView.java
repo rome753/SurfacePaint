@@ -1,9 +1,10 @@
-package com.example.opengles3camera;
+package com.example.opengles3camera.yuv;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.Image;
 import android.media.ImageReader;
+import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +16,8 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.opengles3camera.R;
+
 public class YUVDetectView extends FrameLayout {
 
     ImageView[] ivs;
@@ -23,6 +26,9 @@ public class YUVDetectView extends FrameLayout {
     boolean isShowing = false;
     int rotation = 0;
     byte[] buf;
+
+    GLSurfaceView gls;
+    YUVRender yuvRender;
 
     public YUVDetectView(@NonNull Context context) {
         this(context, null);
@@ -57,6 +63,12 @@ public class YUVDetectView extends FrameLayout {
                 rotation = (rotation + 90) % 360;
             }
         });
+
+//        yuvRender = new YUVRender();
+//        gls = findViewById(R.id.gls);
+//        gls.setRenderer(yuvRender);
+//        gls.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+
     }
 
     public void input(final ImageReader imageReader) {
@@ -75,6 +87,9 @@ public class YUVDetectView extends FrameLayout {
             final int h = isFlip ? imageBytes.width : imageBytes.height;
             displayImage(imageBytes.bytes, w, h);
         }
+
+//        yuvRender.setImage(image);
+//        gls.requestRender();
     }
 
     public void inputAsync(final byte[] data, int width, int height) {

@@ -32,21 +32,9 @@ public class ShaderUtils {
         return linkProgram(vShader, fShader);
     }
 
-    public static int loadProgram3D() {
-        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, loadAssets("shader3d_v.glsl"));
-        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, loadAssets("shader3d_f.glsl"));
-        return linkProgram(vShader, fShader);
-    }
-
-    public static int loadProgramFractor() {
-        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, loadAssets("shader_fractal_v.glsl"));
-        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, loadAssets("shader_fractal_f.glsl"));
-        return linkProgram(vShader, fShader);
-    }
-
-    public static int loadProgram3DLighting() {
-        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, loadAssets("shader_lighting_v.glsl"));
-        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, loadAssets("shader_lighting_f.glsl"));
+    public static int loadProgramYUV() {
+        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, loadAssets("shader_yuv_v.glsl"));
+        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, loadAssets("shader_yuv_f.glsl"));
         return linkProgram(vShader, fShader);
     }
 

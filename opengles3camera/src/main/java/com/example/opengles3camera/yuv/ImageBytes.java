@@ -1,4 +1,4 @@
-package com.example.opengles3camera;
+package com.example.opengles3camera.yuv;
 
 public class ImageBytes {
     public byte[] bytes;
