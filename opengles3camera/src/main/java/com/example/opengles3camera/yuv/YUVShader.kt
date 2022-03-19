@@ -3,6 +3,8 @@ package com.example.opengles3camera.yuv
 import android.media.Image
 import android.opengl.GLES20.*
 import android.opengl.GLES30
+import android.opengl.GLES30.glBindVertexArray
+import android.opengl.GLES30.glGenVertexArrays
 import com.example.opengles3camera.ShaderUtils
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -31,7 +33,7 @@ class YUVShader {
     var tex: IntArray = IntArray(3) // yuv
 
 
-    fun initAll() {
+    fun init() {
         program = ShaderUtils.loadProgramYUV()
         //分配内存空间,每个浮点型占4字节空间
         vertexBuffer = ByteBuffer.allocateDirect(vertices.size * 4)
@@ -41,8 +43,8 @@ class YUVShader {
         vertexBuffer!!.put(vertices)
         vertexBuffer!!.position(0)
         vao = IntArray(1)
-        GLES30.glGenVertexArrays(1, vao, 0)
-        GLES30.glBindVertexArray(vao[0])
+        glGenVertexArrays(1, vao, 0)
+        glBindVertexArray(vao[0])
         val vbo = IntArray(1)
         glGenBuffers(1, vbo, 0)
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
@@ -71,7 +73,7 @@ class YUVShader {
 //            glGenerateMipmap(GL_TEXTURE_2D)
 
             val loc0 = glGetUniformLocation(program, "tex$i")
-            glUniform1i(loc0, tex[i])
+            glUniform1i(loc0, i)
         }
 
 
@@ -86,45 +88,26 @@ class YUVShader {
         GLES30.glBindVertexArray(0)
     }
 
-    fun draw(image: Image) {
-        val planes = image.planes
-
-        val p0 = planes[0]
-        val p1 = planes[1]
-        val p2 = planes[2]
-
-        val b0 = p0.buffer
-        val b1 = p1.buffer
-        val b2 = p2.buffer
-
-        val r0 = b0.remaining()
-        val r1 = b1.remaining()
-        val r2 = b2.remaining()
-
-        val w0 = p0.rowStride
-        var h0 = r0 / w0
-        if (r0 % w0 > 0) h0++
-        val w1 = p1.rowStride
-        var h1 = r1 / w1
-        if (r1 % w1 > 1) h1++
-        val w2 = p2.rowStride
-        var h2 = r2 / w2
-        if (r2 % w2 > 2) h2++
-
+    fun draw(ib: ImageBytes) {
+        val w0 = ib.width
+        val h0 = ib.height
+        val w1 = w0 / 2
+        val h1 = h0 / 2
         glUseProgram(program)
 
         glActiveTexture(tex[0])
         glBindTexture(GL_TEXTURE_2D, tex[0])
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, w0, h0, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, b0)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, w0, h0, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, ib.bufY)
 
         glActiveTexture(tex[1])
         glBindTexture(GL_TEXTURE_2D, tex[1])
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, w1, h1, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, b1)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, w1, h1, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, ib.bufU)
 
         glActiveTexture(tex[2])
         glBindTexture(GL_TEXTURE_2D, tex[2])
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, w2, h2, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, b2)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, w1, h1, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, ib.bufV)
 
+        glBindVertexArray(vao[0])
         glDrawElements(GL_TRIANGLES, vertices.size, GL_UNSIGNED_INT, 0)
     }
 

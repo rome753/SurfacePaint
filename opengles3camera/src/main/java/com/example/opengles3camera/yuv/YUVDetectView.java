@@ -64,10 +64,11 @@ public class YUVDetectView extends FrameLayout {
             }
         });
 
-//        yuvRender = new YUVRender();
-//        gls = findViewById(R.id.gls);
-//        gls.setRenderer(yuvRender);
-//        gls.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+        yuvRender = new YUVRender();
+        gls = findViewById(R.id.gls);
+        gls.setEGLContextClientVersion(3);
+        gls.setRenderer(yuvRender);
+        gls.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
     }
 
@@ -81,15 +82,17 @@ public class YUVDetectView extends FrameLayout {
     }
 
     public void input(final Image image) {
-        final ImageBytes imageBytes = YUVTools.getBytesFromImage(image);
-        if(imageBytes != null) {
-            final int w = isFlip ? imageBytes.height : imageBytes.width;
-            final int h = isFlip ? imageBytes.width : imageBytes.height;
-            displayImage(imageBytes.bytes, w, h);
-        }
+//        final ImageBytes imageBytes = YUVTools.getBytesFromImage(image);
+//        if(imageBytes != null) {
+//            final int w = isFlip ? imageBytes.height : imageBytes.width;
+//            final int h = isFlip ? imageBytes.width : imageBytes.height;
+//            displayImage(imageBytes.bytes, w, h);
+//        }
 
-//        yuvRender.setImage(image);
-//        gls.requestRender();
+        yuvRender.setImageBytes(new ImageBytes(image));
+        gls.requestRender();
+
+        image.close();
     }
 
     public void inputAsync(final byte[] data, int width, int height) {
@@ -128,7 +131,7 @@ public class YUVDetectView extends FrameLayout {
         final Bitmap b3 = YUVTools.nv21ToBitmap(buf, rw, rh);
 
         time = System.currentTimeMillis() - time;
-        Log.d("YUVDetectView", "convert time: " + time);
+//        Log.d("YUVDetectView", "convert time: " + time);
         post(new Runnable() {
             @Override
             public void run() {
