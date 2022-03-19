@@ -76,7 +76,6 @@ class YUVShader {
             glUniform1i(loc0, i)
         }
 
-
         // Load the vertex data
         glVertexAttribPointer(0, 3, GL_FLOAT, false, 8 * 4, 0)
         glEnableVertexAttribArray(0)
@@ -84,8 +83,9 @@ class YUVShader {
         glEnableVertexAttribArray(1)
         glVertexAttribPointer(2, 2, GL_FLOAT, false, 8 * 4, 6 * 4)
         glEnableVertexAttribArray(2)
+
         glBindBuffer(GL_ARRAY_BUFFER, 0)
-        GLES30.glBindVertexArray(0)
+        glBindVertexArray(0)
     }
 
     fun draw(ib: ImageBytes) {
@@ -101,11 +101,11 @@ class YUVShader {
 
         glActiveTexture(tex[1])
         glBindTexture(GL_TEXTURE_2D, tex[1])
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, w1, h1, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, ib.bufU)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, w1, h1, 0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, ib.bufU)
 
         glActiveTexture(tex[2])
         glBindTexture(GL_TEXTURE_2D, tex[2])
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, w1, h1, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, ib.bufV)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, w1, h1, 0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, ib.bufV)
 
         glBindVertexArray(vao[0])
         glDrawElements(GL_TRIANGLES, vertices.size, GL_UNSIGNED_INT, 0)

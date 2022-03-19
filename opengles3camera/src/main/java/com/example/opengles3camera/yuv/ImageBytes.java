@@ -31,8 +31,6 @@ public class ImageBytes {
         ByteBuffer b2 = p2.getBuffer();
 
         int r0 = b0.remaining();
-        int r1 = b1.remaining();
-        int r2 = b2.remaining();
 
         int w0 = p0.getRowStride();
         int h0 = r0 / w0;

@@ -142,6 +142,9 @@ class CameraRender: GLSurfaceView.Renderer, Preview.SurfaceProvider {
 
     override fun onSurfaceRequested(request: SurfaceRequest) {
         val size = request.resolution
+        if (surfaceTexture == null) {
+            return
+        }
         surfaceTexture?.setDefaultBufferSize(size.width, size.height)
         val surface = Surface(surfaceTexture)
         request.provideSurface(surface, executor, Consumer {

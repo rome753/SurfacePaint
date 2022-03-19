@@ -11,17 +11,24 @@ uniform sampler2D tex2;
 
 void main() {
 
-     // 正常画面
-     fragColor = texture(tex0, aTexCoord);
+     float y = texture(tex0, aTexCoord).r;
+     float u = texture(tex1, aTexCoord).r - 0.5;
+     float v = texture(tex1, aTexCoord).a - 0.5;
+     vec3 yuv = vec3(y, u, v);
 
-//     float y = texture(tex0, aTexCoord).r;
-//     float u = texture(tex1, aTexCoord).r - 0.5;
-//     float v = texture(tex2, aTexCoord).r - 0.5;
-//
-//     float r = y + 1.403 * v;
-//     float g = y - 0.344 * u - 0.714 * v;
-//     float b = y + 1.770 * u;
-//
-//     fragColor = vec4(r, g, b, 1.0f);
+    // 下面两种视觉上差异不大
+
+//     // BT.601, which is the standard for SDTV is provided as a reference
+//      vec3 rgb = mat3(      1,       1,       1,
+//      0, -.39465, 2.03211,
+//      1.13983, -.58060,       0) * yuv;
+
+     // Using BT.709 which is the standard for HDTV
+     vec3 rgb = mat3(      1,       1,       1,
+     0, -.21482, 2.12798,
+     1.28033, -.38059,       0) * vec3(y,u,v);
+
+
+     fragColor = vec4(rgb, 1.0);
 
 }
