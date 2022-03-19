@@ -1,13 +1,17 @@
 package com.example.opengles3camera
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.Uri
 import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.util.Log
 import android.util.Size
+import android.view.Gravity
 import android.widget.FrameLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
@@ -16,7 +20,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
-import java.lang.Exception
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.*
@@ -34,6 +37,9 @@ class MainActivity : AppCompatActivity() {
     lateinit var glSurfaceView: GLSurfaceView
     lateinit var cameraRender: CameraRender
 
+
+    lateinit var yuvDetectView: YUVDetectView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -41,6 +47,14 @@ class MainActivity : AppCompatActivity() {
         val screenW = resources.displayMetrics.widthPixels
         glSurfaceView.layoutParams = FrameLayout.LayoutParams(screenW, screenW * 4 / 3)
         setContentView(glSurfaceView)
+
+
+        val content = findViewById<FrameLayout>(android.R.id.content)
+        yuvDetectView = YUVDetectView(this)
+        val lp = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
+        lp.gravity = Gravity.BOTTOM
+        content.addView(yuvDetectView, lp)
+
 
         glSurfaceView.setEGLContextClientVersion(3)
         cameraRender = CameraRender()
@@ -60,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
-    private class LuminosityAnalyzer(private val listener : LumaListener) : ImageAnalysis.Analyzer {
+    private inner class LuminosityAnalyzer(private val listener : LumaListener) : ImageAnalysis.Analyzer {
 
         private fun ByteBuffer.toByteArray() : ByteArray {
             rewind()
@@ -69,14 +83,19 @@ class MainActivity : AppCompatActivity() {
             return data
         }
 
+        @SuppressLint("UnsafeExperimentalUsageError")
         override fun analyze(image: ImageProxy) {
-            val buffer = image.planes[0].buffer
-            val data = buffer.toByteArray()
-            val pixels = data.map { it.toInt() and 0xFF }
-            val luma = pixels.average()
+//            val buffer = image.planes[0].buffer
+//            val data = buffer.toByteArray()
+//            val pixels = data.map { it.toInt() and 0xFF }
+//            val luma = pixels.average()
+//
+//            listener(luma)
+//
+//            image.close()
 
-            listener(luma)
 
+            this@MainActivity.yuvDetectView.input(image.image!!)
             image.close()
         }
 
