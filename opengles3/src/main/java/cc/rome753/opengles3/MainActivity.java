@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         Intent i = new Intent(MainActivity.this, GLActivity.class);
-        i.putExtra("render", "Group3D");
+        i.putExtra("render", "Fractal");
         startActivity(i);
     }
 

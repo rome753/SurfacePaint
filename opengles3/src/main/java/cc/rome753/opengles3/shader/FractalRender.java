@@ -16,6 +16,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import static android.opengl.GLES20.GL_BACK;
+import static android.opengl.GLES20.GL_BYTE;
 import static android.opengl.GLES20.GL_CULL_FACE;
 import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
 import static android.opengl.GLES20.GL_DEPTH_TEST;
@@ -71,11 +72,11 @@ public class FractalRender extends BaseRender {
         return ourCamera;
     }
 
-    float vertices[] = new float[401 * 401 * 2];
+    int w = 400, h = 400;
     int[] indices;
 
     int program;
-    FloatBuffer vertexBuffer;
+    ByteBuffer vertexBuffer;
     int[] vao;
 
     IntBuffer intBuffer;
@@ -83,23 +84,10 @@ public class FractalRender extends BaseRender {
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 
-        int p = 0;
-        for (int i = -200; i <= 200; i++) {
-            for (int j = -200; j <= 200; j++) {
-                vertices[p] = i;
-                vertices[p + 1] = j;
-                p += 2;
-            }
-        }
-
         program = ShaderUtils.loadProgramFractor();
         //分配内存空间,每个浮点型占4字节空间
-        vertexBuffer = ByteBuffer.allocateDirect(vertices.length * 4)
-                .order(ByteOrder.nativeOrder())
-                .asFloatBuffer();
-        //传入指定的坐标数据
-        vertexBuffer.put(vertices);
-        vertexBuffer.position(0);
+        vertexBuffer = ByteBuffer.allocateDirect(w * h)
+                .order(ByteOrder.nativeOrder());
 
         vao = new int[1];
         glGenVertexArrays(1, vao, 0);
@@ -108,9 +96,9 @@ public class FractalRender extends BaseRender {
         int[] vbo = new int[1];
         glGenBuffers(1, vbo, 0);
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-        glBufferData(GL_ARRAY_BUFFER, vertices.length * 4, vertexBuffer, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, w * h, vertexBuffer, GL_STATIC_DRAW);
 
-        indices = strip(401, 401);
+        indices = strip(w, h);
 
         intBuffer = IntBuffer.allocate(indices.length * 4);
         intBuffer.put(indices);
@@ -123,8 +111,13 @@ public class FractalRender extends BaseRender {
 
 
         // Load the vertex data
-        glVertexAttribPointer(0, 2, GL_FLOAT, false, 2 * 4, 0);
+        glVertexAttribPointer(0, 1, GL_BYTE, false, 1, 0);
         glEnableVertexAttribArray(0);
+
+
+        glUseProgram(program);
+        int loc = glGetUniformLocation(program, "w");
+        glUniform1i(loc, w);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
@@ -144,7 +137,7 @@ public class FractalRender extends BaseRender {
 
     float width, height;
 //    float[] c = {0.285f, 0.01f};
-    float[] c = {0.225f, 0.01f};
+    float[] c = {0.27f, 0.01f};
 
     float[] modelMat = new float[16];
     float[] viewMat = new float[16];
@@ -188,17 +181,17 @@ public class FractalRender extends BaseRender {
 
     }
 
-    // 用GL_TRIANGLE_STRIP方式把平面上所有点转化成一个三角形条带
+    // 平面转化成GL_TRIANGLES，每个小方格两个三角形
     public static int[] strip(int w, int h) {
         List<Integer> list = new ArrayList<>();
         for (int j = 0; j < h - 1; j++) {
             for (int i = 0; i < w - 1; i++) {
                 int p = j * w + i;
                 list.add(p);
-                list.add(p + w);
-                list.add(p + 1);
                 list.add(p + 1);
                 list.add(p + w);
+                list.add(p + w);
+                list.add(p + 1);
                 list.add(p + w + 1);
             }
         }
