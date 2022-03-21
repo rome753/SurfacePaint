@@ -18,6 +18,7 @@ import cc.rome753.opengles3.shader.GroupRender;
 import cc.rome753.opengles3.shader.LightingRender;
 import cc.rome753.opengles3.shader.OurCamera;
 import cc.rome753.opengles3.shader.ParticleSystemRenderer;
+import cc.rome753.opengles3.shader.Simple3DFrameBufferRender;
 import cc.rome753.opengles3.shader.Simple3DRender;
 import cc.rome753.opengles3.shader.SimpleRender;
 
@@ -49,6 +50,9 @@ public class GLActivity extends AppCompatActivity {
                 break;
             case "Simple3D":
                 glSurfaceView.setRenderer(render = new Simple3DRender());
+                break;
+            case "FrameBuffer":
+                glSurfaceView.setRenderer(render = new Simple3DFrameBufferRender());
                 break;
             case "Fractal":
                 glSurfaceView.setRenderer(render = new FractalRender());
@@ -134,7 +138,7 @@ public class GLActivity extends AppCompatActivity {
                 // 防止多指跳动
                 if (Math.abs(dx) > 100 || Math.abs(dy) > 100) return true;
 
-                if (render instanceof Simple3DRender) {
+                if (render instanceof Simple3DRender || render instanceof Simple3DFrameBufferRender) {
                     ourCamera.ProcessKeyboard(dx > 0 ? OurCamera.Camera_Movement.LEFT : OurCamera.Camera_Movement.RIGHT, Math.abs(dx) / 1000);
                     ourCamera.ProcessKeyboard(dy > 0 ? OurCamera.Camera_Movement.BACKWARD : OurCamera.Camera_Movement.FORWARD, Math.abs(dy) / 1000);
                 }
