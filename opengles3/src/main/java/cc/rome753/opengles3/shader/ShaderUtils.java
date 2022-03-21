@@ -30,6 +30,12 @@ public class ShaderUtils {
         return linkProgram(vShader, fShader);
     }
 
+    public static int loadProgramFramebuffer() {
+        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, loadAssets("framebuffer_v.glsl"));
+        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, loadAssets("framebuffer_f.glsl"));
+        return linkProgram(vShader, fShader);
+    }
+
     public static int loadProgramFractor() {
         int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, loadAssets("shader_fractal_v.glsl"));
         int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, loadAssets("shader_fractal_f.glsl"));

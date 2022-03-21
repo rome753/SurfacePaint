@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         mData = new ArrayList<>();
         mData.add("Simple");
         mData.add("Simple3D");
+        mData.add("FrameBuffer");
         mData.add("Fractal");
         mData.add("Audio");
         mData.add("Record");
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         Intent i = new Intent(MainActivity.this, GLActivity.class);
-        i.putExtra("render", "Fractal");
+        i.putExtra("render", "FrameBuffer");
         startActivity(i);
     }
 
