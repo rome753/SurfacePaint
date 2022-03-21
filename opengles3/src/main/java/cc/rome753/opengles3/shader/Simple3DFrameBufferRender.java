@@ -1,8 +1,25 @@
 package cc.rome753.opengles3.shader;
 
+import static android.opengl.GLES20.GL_COLOR_ATTACHMENT0;
+import static android.opengl.GLES20.GL_FRAMEBUFFER;
+import static android.opengl.GLES20.GL_FRAMEBUFFER_COMPLETE;
+import static android.opengl.GLES20.GL_RENDERBUFFER;
+import static android.opengl.GLES20.GL_RGB;
+import static android.opengl.GLES20.GL_UNSIGNED_BYTE;
+import static android.opengl.GLES20.glBindFramebuffer;
+import static android.opengl.GLES20.glBindRenderbuffer;
+import static android.opengl.GLES20.glCheckFramebufferStatus;
+import static android.opengl.GLES20.glFramebufferRenderbuffer;
+import static android.opengl.GLES20.glFramebufferTexture2D;
+import static android.opengl.GLES20.glGenFramebuffers;
+import static android.opengl.GLES20.glGenRenderbuffers;
+import static android.opengl.GLES20.glRenderbufferStorage;
+import static android.opengl.GLES20.glTexImage2D;
 import static android.opengl.GLES30.GL_ARRAY_BUFFER;
 import static android.opengl.GLES30.GL_COLOR_BUFFER_BIT;
+import static android.opengl.GLES30.GL_DEPTH24_STENCIL8;
 import static android.opengl.GLES30.GL_DEPTH_BUFFER_BIT;
+import static android.opengl.GLES30.GL_DEPTH_STENCIL_ATTACHMENT;
 import static android.opengl.GLES30.GL_DEPTH_TEST;
 import static android.opengl.GLES30.GL_FLOAT;
 import static android.opengl.GLES30.GL_LINEAR;
@@ -40,6 +57,7 @@ import static android.opengl.GLES30.glVertexAttribPointer;
 import android.graphics.Bitmap;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
+import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -59,8 +77,42 @@ public class Simple3DFrameBufferRender extends BaseRender {
 
     float width, height;
 
+    int[] fbo;
+    int[] tcbo;
+    int[] rbo;
+
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+        fbo = new int[1];
+        glGenFramebuffers(1, fbo, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo[0]);
+
+        // 生成纹理
+        tcbo = new int[1];
+        glGenTextures(1, tcbo, 0);
+        glBindTexture(GL_TEXTURE_2D, tcbo[0]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 1000, 0, GL_RGB, GL_UNSIGNED_BYTE, null);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        // 将它附加到当前绑定的帧缓冲对象
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tcbo[0], 0);
+
+        rbo = new int[1];
+        glGenRenderbuffers(1, rbo, 0);
+        glBindRenderbuffer(GL_RENDERBUFFER, rbo[0]);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo[0]);
+
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            Log.e("chao", "创建Framebuffer没有完成！");
+        }
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
         shader.init();
         glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
         glEnable(GL_DEPTH_TEST);
@@ -92,6 +144,11 @@ public class Simple3DFrameBufferRender extends BaseRender {
         rot %= 360;
         Matrix.perspectiveM(projectionMat, 0, OurCamera.radians(ourCamera.Zoom), width / height, 0.1f, 100.0f);
         ourCamera.GetViewMatrix(viewMat);
+
+
+
+
+
 
         shader.draw(modelMat, viewMat, projectionMat, rot);
     }
