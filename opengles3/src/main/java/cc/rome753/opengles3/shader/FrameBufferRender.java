@@ -9,12 +9,14 @@ import static android.opengl.GLES20.GL_UNSIGNED_BYTE;
 import static android.opengl.GLES20.glBindFramebuffer;
 import static android.opengl.GLES20.glBindRenderbuffer;
 import static android.opengl.GLES20.glCheckFramebufferStatus;
+import static android.opengl.GLES20.glDisable;
 import static android.opengl.GLES20.glFramebufferRenderbuffer;
 import static android.opengl.GLES20.glFramebufferTexture2D;
 import static android.opengl.GLES20.glGenFramebuffers;
 import static android.opengl.GLES20.glGenRenderbuffers;
 import static android.opengl.GLES20.glRenderbufferStorage;
 import static android.opengl.GLES20.glTexImage2D;
+import static android.opengl.GLES20.glViewport;
 import static android.opengl.GLES30.GL_ARRAY_BUFFER;
 import static android.opengl.GLES30.GL_COLOR_BUFFER_BIT;
 import static android.opengl.GLES30.GL_DEPTH24_STENCIL8;
@@ -66,14 +68,15 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class Simple3DFrameBufferRender extends BaseRender {
+public class FrameBufferRender extends BaseRender {
 
     @Override
     public OurCamera getOurCamera() {
         return ourCamera;
     }
 
-    Simple3DShader shader = new Simple3DShader();
+    Simple3DShader simple3DShader = new Simple3DShader();
+    ScreenShader screenShader = new ScreenShader();
 
     float width, height;
 
@@ -81,8 +84,10 @@ public class Simple3DFrameBufferRender extends BaseRender {
     int[] tcbo;
     int[] rbo;
 
-    @Override
-    public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+    private void initFramebuffer(int w, int h) {
+        if (fbo != null) {
+            return;
+        }
         fbo = new int[1];
         glGenFramebuffers(1, fbo, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, fbo[0]);
@@ -91,7 +96,7 @@ public class Simple3DFrameBufferRender extends BaseRender {
         tcbo = new int[1];
         glGenTextures(1, tcbo, 0);
         glBindTexture(GL_TEXTURE_2D, tcbo[0]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 1000, 0, GL_RGB, GL_UNSIGNED_BYTE, null);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, null);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -102,7 +107,7 @@ public class Simple3DFrameBufferRender extends BaseRender {
         rbo = new int[1];
         glGenRenderbuffers(1, rbo, 0);
         glBindRenderbuffer(GL_RENDERBUFFER, rbo[0]);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo[0]);
@@ -111,18 +116,22 @@ public class Simple3DFrameBufferRender extends BaseRender {
             Log.e("chao", "创建Framebuffer没有完成！");
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
 
+    @Override
+    public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 
-        shader.init();
-        glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
-        glEnable(GL_DEPTH_TEST);
+        simple3DShader.init();
+        screenShader.init();
+
     }
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         this.width = width;
         this.height = height;
-//        glViewport(0, 0, width, height);
+        initFramebuffer(width, height);
+        glViewport(0, 0, width, height);
     }
 
     float[] modelMat = new float[16];
@@ -133,8 +142,8 @@ public class Simple3DFrameBufferRender extends BaseRender {
 
     @Override
     public void onDrawFrame(GL10 gl) {
+        super.onDrawFrame(gl);
         // Clear the color buffer
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 //        Matrix.setIdentityM(modelMat, 0);
         Matrix.setIdentityM(viewMat, 0);
@@ -146,16 +155,86 @@ public class Simple3DFrameBufferRender extends BaseRender {
         ourCamera.GetViewMatrix(viewMat);
 
 
+//        // 第一阶段处理（Pass），绘制3D图形到Framebuffer
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo[0]);
+        glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);
+        simple3DShader.draw(modelMat, viewMat, projectionMat, rot);
 
+        // 第二阶段处理，把Framebuffer绘制为2D纹理
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
 
+        screenShader.draw(tcbo);
 
-
-        shader.draw(modelMat, viewMat, projectionMat, rot);
     }
 
 
 
 
+    static class ScreenShader {
+
+        float vertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+                // positions   // texCoords
+                -1.0f,  1.0f,  0.0f, 1.0f,
+                -1.0f, -1.0f,  0.0f, 0.0f,
+                1.0f, -1.0f,  1.0f, 0.0f,
+
+                -1.0f,  1.0f,  0.0f, 1.0f,
+                1.0f, -1.0f,  1.0f, 0.0f,
+                1.0f,  1.0f,  1.0f, 1.0f
+        };
+
+        int program;
+        int[] vao;
+
+        public void init() {
+            program = ShaderUtils.loadProgramFramebuffer();
+            //分配内存空间,每个浮点型占4字节空间
+            FloatBuffer vertexBuffer = ByteBuffer.allocateDirect(vertices.length * 4)
+                    .order(ByteOrder.nativeOrder())
+                    .asFloatBuffer();
+            //传入指定的坐标数据
+            vertexBuffer.put(vertices);
+            vertexBuffer.position(0);
+
+            vao = new int[1];
+            glGenVertexArrays(1, vao, 0);
+            glBindVertexArray(vao[0]);
+
+            int[] vbo = new int[1];
+            glGenBuffers(1, vbo, 0);
+            glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+            glBufferData(GL_ARRAY_BUFFER, vertices.length * 4, vertexBuffer, GL_STATIC_DRAW);
+
+            glVertexAttribPointer(0, 2, GL_FLOAT, false, 4 * 4, 0);
+            glEnableVertexAttribArray(0);
+
+            glVertexAttribPointer(1, 2, GL_FLOAT, false, 4 * 4, 2 * 4);
+            glEnableVertexAttribArray(1);
+
+
+            glUseProgram(program);
+            int loc = glGetUniformLocation(program, "screenTexture");
+            glUniform1i(loc, 1);
+
+
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            glBindVertexArray(0);
+
+        }
+
+        public void draw(int[] tcbo) {
+            glUseProgram(program);
+            glBindVertexArray(vao[0]);
+            glDisable(GL_DEPTH_TEST);
+            glBindTexture(GL_TEXTURE_2D, tcbo[0]);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+        }
+
+    }
 
 
     static class Simple3DShader {
