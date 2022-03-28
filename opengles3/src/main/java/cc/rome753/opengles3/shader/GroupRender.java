@@ -2,10 +2,12 @@ package cc.rome753.opengles3.shader;
 
 import android.util.Log;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Random;
 
 import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
@@ -19,6 +21,9 @@ import static android.opengl.GLES20.glViewport;
 import static android.opengl.GLES30.GL_ARRAY_BUFFER;
 import static android.opengl.GLES30.GL_COLOR_BUFFER_BIT;
 import static android.opengl.GLES30.GL_FLOAT;
+import static android.opengl.GLES30.GL_MAP_INVALIDATE_BUFFER_BIT;
+import static android.opengl.GLES30.GL_MAP_READ_BIT;
+import static android.opengl.GLES30.GL_MAP_WRITE_BIT;
 import static android.opengl.GLES30.glBindBuffer;
 import static android.opengl.GLES30.glBindVertexArray;
 import static android.opengl.GLES30.glBufferData;
@@ -26,10 +31,13 @@ import static android.opengl.GLES30.glClear;
 import static android.opengl.GLES30.glClearColor;
 import static android.opengl.GLES30.glDrawElements;
 import static android.opengl.GLES30.glEnableVertexAttribArray;
+import static android.opengl.GLES30.glFlushMappedBufferRange;
 import static android.opengl.GLES30.glGenBuffers;
 import static android.opengl.GLES30.glGenTextures;
 import static android.opengl.GLES30.glGenVertexArrays;
+import static android.opengl.GLES30.glMapBufferRange;
 import static android.opengl.GLES30.glUniformMatrix4fv;
+import static android.opengl.GLES30.glUnmapBuffer;
 import static android.opengl.GLES30.glUseProgram;
 import static android.opengl.GLES30.glVertexAttribPointer;
 
@@ -38,11 +46,13 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class GroupRender extends BaseRender {
 
+    boolean useMapBuffer = true;
+
     int program;
     int[] vao;
     int[] vbo;
 
-    static int MAX_COUNT = 200;
+    static int MAX_COUNT = 1000;
     static int BOUND = 1024;
 
     float[] pos = new float[MAX_COUNT * 2];
@@ -81,7 +91,7 @@ public class GroupRender extends BaseRender {
 
         program = ShaderUtils.loadProgramGroup();
 
-//        //分配内存空间,每个浮点型占4字节空间
+        // 分配内存空间,每个浮点型占4字节空间
         posBuffer = ByteBuffer
                 .allocateDirect(2 * 4 * MAX_COUNT)
                 .order(ByteOrder.nativeOrder());
@@ -95,6 +105,13 @@ public class GroupRender extends BaseRender {
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 //        glBufferData(GL_ARRAY_BUFFER, vertices.length * 4, vertexBuffer, GL_STATIC_DRAW);
         glBufferData(GL_ARRAY_BUFFER, MAX_COUNT * 4 * 2, posBuffer, GL_STREAM_DRAW);
+
+        if (useMapBuffer) {
+            // 使用映射缓冲区对象，分配GPU内存直接操作
+            ByteBuffer mapBuffer = (ByteBuffer) glMapBufferRange(GL_ARRAY_BUFFER, 0, MAX_COUNT * 4 * 2, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+            posBuffer = mapBuffer.order(ByteOrder.LITTLE_ENDIAN);
+            glUnmapBuffer(GL_ARRAY_BUFFER);
+        }
 
         // Load the vertex data
         glVertexAttribPointer(0, 2, GL_FLOAT, false, 2 * 4, 0);
@@ -129,11 +146,14 @@ public class GroupRender extends BaseRender {
         // Clear the color buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // 刷新vbo数据
-        glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, MAX_COUNT * 4 * 2,  posBuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-
+        if (useMapBuffer) {
+            glFlushMappedBufferRange(GL_ARRAY_BUFFER, 0, MAX_COUNT * 4 * 2);
+        } else {
+            // 刷新vbo数据
+            glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, MAX_COUNT * 4 * 2,  posBuffer);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+        }
 
         // Use the program object
         glUseProgram(program);

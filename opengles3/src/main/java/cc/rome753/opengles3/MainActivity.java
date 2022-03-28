@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         Intent i = new Intent(MainActivity.this, GLActivity.class);
-        i.putExtra("render", "FrameBuffer");
+        i.putExtra("render", "Group");
         startActivity(i);
     }
 
