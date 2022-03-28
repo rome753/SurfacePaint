@@ -311,7 +311,7 @@ public class GroupRender extends BaseRender {
     static class Part {
 
         public Part() {
-            set = new HashSet<>();
+            set = new LinkedHashSet<>();
         }
 
         HashSet<Integer> set;
