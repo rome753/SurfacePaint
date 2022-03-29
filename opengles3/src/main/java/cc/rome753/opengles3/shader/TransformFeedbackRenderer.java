@@ -55,6 +55,8 @@ import static android.opengl.GLES20.glEnableVertexAttribArray;
 import static android.opengl.GLES20.glGenBuffers;
 import static android.opengl.GLES20.glGetUniformLocation;
 import static android.opengl.GLES20.glUniform1f;
+import static android.opengl.GLES20.glUniform3f;
+import static android.opengl.GLES20.glUniform3fv;
 import static android.opengl.GLES20.glUseProgram;
 import static android.opengl.GLES20.glVertexAttribPointer;
 import static android.opengl.GLES20.glViewport;
@@ -97,7 +99,7 @@ public class TransformFeedbackRenderer extends BaseRender {
    float[] pos = new float[MAX_COUNT * 4]; // x,y,vx,vy
    Random r = new Random();
 
-   float time = 0;
+   float[] time = {0f, 0f, 0f}; // time,centerX,centerY
 
    @Override
    public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -156,9 +158,10 @@ public class TransformFeedbackRenderer extends BaseRender {
       // Use the program object
       glUseProgram(program);
 
-      time += 0.01;
+      time[0] += 0.01;
+
       int loc = glGetUniformLocation(program, "time");
-      glUniform1f(loc, time);
+      glUniform3fv(loc, 1, time, 0);
 
       glBindVertexArray(vao[0]);
 
