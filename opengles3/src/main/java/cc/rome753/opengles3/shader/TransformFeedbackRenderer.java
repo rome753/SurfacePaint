@@ -40,50 +40,36 @@ package cc.rome753.opengles3.shader;
 
 import static android.opengl.GLES20.GL_ARRAY_BUFFER;
 import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
-import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
+import static android.opengl.GLES20.GL_DYNAMIC_DRAW;
 import static android.opengl.GLES20.GL_FLOAT;
 import static android.opengl.GLES20.GL_POINTS;
-import static android.opengl.GLES20.GL_STATIC_DRAW;
-import static android.opengl.GLES20.GL_STREAM_DRAW;
 import static android.opengl.GLES20.glBindBuffer;
 import static android.opengl.GLES20.glBufferData;
-import static android.opengl.GLES20.glBufferSubData;
 import static android.opengl.GLES20.glClear;
 import static android.opengl.GLES20.glClearColor;
+import static android.opengl.GLES20.glDisable;
 import static android.opengl.GLES20.glDrawArrays;
+import static android.opengl.GLES20.glEnable;
 import static android.opengl.GLES20.glEnableVertexAttribArray;
 import static android.opengl.GLES20.glGenBuffers;
 import static android.opengl.GLES20.glGetUniformLocation;
-import static android.opengl.GLES20.glUniform1f;
-import static android.opengl.GLES20.glUniform3f;
 import static android.opengl.GLES20.glUniform3fv;
 import static android.opengl.GLES20.glUseProgram;
 import static android.opengl.GLES20.glVertexAttribPointer;
 import static android.opengl.GLES20.glViewport;
-import static android.opengl.GLES30.GL_MAP_INVALIDATE_BUFFER_BIT;
-import static android.opengl.GLES30.GL_MAP_WRITE_BIT;
+import static android.opengl.GLES30.GL_RASTERIZER_DISCARD;
+import static android.opengl.GLES30.GL_TRANSFORM_FEEDBACK;
+import static android.opengl.GLES30.GL_TRANSFORM_FEEDBACK_BUFFER;
+import static android.opengl.GLES30.glBeginTransformFeedback;
+import static android.opengl.GLES30.glBindBufferBase;
+import static android.opengl.GLES30.glBindTransformFeedback;
 import static android.opengl.GLES30.glBindVertexArray;
-import static android.opengl.GLES30.glFlushMappedBufferRange;
+import static android.opengl.GLES30.glEndTransformFeedback;
+import static android.opengl.GLES30.glGenTransformFeedbacks;
 import static android.opengl.GLES30.glGenVertexArrays;
-import static android.opengl.GLES30.glMapBufferRange;
-import static android.opengl.GLES30.glUnmapBuffer;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.opengl.GLES30;
-import android.opengl.GLUtils;
-import android.os.SystemClock;
-import android.util.Log;
-
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Random;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -95,8 +81,10 @@ public class TransformFeedbackRenderer extends BaseRender {
    int[] vao;
    int[] vbo;
 
+   int[] tfo;
+
    static int MAX_COUNT = 100000;
-   float[] pos = new float[MAX_COUNT * 4]; // x,y,vx,vy
+   float[] pts = new float[MAX_COUNT * 4]; // x,y,vx,vy
    Random r = new Random();
 
    float[] time = {0f, 0f, 0f}; // time,centerX,centerY
@@ -108,28 +96,40 @@ public class TransformFeedbackRenderer extends BaseRender {
 
       program = ShaderUtils.loadProgramTransformFeedback();
 
+
       // 分配内存空间,每个浮点型占4字节空间
-      ByteBuffer posBuffer = ByteBuffer
-              .allocateDirect(pos.length * 4)
+      ByteBuffer buffer = ByteBuffer
+              .allocateDirect(pts.length * 4)
               .order(ByteOrder.nativeOrder());
 
-      posBuffer.position(0);
-      posBuffer.asFloatBuffer().put(pos);
+      buffer.position(0);
+      buffer.asFloatBuffer().put(pts);
 
-      vao = new int[1];
-      glGenVertexArrays(1, vao, 0);
-      glBindVertexArray(vao[0]);
+      vao = new int[2];
+      glGenVertexArrays(2, vao, 0);
+      vbo = new int[2];
+      glGenBuffers(2, vbo, 0);
+      tfo = new int[2];
+      glGenTransformFeedbacks(2, tfo, 0);
 
-      vbo = new int[1];
-      glGenBuffers(1, vbo, 0);
-      glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-      glBufferData(GL_ARRAY_BUFFER, MAX_COUNT * 4 * 4, posBuffer, GL_STATIC_DRAW);
+      for (int i = 0; i < 2; i++) {
 
-      // Load the vertex data
-      glVertexAttribPointer(0, 2, GL_FLOAT, false, 2 * 4, 0);
-      glEnableVertexAttribArray(0);
-      glVertexAttribPointer(1, 2, GL_FLOAT, false, 2 * 4, 2 * 4);
-      glEnableVertexAttribArray(1);
+         glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tfo[i]);
+
+         glBindVertexArray(vao[i]);
+         glBindBuffer(GL_ARRAY_BUFFER, vbo[i]);
+         glBufferData(GL_ARRAY_BUFFER, MAX_COUNT * 4 * 4, buffer, GL_DYNAMIC_DRAW);
+         glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, vbo[i]);
+
+         // Load the vertex data
+         glVertexAttribPointer(0, 2, GL_FLOAT, false, 2 * 4, 0);
+         glEnableVertexAttribArray(0);
+         glVertexAttribPointer(1, 2, GL_FLOAT, false, 2 * 4, 2 * 4);
+         glEnableVertexAttribArray(1);
+
+      }
+
+
 
       glBindBuffer(GL_ARRAY_BUFFER, 0);
       glBindVertexArray(0);
@@ -148,6 +148,8 @@ public class TransformFeedbackRenderer extends BaseRender {
 
    int width, height;
 
+   int i0 = 0;
+
    @Override
    public void onDrawFrame(GL10 gl) {
       super.onDrawFrame(gl);
@@ -163,18 +165,36 @@ public class TransformFeedbackRenderer extends BaseRender {
       int loc = glGetUniformLocation(program, "time");
       glUniform3fv(loc, 1, time, 0);
 
-      glBindVertexArray(vao[0]);
 
+      glEnable(GL_RASTERIZER_DISCARD);
+
+      glBindVertexArray(vao[i0]);
+      glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, vbo[i0]);
+      glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tfo[i0]);
+      glBeginTransformFeedback(GL_POINTS);
       glDrawArrays(GL_POINTS, 0, MAX_COUNT);
+      glEndTransformFeedback();
+
+      glDisable(GL_RASTERIZER_DISCARD);
+
+      int i1 = (i0 + 1) % 2;
+      glBindVertexArray(vao[i1]);
+      glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, vbo[i1]);
+      glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tfo[i1]);
+      glDrawArrays(GL_POINTS, 0, MAX_COUNT);
+
+
+      // 交换
+      i0 = i1;
    }
 
    void initAll() {
-      for (int i = 0; i < pos.length; i++) {
-         pos[i] = (float)r.nextInt(1000) / 1000;
+      for (int i = 0; i < pts.length; i++) {
+         pts[i] = (float)r.nextInt(1000) / 1000;
          if (i % 4 < 2) {
-             pos[i] = (pos[i] - 0.5f) * 2;
+             pts[i] = (pts[i] - 0.5f) * 2;
          } else {
-             pos[i] = pos[i] - 0.5f;
+             pts[i] = pts[i] - 0.5f;
          }
       }
 

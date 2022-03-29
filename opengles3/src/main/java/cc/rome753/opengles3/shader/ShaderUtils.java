@@ -63,7 +63,7 @@ public class ShaderUtils {
     public static int loadProgramTransformFeedback() {
         int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, loadAssets("transform_feedback_v.glsl"));
         int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, loadAssets("transform_feedback_f.glsl"));
-        return linkProgram(vShader, fShader);
+        return linkProgram(vShader, fShader, new String[]{"vPos", "vVel"});
     }
 
     public static int loadProgram3DLighting() {
