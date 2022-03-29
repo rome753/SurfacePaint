@@ -60,6 +60,12 @@ public class ShaderUtils {
         return linkProgram(vShader, fShader);
     }
 
+    public static int loadProgramTransformFeedback() {
+        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, loadAssets("transform_feedback_v.glsl"));
+        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, loadAssets("transform_feedback_f.glsl"));
+        return linkProgram(vShader, fShader);
+    }
+
     public static int loadProgram3DLighting() {
         int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, loadAssets("shader_lighting_v.glsl"));
         int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, loadAssets("shader_lighting_f.glsl"));
@@ -70,6 +76,12 @@ public class ShaderUtils {
         int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, vs);
         int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, fs);
         return linkProgram(vShader, fShader);
+    }
+
+    public static int loadProgram(String vs, String fs, String[] transformFeedbackVaryings) {
+        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, vs);
+        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, fs);
+        return linkProgram(vShader, fShader, transformFeedbackVaryings);
     }
 
     private static int loadShader(int type, String shaderSrc) {
@@ -92,6 +104,10 @@ public class ShaderUtils {
     }
 
     private static int linkProgram(int vShader, int fShader) {
+        return linkProgram(vShader, fShader, null);
+    }
+
+    private static int linkProgram(int vShader, int fShader, String[] transformFeedbackVaryings) {
         int program = glCreateProgram();
         if (program == 0) {
             Log.e("chao", "program == 0");
@@ -100,6 +116,10 @@ public class ShaderUtils {
 
         glAttachShader(program, vShader);
         glAttachShader(program, fShader);
+
+        if (transformFeedbackVaryings != null) {
+            glTransformFeedbackVaryings(program, transformFeedbackVaryings, GL_INTERLEAVED_ATTRIBS);
+        }
 
         glLinkProgram(program);
         int[] linkStatus = new int[1];

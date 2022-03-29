@@ -77,7 +77,7 @@ public class GLActivity extends AppCompatActivity {
                 glSurfaceView.setRenderer(render = new ParticleSystemRenderer(this));
                 break;
             case "TransformFeedback":
-                glSurfaceView.setRenderer(render = new TransformFeedbackRenderer(this));
+                glSurfaceView.setRenderer(render = new TransformFeedbackRenderer());
                 break;
         }
 
