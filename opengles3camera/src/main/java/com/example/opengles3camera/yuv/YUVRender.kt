@@ -8,7 +8,8 @@ import javax.microedition.khronos.opengles.GL10
 
 class YUVRender: GLSurfaceView.Renderer {
 
-    var yuvShader = YUVShader()
+//    var yuvShader = YUVShader()
+    var yuvShader = DiffShader()
     var imageBytes: ImageBytes? = null
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {

@@ -38,6 +38,12 @@ public class ShaderUtils {
         return linkProgram(vShader, fShader);
     }
 
+    public static int loadProgramDiff() {
+        int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, loadAssets("shader_diff_v.glsl"));
+        int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, loadAssets("shader_diff_f.glsl"));
+        return linkProgram(vShader, fShader);
+    }
+
     public static int loadProgram(String vs, String fs) {
         int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, vs);
         int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, fs);

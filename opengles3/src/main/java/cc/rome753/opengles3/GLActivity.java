@@ -21,6 +21,7 @@ import cc.rome753.opengles3.shader.ParticleSystemRenderer;
 import cc.rome753.opengles3.shader.FrameBufferRender;
 import cc.rome753.opengles3.shader.Simple3DRender;
 import cc.rome753.opengles3.shader.SimpleRender;
+import cc.rome753.opengles3.shader.TransformFeedbackRenderer;
 
 public class GLActivity extends AppCompatActivity {
 
@@ -74,6 +75,9 @@ public class GLActivity extends AppCompatActivity {
                 break;
             case "ParticleSystem":
                 glSurfaceView.setRenderer(render = new ParticleSystemRenderer(this));
+                break;
+            case "TransformFeedback":
+                glSurfaceView.setRenderer(render = new TransformFeedbackRenderer(this));
                 break;
         }
 
