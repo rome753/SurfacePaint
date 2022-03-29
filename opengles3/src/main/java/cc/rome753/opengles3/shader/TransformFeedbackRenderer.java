@@ -171,6 +171,11 @@ public class TransformFeedbackRenderer extends BaseRender {
    void initAll() {
       for (int i = 0; i < pos.length; i++) {
          pos[i] = (float)r.nextInt(1000) / 1000;
+         if (i % 4 < 2) {
+             pos[i] = (pos[i] - 0.5f) * 2;
+         } else {
+             pos[i] = pos[i] - 0.5f;
+         }
       }
 
    }

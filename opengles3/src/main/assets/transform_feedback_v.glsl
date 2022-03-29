@@ -9,8 +9,8 @@ out vec2 vPos;
 out vec2 vVel;
 
 void main() {
-     vPos = (vPosition - 0.5) * 2.0;
-     vVel = vVelocity - 0.5;
+     vPos = vPosition;
+     vVel = vVelocity;
      gl_PointSize = 5.0;
 
      float cx = time.g;
