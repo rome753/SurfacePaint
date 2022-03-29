@@ -53,6 +53,8 @@ import static android.opengl.GLES20.glClearColor;
 import static android.opengl.GLES20.glDrawArrays;
 import static android.opengl.GLES20.glEnableVertexAttribArray;
 import static android.opengl.GLES20.glGenBuffers;
+import static android.opengl.GLES20.glGetUniformLocation;
+import static android.opengl.GLES20.glUniform1f;
 import static android.opengl.GLES20.glUseProgram;
 import static android.opengl.GLES20.glVertexAttribPointer;
 import static android.opengl.GLES20.glViewport;
@@ -92,14 +94,10 @@ public class TransformFeedbackRenderer extends BaseRender {
    int[] vbo;
 
    static int MAX_COUNT = 100000;
-   static int BOUND = 1024;
-
-   float[] pos = new float[MAX_COUNT * 2];
-   float[] vel = new float[MAX_COUNT * 2];
-
-   ByteBuffer posBuffer;
-
+   float[] pos = new float[MAX_COUNT * 4]; // x,y,vx,vy
    Random r = new Random();
+
+   float time = 0;
 
    @Override
    public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -109,9 +107,12 @@ public class TransformFeedbackRenderer extends BaseRender {
       program = ShaderUtils.loadProgramTransformFeedback();
 
       // 分配内存空间,每个浮点型占4字节空间
-      posBuffer = ByteBuffer
-              .allocateDirect(2 * 4 * MAX_COUNT)
+      ByteBuffer posBuffer = ByteBuffer
+              .allocateDirect(pos.length * 4)
               .order(ByteOrder.nativeOrder());
+
+      posBuffer.position(0);
+      posBuffer.asFloatBuffer().put(pos);
 
       vao = new int[1];
       glGenVertexArrays(1, vao, 0);
@@ -120,14 +121,13 @@ public class TransformFeedbackRenderer extends BaseRender {
       vbo = new int[1];
       glGenBuffers(1, vbo, 0);
       glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-      glBufferData(GL_ARRAY_BUFFER, MAX_COUNT * 4 * 2, posBuffer, GL_STATIC_DRAW);
-
-      posBuffer.position(0);
-      posBuffer.asFloatBuffer().put(pos);
+      glBufferData(GL_ARRAY_BUFFER, MAX_COUNT * 4 * 4, posBuffer, GL_STATIC_DRAW);
 
       // Load the vertex data
       glVertexAttribPointer(0, 2, GL_FLOAT, false, 2 * 4, 0);
       glEnableVertexAttribArray(0);
+      glVertexAttribPointer(1, 2, GL_FLOAT, false, 2 * 4, 2 * 4);
+      glEnableVertexAttribArray(1);
 
       glBindBuffer(GL_ARRAY_BUFFER, 0);
       glBindVertexArray(0);
@@ -151,15 +151,15 @@ public class TransformFeedbackRenderer extends BaseRender {
       super.onDrawFrame(gl);
 
       // Clear the color buffer
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-      // 刷新vbo数据
-      glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-      glBufferSubData(GL_ARRAY_BUFFER, 0, MAX_COUNT * 4 * 2,  posBuffer);
-      glBindBuffer(GL_ARRAY_BUFFER, 0);
+      glClear(GL_COLOR_BUFFER_BIT);
 
       // Use the program object
       glUseProgram(program);
+
+      time += 0.01;
+      int loc = glGetUniformLocation(program, "time");
+      glUniform1f(loc, time);
+
       glBindVertexArray(vao[0]);
 
       glDrawArrays(GL_POINTS, 0, MAX_COUNT);
@@ -167,8 +167,7 @@ public class TransformFeedbackRenderer extends BaseRender {
 
    void initAll() {
       for (int i = 0; i < pos.length; i++) {
-         pos[i] = r.nextInt(BOUND);
-         vel[i] = r.nextFloat() - 0.5f;
+         pos[i] = (float)r.nextInt(1000) / 1000;
       }
 
    }
