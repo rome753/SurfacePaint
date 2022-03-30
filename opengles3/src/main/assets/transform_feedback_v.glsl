@@ -1,9 +1,9 @@
 #version 300 es
 layout (location = 0) in vec2 vPosition;
-//layout (location = 1) in vec2 vVelocity;
+layout (location = 1) in vec2 vVelocity;
 
 out vec2 vPos;
-//out vec2 vVel;
+out vec2 vVel;
 
 uniform vec3 time;
 uniform vec2 center;
@@ -19,7 +19,7 @@ void main() {
           y = -1.0;
      }
      vPos = vec2(x, y);
-//     vVel = vVelocity;
+     vVel = vVelocity;
      gl_PointSize = 5.0;
      gl_Position  = vec4(vPos, 0.0, 1.0);
 

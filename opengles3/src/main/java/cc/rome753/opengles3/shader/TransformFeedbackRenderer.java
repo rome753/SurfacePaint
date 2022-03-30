@@ -127,8 +127,8 @@ public class TransformFeedbackRenderer extends BaseRender {
          // Load the vertex data
          glVertexAttribPointer(0, 2, GL_FLOAT, false, 2 * 4, 0);
          glEnableVertexAttribArray(0);
-//         glVertexAttribPointer(1, 2, GL_FLOAT, false, 2 * 4, 2 * 4);
-//         glEnableVertexAttribArray(1);
+         glVertexAttribPointer(1, 2, GL_FLOAT, false, 2 * 4, 2 * 4);
+         glEnableVertexAttribArray(1);
 
          glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tfo[i]);
          glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, vbo[i]);
@@ -167,23 +167,13 @@ public class TransformFeedbackRenderer extends BaseRender {
       glUniform3fv(loc, 1, time, 0);
 
 
-      if (i0 == 0) {
-         // 绑定tfo[0]，接收输出的顶点数据，数据相当于输出到vao[0]了
-         glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tfo[0]);
-         glBeginTransformFeedback(GL_POINTS);
-         // 绑定vao[1]，输入顶点数据
-         glBindVertexArray(vao[1]);
-         glDrawArrays(GL_POINTS, 0, MAX_COUNT);
-         glEndTransformFeedback();
-      } else {
-         // 绑定tfo[1]，接收输出的顶点数据，数据相当于输出到vao[1]了
-         glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tfo[1]);
-         glBeginTransformFeedback(GL_POINTS);
-         // 绑定vao[0]，输入顶点数据
-         glBindVertexArray(vao[0]);
-         glDrawArrays(GL_POINTS, 0, MAX_COUNT);
-         glEndTransformFeedback();
-      }
+      // 绑定tfo[0]，接收输出的顶点数据，数据相当于输出到vao[0]了
+      glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tfo[i0]);
+      glBeginTransformFeedback(GL_POINTS);
+      // 绑定vao[1]，输入顶点数据
+      glBindVertexArray(vao[1 - i0]);
+      glDrawArrays(GL_POINTS, 0, MAX_COUNT);
+      glEndTransformFeedback();
 
 
 //      if (frames++ < 10) {
