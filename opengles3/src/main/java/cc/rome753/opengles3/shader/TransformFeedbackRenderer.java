@@ -83,7 +83,7 @@ public class TransformFeedbackRenderer extends BaseRender {
 
    int[] tfo;
 
-   static int MAX_COUNT = 100000;
+   static int MAX_COUNT = 10;
    float[] pts = new float[MAX_COUNT * 4]; // x,y,vx,vy
    Random r = new Random();
 
@@ -95,7 +95,6 @@ public class TransformFeedbackRenderer extends BaseRender {
       initAll();
 
       program = ShaderUtils.loadProgramTransformFeedback();
-
 
       // 分配内存空间,每个浮点型占4字节空间
       ByteBuffer buffer = ByteBuffer
@@ -113,13 +112,9 @@ public class TransformFeedbackRenderer extends BaseRender {
       glGenTransformFeedbacks(2, tfo, 0);
 
       for (int i = 0; i < 2; i++) {
-
-         glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tfo[i]);
-
          glBindVertexArray(vao[i]);
          glBindBuffer(GL_ARRAY_BUFFER, vbo[i]);
          glBufferData(GL_ARRAY_BUFFER, MAX_COUNT * 4 * 4, buffer, GL_DYNAMIC_DRAW);
-         glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, vbo[i]);
 
          // Load the vertex data
          glVertexAttribPointer(0, 2, GL_FLOAT, false, 2 * 4, 0);
@@ -127,12 +122,9 @@ public class TransformFeedbackRenderer extends BaseRender {
          glVertexAttribPointer(1, 2, GL_FLOAT, false, 2 * 4, 2 * 4);
          glEnableVertexAttribArray(1);
 
+         glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tfo[i]);
+         glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, vbo[i]);
       }
-
-
-
-      glBindBuffer(GL_ARRAY_BUFFER, 0);
-      glBindVertexArray(0);
 
       glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -166,26 +158,26 @@ public class TransformFeedbackRenderer extends BaseRender {
       glUniform3fv(loc, 1, time, 0);
 
 
-      glEnable(GL_RASTERIZER_DISCARD);
-
-      glBindVertexArray(vao[i0]);
-      glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, vbo[i0]);
-      glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tfo[i0]);
-      glBeginTransformFeedback(GL_POINTS);
-      glDrawArrays(GL_POINTS, 0, MAX_COUNT);
-      glEndTransformFeedback();
-
-      glDisable(GL_RASTERIZER_DISCARD);
-
-      int i1 = (i0 + 1) % 2;
-      glBindVertexArray(vao[i1]);
-      glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, vbo[i1]);
-      glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tfo[i1]);
-      glDrawArrays(GL_POINTS, 0, MAX_COUNT);
-
+      if (i0 == 0) {
+         // 绑定tfo[0]，接收输出的顶点数据，数据相当于输出到vao[0]了
+         glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tfo[0]);
+         glBeginTransformFeedback(GL_POINTS);
+         // 绑定vao[1]，输入顶点数据
+         glBindVertexArray(vao[1]);
+         glDrawArrays(GL_POINTS, 0, MAX_COUNT);
+         glEndTransformFeedback();
+      } else {
+         // 绑定tfo[1]，接收输出的顶点数据，数据相当于输出到vao[1]了
+         glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tfo[1]);
+         glBeginTransformFeedback(GL_POINTS);
+         // 绑定vao[0]，输入顶点数据
+         glBindVertexArray(vao[0]);
+         glDrawArrays(GL_POINTS, 0, MAX_COUNT);
+         glEndTransformFeedback();
+      }
 
       // 交换
-      i0 = i1;
+      i0 = 1 - i0;
    }
 
    void initAll() {
