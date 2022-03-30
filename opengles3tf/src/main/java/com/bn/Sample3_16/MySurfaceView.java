@@ -22,6 +22,8 @@ import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
 import android.view.MotionEvent;
 
+import com.example.opengles3tf.R;
+
 class MySurfaceView extends GLSurfaceView 
 {
      private SceneRenderer mRenderer;//³¡¾°äÖÈ¾Æ÷    
