@@ -57,7 +57,10 @@ import static android.opengl.GLES20.glUniform3fv;
 import static android.opengl.GLES20.glUseProgram;
 import static android.opengl.GLES20.glVertexAttribPointer;
 import static android.opengl.GLES20.glViewport;
+import static android.opengl.GLES30.GL_MAP_READ_BIT;
+import static android.opengl.GLES30.GL_MAP_WRITE_BIT;
 import static android.opengl.GLES30.GL_RASTERIZER_DISCARD;
+import static android.opengl.GLES30.GL_READ_BUFFER;
 import static android.opengl.GLES30.GL_TRANSFORM_FEEDBACK;
 import static android.opengl.GLES30.GL_TRANSFORM_FEEDBACK_BUFFER;
 import static android.opengl.GLES30.glBeginTransformFeedback;
@@ -67,9 +70,14 @@ import static android.opengl.GLES30.glBindVertexArray;
 import static android.opengl.GLES30.glEndTransformFeedback;
 import static android.opengl.GLES30.glGenTransformFeedbacks;
 import static android.opengl.GLES30.glGenVertexArrays;
+import static android.opengl.GLES30.glMapBufferRange;
+import static android.opengl.GLES30.glUnmapBuffer;
+
+import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 import java.util.Random;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -83,8 +91,8 @@ public class TransformFeedbackRenderer extends BaseRender {
 
    int[] tfo;
 
-   static int MAX_COUNT = 10;
-   float[] pts = new float[MAX_COUNT * 4]; // x,y,vx,vy
+   static int MAX_COUNT = 1000;
+   float[] pts = new float[MAX_COUNT * 2]; // x,y,vx,vy
    Random r = new Random();
 
    float[] time = {0f, 0f, 0f}; // time,centerX,centerY
@@ -114,13 +122,13 @@ public class TransformFeedbackRenderer extends BaseRender {
       for (int i = 0; i < 2; i++) {
          glBindVertexArray(vao[i]);
          glBindBuffer(GL_ARRAY_BUFFER, vbo[i]);
-         glBufferData(GL_ARRAY_BUFFER, MAX_COUNT * 4 * 4, buffer, GL_DYNAMIC_DRAW);
+         glBufferData(GL_ARRAY_BUFFER, MAX_COUNT * 4 * 2, buffer, GL_DYNAMIC_DRAW);
 
          // Load the vertex data
          glVertexAttribPointer(0, 2, GL_FLOAT, false, 2 * 4, 0);
          glEnableVertexAttribArray(0);
-         glVertexAttribPointer(1, 2, GL_FLOAT, false, 2 * 4, 2 * 4);
-         glEnableVertexAttribArray(1);
+//         glVertexAttribPointer(1, 2, GL_FLOAT, false, 2 * 4, 2 * 4);
+//         glEnableVertexAttribArray(1);
 
          glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tfo[i]);
          glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, vbo[i]);
@@ -141,6 +149,7 @@ public class TransformFeedbackRenderer extends BaseRender {
    int width, height;
 
    int i0 = 0;
+   int frames = 0;
 
    @Override
    public void onDrawFrame(GL10 gl) {
@@ -176,6 +185,24 @@ public class TransformFeedbackRenderer extends BaseRender {
          glEndTransformFeedback();
       }
 
+
+//      if (frames++ < 10) {
+//         ByteBuffer bb = (ByteBuffer) glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, MAX_COUNT * 4 * 4, GL_MAP_READ_BIT | GL_MAP_WRITE_BIT);
+//         if (bb != null) {
+//            FloatBuffer res = bb.order(ByteOrder.LITTLE_ENDIAN).asFloatBuffer();
+//            String s = "";
+//            for (int i = 0; i < MAX_COUNT * 4; i++) {
+//               s += res.get(i);
+//               s += " ";
+//            }
+//            Log.d("chao data ", s);
+//         } else {
+//            Log.d("chao data", "null");
+//         }
+//         glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
+//      }
+
+
       // 交换
       i0 = 1 - i0;
    }
@@ -183,11 +210,12 @@ public class TransformFeedbackRenderer extends BaseRender {
    void initAll() {
       for (int i = 0; i < pts.length; i++) {
          pts[i] = (float)r.nextInt(1000) / 1000;
-         if (i % 4 < 2) {
-            pts[i] = (pts[i] - 0.5f) * 2;
-         } else {
-            pts[i] = pts[i] - 0.5f;
-         }
+         pts[i] = (pts[i] - 0.5f) * 2;
+//         if (i % 4 < 2) {
+//            pts[i] = (pts[i] - 0.5f) * 2;
+//         } else {
+//            pts[i] = pts[i] - 0.5f;
+//         }
       }
 
    }
