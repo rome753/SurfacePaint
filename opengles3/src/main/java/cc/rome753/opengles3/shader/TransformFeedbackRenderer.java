@@ -86,7 +86,7 @@ public class TransformFeedbackRenderer extends BaseRender {
 
    int[] tfo;
 
-   int particles = 1000;
+   int particles = 4;
    int particlesLen = particles * 4;
    int particlesBytes = particlesLen * 4;
 
@@ -146,7 +146,7 @@ public class TransformFeedbackRenderer extends BaseRender {
 
    int width, height;
 
-   int i0 = 0;
+   int i0 = 1;
    int frames = 0;
 
    @Override
@@ -180,8 +180,8 @@ public class TransformFeedbackRenderer extends BaseRender {
 //            FloatBuffer res = bb.order(ByteOrder.LITTLE_ENDIAN).asFloatBuffer();
 //            String s = "";
 //            for (int i = 0; i < particlesLen; i++) {
-//               s += res.get(i);
-//               s += " ";
+//               float num = res.get(i);
+//               s = s + " " + String.format("%.2f", num);
 //            }
 //            Log.d("chao data ", s);
 //         } else {
@@ -195,9 +195,17 @@ public class TransformFeedbackRenderer extends BaseRender {
    }
 
    void initAll() {
+      float f = 0.1f;
       for (int i = 0; i < buf.length; i++) {
-         buf[i] = (float)r.nextInt(1000) / 1000;
-         buf[i] = (buf[i] - 0.5f) * 2;
+//         buf[i] = (float)r.nextInt(1000) / 1000;
+//         buf[i] = (buf[i] - 0.5f) * 2;
+
+         if (i % 2 == 1) {
+            buf[i] = buf[i - 1];
+         } else {
+            buf[i] = f;
+            f += 0.1f;
+         }
       }
    }
 
