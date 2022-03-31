@@ -5,6 +5,7 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -78,6 +79,15 @@ public class GLActivity extends AppCompatActivity {
                 break;
             case "TransformFeedback":
                 glSurfaceView.setRenderer(render = new TransformFeedbackRenderer());
+                glSurfaceView.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if (render instanceof TransformFeedbackRenderer) {
+                            ((TransformFeedbackRenderer) render).updateCenter(event.getX(), event.getY());
+                        }
+                        return true;
+                    }
+                });
                 break;
         }
 

@@ -86,7 +86,7 @@ public class TransformFeedbackRenderer extends BaseRender {
 
    int[] tfo;
 
-   int particles = 10000;
+   int particles = 200000;
    int particlesLen = particles * 4;
    int particlesBytes = particlesLen * 4;
 
@@ -94,6 +94,11 @@ public class TransformFeedbackRenderer extends BaseRender {
    Random r = new Random();
 
    float[] time = {0f, 0f, 0f}; // time,centerX,centerY
+
+   public void updateCenter(float x, float y) {
+      time[1] = (x / width - 0.5f) * 2;
+      time[2] = -(y / height - 0.5f) * 2;
+   }
 
    @Override
    public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -132,7 +137,7 @@ public class TransformFeedbackRenderer extends BaseRender {
          glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, vbo[i]);
       }
 
-      glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+      glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
    }
 
