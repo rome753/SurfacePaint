@@ -47,9 +47,7 @@ import static android.opengl.GLES20.glBindBuffer;
 import static android.opengl.GLES20.glBufferData;
 import static android.opengl.GLES20.glClear;
 import static android.opengl.GLES20.glClearColor;
-import static android.opengl.GLES20.glDisable;
 import static android.opengl.GLES20.glDrawArrays;
-import static android.opengl.GLES20.glEnable;
 import static android.opengl.GLES20.glEnableVertexAttribArray;
 import static android.opengl.GLES20.glGenBuffers;
 import static android.opengl.GLES20.glGetUniformLocation;
@@ -58,9 +56,6 @@ import static android.opengl.GLES20.glUseProgram;
 import static android.opengl.GLES20.glVertexAttribPointer;
 import static android.opengl.GLES20.glViewport;
 import static android.opengl.GLES30.GL_MAP_READ_BIT;
-import static android.opengl.GLES30.GL_MAP_WRITE_BIT;
-import static android.opengl.GLES30.GL_RASTERIZER_DISCARD;
-import static android.opengl.GLES30.GL_READ_BUFFER;
 import static android.opengl.GLES30.GL_TRANSFORM_FEEDBACK;
 import static android.opengl.GLES30.GL_TRANSFORM_FEEDBACK_BUFFER;
 import static android.opengl.GLES30.glBeginTransformFeedback;
@@ -91,8 +86,11 @@ public class TransformFeedbackRenderer extends BaseRender {
 
    int[] tfo;
 
-   static int MAX_COUNT = 1000;
-   float[] pts = new float[MAX_COUNT * 2]; // x,y,vx,vy
+   int particles = 1000;
+   int particlesLen = particles * 4;
+   int particlesBytes = particlesLen * 4;
+
+   float[] buf = new float[particlesLen]; // x,y,vx,vy
    Random r = new Random();
 
    float[] time = {0f, 0f, 0f}; // time,centerX,centerY
@@ -106,11 +104,11 @@ public class TransformFeedbackRenderer extends BaseRender {
 
       // 分配内存空间,每个浮点型占4字节空间
       ByteBuffer buffer = ByteBuffer
-              .allocateDirect(pts.length * 4)
+              .allocateDirect(particlesBytes)
               .order(ByteOrder.nativeOrder());
 
       buffer.position(0);
-      buffer.asFloatBuffer().put(pts);
+      buffer.asFloatBuffer().put(buf);
 
       vao = new int[2];
       glGenVertexArrays(2, vao, 0);
@@ -122,7 +120,7 @@ public class TransformFeedbackRenderer extends BaseRender {
       for (int i = 0; i < 2; i++) {
          glBindVertexArray(vao[i]);
          glBindBuffer(GL_ARRAY_BUFFER, vbo[i]);
-         glBufferData(GL_ARRAY_BUFFER, MAX_COUNT * 4 * 2, buffer, GL_DYNAMIC_DRAW);
+         glBufferData(GL_ARRAY_BUFFER, particlesBytes, buffer, GL_DYNAMIC_DRAW);
 
          // Load the vertex data
          glVertexAttribPointer(0, 2, GL_FLOAT, false, 2 * 4, 0);
@@ -172,16 +170,16 @@ public class TransformFeedbackRenderer extends BaseRender {
       glBeginTransformFeedback(GL_POINTS);
       // 绑定vao[1]，输入顶点数据
       glBindVertexArray(vao[1 - i0]);
-      glDrawArrays(GL_POINTS, 0, MAX_COUNT);
+      glDrawArrays(GL_POINTS, 0, particles);
       glEndTransformFeedback();
 
 
 //      if (frames++ < 10) {
-//         ByteBuffer bb = (ByteBuffer) glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, MAX_COUNT * 4 * 4, GL_MAP_READ_BIT | GL_MAP_WRITE_BIT);
+//         ByteBuffer bb = (ByteBuffer) glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, particlesBytes, GL_MAP_READ_BIT);
 //         if (bb != null) {
 //            FloatBuffer res = bb.order(ByteOrder.LITTLE_ENDIAN).asFloatBuffer();
 //            String s = "";
-//            for (int i = 0; i < MAX_COUNT * 4; i++) {
+//            for (int i = 0; i < particlesLen; i++) {
 //               s += res.get(i);
 //               s += " ";
 //            }
@@ -192,23 +190,15 @@ public class TransformFeedbackRenderer extends BaseRender {
 //         glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
 //      }
 
-
       // 交换
       i0 = 1 - i0;
    }
 
    void initAll() {
-      for (int i = 0; i < pts.length; i++) {
-         pts[i] = (float)r.nextInt(1000) / 1000;
-         pts[i] = (pts[i] - 0.5f) * 2;
-//         if (i % 4 < 2) {
-//            pts[i] = (pts[i] - 0.5f) * 2;
-//         } else {
-//            pts[i] = pts[i] - 0.5f;
-//         }
+      for (int i = 0; i < buf.length; i++) {
+         buf[i] = (float)r.nextInt(1000) / 1000;
+         buf[i] = (buf[i] - 0.5f) * 2;
       }
-
    }
-
 
 }
