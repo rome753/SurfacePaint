@@ -86,7 +86,7 @@ public class TransformFeedbackRenderer extends BaseRender {
 
    int[] tfo;
 
-   int particles = 4;
+   int particles = 10000;
    int particlesLen = particles * 4;
    int particlesBytes = particlesLen * 4;
 
@@ -123,10 +123,10 @@ public class TransformFeedbackRenderer extends BaseRender {
          glBufferData(GL_ARRAY_BUFFER, particlesBytes, buffer, GL_DYNAMIC_DRAW);
 
          // Load the vertex data
-         glVertexAttribPointer(0, 2, GL_FLOAT, false, 2 * 4, 0);
+         glVertexAttribPointer(0, 4, GL_FLOAT, false, 4 * 4, 0);
          glEnableVertexAttribArray(0);
-         glVertexAttribPointer(1, 2, GL_FLOAT, false, 2 * 4, 2 * 4);
-         glEnableVertexAttribArray(1);
+//         glVertexAttribPointer(1, 2, GL_FLOAT, false, 2 * 4, 2 * 4);
+//         glEnableVertexAttribArray(1);
 
          glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tfo[i]);
          glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, vbo[i]);
@@ -197,15 +197,15 @@ public class TransformFeedbackRenderer extends BaseRender {
    void initAll() {
       float f = 0.1f;
       for (int i = 0; i < buf.length; i++) {
-//         buf[i] = (float)r.nextInt(1000) / 1000;
-//         buf[i] = (buf[i] - 0.5f) * 2;
+         buf[i] = (float)r.nextInt(1000) / 1000;
+         buf[i] = (buf[i] - 0.5f) * 2;
 
-         if (i % 2 == 1) {
-            buf[i] = buf[i - 1];
-         } else {
-            buf[i] = f;
-            f += 0.1f;
-         }
+//         if (i % 2 == 1) {
+//            buf[i] = buf[i - 1];
+//         } else {
+//            buf[i] = f;
+//            f += 0.1f;
+//         }
       }
    }
 
