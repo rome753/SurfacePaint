@@ -86,7 +86,7 @@ public class TransformFeedbackRenderer extends BaseRender {
 
    int[] tfo;
 
-   int particles = 200000;
+   int particles = 1000000;
    int particlesLen = particles * 4;
    int particlesBytes = particlesLen * 4;
 

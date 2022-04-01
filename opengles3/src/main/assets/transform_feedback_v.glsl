@@ -32,5 +32,5 @@ void main() {
      }
      vPos = vec4(v_position, v_velocity * 0.99);
      gl_Position  = vec4(v_position, 0.0, 1.0);
-     gl_PointSize = 5.0;
+     gl_PointSize = 2.0;
 }
