@@ -92,6 +92,7 @@ public class GLActivity extends AppCompatActivity {
                 break;
             case "Compute":
                 glSurfaceView.setRenderer(render = new ComputeRender());
+                glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
                 break;
         }
 
