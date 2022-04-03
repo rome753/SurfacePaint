@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import cc.rome753.opengles3.shader.AudioRender;
 import cc.rome753.opengles3.shader.BaseRender;
+import cc.rome753.opengles3.shader.ComputeRender;
 import cc.rome753.opengles3.shader.FractalRender;
 import cc.rome753.opengles3.shader.Group3DRender;
 import cc.rome753.opengles3.shader.GroupRender;
@@ -88,6 +89,9 @@ public class GLActivity extends AppCompatActivity {
                         return true;
                     }
                 });
+                break;
+            case "Compute":
+                glSurfaceView.setRenderer(render = new ComputeRender());
                 break;
         }
 

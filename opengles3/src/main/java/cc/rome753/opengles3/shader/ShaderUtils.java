@@ -1,6 +1,7 @@
 package cc.rome753.opengles3.shader;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.opengl.GLES31;
 import android.util.Log;
 
 import cc.rome753.opengles3.App;
@@ -16,6 +17,11 @@ public class ShaderUtils {
         int vShader = ShaderUtils.loadShader(GL_VERTEX_SHADER, loadAssets("shader_base_v.glsl"));
         int fShader = ShaderUtils.loadShader(GL_FRAGMENT_SHADER, loadAssets("shader_base_f.glsl"));
         return linkProgram(vShader, fShader);
+    }
+
+    public static int loadProgramCompute() {
+        int computeShader = ShaderUtils.loadShader(GLES31.GL_COMPUTE_SHADER, loadAssets("compute.glsl"));
+        return linkProgram(computeShader);
     }
 
     public static int loadProgramBox() {
@@ -109,19 +115,30 @@ public class ShaderUtils {
         return shader;
     }
 
+    private static int linkProgram(int computeShader) {
+        return linkProgram(new int[]{computeShader}, null);
+    }
+
     private static int linkProgram(int vShader, int fShader) {
         return linkProgram(vShader, fShader, null);
     }
 
     private static int linkProgram(int vShader, int fShader, String[] transformFeedbackVaryings) {
+        return linkProgram(new int[]{vShader, fShader}, transformFeedbackVaryings);
+    }
+
+    private static int linkProgram(int[] shaders, String[] transformFeedbackVaryings) {
         int program = glCreateProgram();
         if (program == 0) {
             Log.e("chao", "program == 0");
             return 0;
         }
 
-        glAttachShader(program, vShader);
-        glAttachShader(program, fShader);
+        for (int shader: shaders) {
+            glAttachShader(program, shader);
+        }
+//        glAttachShader(program, vShader);
+//        glAttachShader(program, fShader);
 
         if (transformFeedbackVaryings != null) {
             glTransformFeedbackVaryings(program, transformFeedbackVaryings, GL_INTERLEAVED_ATTRIBS);

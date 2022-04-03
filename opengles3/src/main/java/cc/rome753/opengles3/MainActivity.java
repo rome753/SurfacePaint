@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         mData.add("Group3D");
         mData.add("ParticleSystem");
         mData.add("TransformFeedback");
+        mData.add("Compute");
         mListView = (ListView) findViewById(R.id.lv);
         mListView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mData));
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         Intent i = new Intent(MainActivity.this, GLActivity.class);
-        i.putExtra("render", "TransformFeedback");
+        i.putExtra("render", "Compute");
         startActivity(i);
     }
 
