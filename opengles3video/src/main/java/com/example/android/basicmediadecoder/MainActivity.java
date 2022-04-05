@@ -24,15 +24,19 @@ import android.media.MediaExtractor;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.TextView;
 
 import com.example.android.GLVideoRender;
+import com.example.android.OurCamera;
+import com.example.android.ScaleGestureDetector;
 import com.example.android.common.media.MediaCodecWrapper;
 
 import java.io.IOException;
@@ -55,6 +59,10 @@ public class MainActivity extends Activity {
 
 
     GLVideoRender glVideoRender = new GLVideoRender();
+    OurCamera ourCamera;
+    float fx, fy;
+
+    ScaleGestureDetector scaleGestureDetector;
 
 
     /**
@@ -72,8 +80,36 @@ public class MainActivity extends Activity {
         glSurfaceView.setEGLContextClientVersion(3);
         glSurfaceView.setRenderer(glVideoRender);
         glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        ourCamera = glVideoRender.getOurCamera();
 
-//        glVideoRender.initAll();
+        scaleGestureDetector = new ScaleGestureDetector(this, new ScaleGestureDetector.OnScaleGestureListener() {
+            @Override
+            public boolean onScale(ScaleGestureDetector detector) {
+                float factor = detector.getScaleFactor();
+                ourCamera.ProcessMouseScroll((1 - factor) * 2000);
+                Log.d("chao", "scaleGestureDetector.onScale " + factor);
+
+                float dx = detector.getFocusX() - fx;
+                float dy = detector.getFocusY() - fy;
+                ourCamera.ProcessMouseMovement(-dx / 2, dy / 2, true);
+                fx = detector.getFocusX();
+                fy = detector.getFocusY();
+                return true;
+            }
+
+            @Override
+            public boolean onScaleBegin(ScaleGestureDetector detector) {
+                Log.d("chao", "scaleGestureDetector.onScaleBegin");
+                fx = detector.getFocusX();
+                fy = detector.getFocusY();
+                return true;
+            }
+
+            @Override
+            public void onScaleEnd(ScaleGestureDetector detector) {
+                Log.d("chao", "scaleGestureDetector.onScaleEnd");
+            }
+        });
     }
 
     @Override
@@ -200,5 +236,48 @@ public class MainActivity extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+
+    float x, y;
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (ourCamera == null) {
+            return false;
+        }
+        // 多指缩放视图
+        if (event.getPointerCount() > 1) {
+            return scaleGestureDetector.onTouchEvent(event);
+        }
+        // 单指移动视角
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                x = event.getRawX();
+                y = event.getRawY();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                float dx = event.getRawX() - x;
+                float dy = event.getRawY() - y;
+
+                // 防止多指跳动
+                if (Math.abs(dx) > 100 || Math.abs(dy) > 100) return true;
+
+                    ourCamera.ProcessKeyboard(dx > 0 ? OurCamera.Camera_Movement.LEFT : OurCamera.Camera_Movement.RIGHT, Math.abs(dx) / 1000);
+                    ourCamera.ProcessKeyboard(dy > 0 ? OurCamera.Camera_Movement.BACKWARD : OurCamera.Camera_Movement.FORWARD, Math.abs(dy) / 1000);
+
+                x = event.getRawX();
+                y = event.getRawY();
+
+
+                glVideoRender.rotModel(dx, dy);
+
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                break;
+        }
+        return true;
     }
 }

@@ -1,10 +1,11 @@
 package com.example.android
 
-import android.graphics.Bitmap
 import android.graphics.SurfaceTexture
-import android.opengl.*
+import android.opengl.GLES11Ext
 import android.opengl.GLES20.*
-import android.view.Surface
+import android.opengl.GLES30
+import android.opengl.GLSurfaceView
+import android.opengl.Matrix
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
@@ -38,6 +39,22 @@ class GLVideoRender: GLSurfaceView.Renderer {
     var tex: IntArray = IntArray(1)
 
     var sphere: Sphere? = null
+
+    var ourCamera: OurCamera = OurCamera(floatArrayOf(0.0f, 0.0f, 3.0f))
+
+    var rx = 0f
+    var ry = 0f
+
+    fun rotModel(dx: Float, dy: Float) {
+        rx += dx / 5f
+        rx %= 360f
+        ry += dy / 5f
+        ry %= 360f
+    }
+
+    var modelMat = FloatArray(16)
+    var viewMat = FloatArray(16)
+    var projectionMat = FloatArray(16)
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
 
@@ -99,17 +116,23 @@ class GLVideoRender: GLSurfaceView.Renderer {
         glBindBuffer(GL_ARRAY_BUFFER, 0)
         GLES30.glBindVertexArray(0)
         glClearColor(0.5f, 0.5f, 0.5f, 0.5f)
+        glEnable(GL_DEPTH_TEST)
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
         glViewport(0, 0, width, height)
+        this.width = width.toFloat()
+        this.height = height.toFloat()
     }
+
+    var width: Float = 1f
+    var height: Float = 1f
 
     var transform = FloatArray(16)
 
     override fun onDrawFrame(gl: GL10?) {
         // Clear the color buffer
-        glClear(GL_COLOR_BUFFER_BIT)
+        glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
 
         surfaceTexture?.updateTexImage()
         surfaceTexture?.getTransformMatrix(transform)
@@ -119,12 +142,33 @@ class GLVideoRender: GLSurfaceView.Renderer {
 //        glBindTexture(GL_TEXTURE_2D, tex[0])
         glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, tex[0])
 
-//        Matrix.setIdentityM(transform, 0)
-//        Matrix.translateM(transform, 1, 1f, 0f, 0f);
 
-        var loc = glGetUniformLocation(program, "transform")
-        glUniformMatrix4fv(loc, 1, false, transform, 0)
-        GLES30.glBindVertexArray(vao[0])
+        //        Matrix.setIdentityM(modelMat, 0);
+
+//        Matrix.setIdentityM(modelMat, 0);
+        Matrix.setIdentityM(viewMat, 0)
+        Matrix.setIdentityM(projectionMat, 0)
+
+        Matrix.perspectiveM(
+            projectionMat,
+            0,
+            OurCamera.radians(ourCamera.Zoom),
+            width / height,
+            0.1f,
+            100.0f
+        )
+        ourCamera.GetViewMatrix(viewMat)
+
+        val loc1 = glGetUniformLocation(program, "view")
+        glUniformMatrix4fv(loc1, 1, false, viewMat, 0)
+        val loc2 = glGetUniformLocation(program, "projection")
+        glUniformMatrix4fv(loc2, 1, false, projectionMat, 0)
+        Matrix.setIdentityM(modelMat, 0)
+        Matrix.translateM(modelMat, 0, 0f, 0f, 0f)
+        Matrix.rotateM(modelMat, 0, rx, 0.0f, 1.0f, 0.0f)
+        Matrix.rotateM(modelMat, 0, ry, 1.0f, 0.0f, 0.0f)
+        val loc3 = glGetUniformLocation(program, "model")
+        glUniformMatrix4fv(loc3, 1, false, modelMat, 0)
 
 //        glDrawElements(GL_TRIANGLES, vertices.size, GL_UNSIGNED_INT, 0)
         sphere?.draw()
