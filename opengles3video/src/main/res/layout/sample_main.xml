@@ -31,5 +31,10 @@
             android:visibility="gone"
             android:textColor="@android:color/holo_blue_bright"
             android:text="@string/app_video_attrib"/>
+
+    <android.opengl.GLSurfaceView
+        android:id="@+id/glSurfaceView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </FrameLayout>
 

@@ -22,6 +22,7 @@ import android.app.Activity;
 import android.media.MediaCodec;
 import android.media.MediaExtractor;
 import android.net.Uri;
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,6 +32,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.android.GLVideoRender;
 import com.example.android.common.media.MediaCodecWrapper;
 
 import java.io.IOException;
@@ -51,6 +53,10 @@ public class MainActivity extends Activity {
     TextView mAttribView = null;
 
 
+
+    GLVideoRender glVideoRender = new GLVideoRender();
+
+
     /**
      * Called when the activity is first created.
      */
@@ -61,6 +67,13 @@ public class MainActivity extends Activity {
         mPlaybackView = (TextureView) findViewById(R.id.PlaybackView);
         mAttribView =  (TextView)findViewById(R.id.AttribView);
 
+
+        GLSurfaceView glSurfaceView = findViewById(R.id.glSurfaceView);
+        glSurfaceView.setEGLContextClientVersion(3);
+        glSurfaceView.setRenderer(glVideoRender);
+        glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+
+//        glVideoRender.initAll();
     }
 
     @Override
@@ -121,8 +134,10 @@ public class MainActivity extends Activity {
                 // Try to create a video codec for this track. This call will return null if the
                 // track is not a video track, or not a recognized video format. Once it returns
                 // a valid MediaCodecWrapper, we can break out of the loop.
+//                mCodecWrapper = MediaCodecWrapper.fromVideoFormat(mExtractor.getTrackFormat(i),
+//                        new Surface(mPlaybackView.getSurfaceTexture()));
                 mCodecWrapper = MediaCodecWrapper.fromVideoFormat(mExtractor.getTrackFormat(i),
-                        new Surface(mPlaybackView.getSurfaceTexture()));
+                        new Surface(glVideoRender.getSurfaceTexture()));
                 if (mCodecWrapper != null) {
                     mExtractor.selectTrack(i);
                     break;

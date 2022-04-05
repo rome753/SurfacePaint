@@ -23,10 +23,10 @@
     <!-- Min/target SDK versions (<uses-sdk>) managed by build.gradle -->
     
     <application
+        android:name=".App"
         android:label="@string/app_name" android:icon="@drawable/ic_launcher">
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="landscape"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
