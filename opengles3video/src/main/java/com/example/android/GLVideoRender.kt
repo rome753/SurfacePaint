@@ -37,7 +37,12 @@ class GLVideoRender: GLSurfaceView.Renderer {
     var vao: IntArray = IntArray(1)
     var tex: IntArray = IntArray(1)
 
+    var sphere: Sphere? = null
+
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
+
+        sphere = Sphere()
+
         program = ShaderUtils.loadProgram()
         //分配内存空间,每个浮点型占4字节空间
         vertexBuffer = ByteBuffer.allocateDirect(vertices.size * 4)
@@ -121,8 +126,8 @@ class GLVideoRender: GLSurfaceView.Renderer {
         glUniformMatrix4fv(loc, 1, false, transform, 0)
         GLES30.glBindVertexArray(vao[0])
 
-//            glDrawArrays ( GL_TRIANGLES, 0, vertices.length );
-        glDrawElements(GL_TRIANGLES, vertices.size, GL_UNSIGNED_INT, 0)
+//        glDrawElements(GL_TRIANGLES, vertices.size, GL_UNSIGNED_INT, 0)
+        sphere?.draw()
     }
 
     fun createOESTexture(): IntArray {
