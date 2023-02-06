@@ -52,11 +52,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
-        Intent i = new Intent(MainActivity.this, GLActivity.class);
-        i.putExtra("render", "Compute");
-        startActivity(i);
+//        Intent i = new Intent(MainActivity.this, GLActivity.class);
+//        i.putExtra("render", "Compute");
+//        startActivity(i);
     }
 
 }
