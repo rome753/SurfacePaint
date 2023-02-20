@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
         mData.add("ParticleSystem");
         mData.add("TransformFeedback");
         mData.add("Compute");
+        mData.add("EGL");
         mListView = (ListView) findViewById(R.id.lv);
         mListView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mData));
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -45,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
                     clazz = GLAudioActivity.class;
                 } else if (mData.get(position).equals("Record")) {
                     clazz = GLRecordActivity.class;
+                } else if (mData.get(position).equals("EGL")) {
+                    clazz = EglActivity.class;
                 }
                 Intent i = new Intent(MainActivity.this, clazz);
                 i.putExtra("render", mData.get(position));

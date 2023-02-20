@@ -19,10 +19,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".GLActivity"/>
-        <activity android:name=".GLAudioActivity"/>
-        <activity android:name=".GLRecordActivity"/>
-
+        <activity android:name=".GLActivity" />
+        <activity android:name=".GLAudioActivity" />
+        <activity android:name=".GLRecordActivity" />
+        <activity android:name=".EglActivity" />
     </application>
 
 </manifest>
