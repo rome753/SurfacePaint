@@ -8,18 +8,18 @@ import android.view.WindowManager;
 
 public class Sample2_12Activity extends Activity {
 	private MySurfaceView mGLSurfaceView;
-	//ÆÁÄ»¶ÔÓ¦µÄ¿í¶ÈºÍ¸ß¶È
+	//å±å¹•å¯¹åº”çš„å®½åº¦å’Œé«˜åº¦
 	static float WIDTH;
 	static float HEIGHT;
     @Override
     protected void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);         
-        //ÉèÖÃÎªÈ«ÆÁ
+        //è®¾ç½®ä¸ºå…¨å±
         requestWindowFeature(Window.FEATURE_NO_TITLE); 
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN ,  
 		              WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		//»ñµÃÏµÍ³µÄ¿í¶ÈÒÔ¼°¸ß¶È
+		//è·å¾—ç³»ç»Ÿçš„å®½åº¦ä»¥åŠé«˜åº¦
         DisplayMetrics dm=new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         if(dm.widthPixels>dm.heightPixels)
@@ -32,14 +32,14 @@ public class Sample2_12Activity extends Activity {
         	WIDTH=dm.heightPixels;
         	HEIGHT=dm.widthPixels;
         }
-		//ÉèÖÃÎªºáÆÁÄ£Ê½
+		//è®¾ç½®ä¸ºæ¨ªå±æ¨¡å¼
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-		//³õÊ¼»¯GLSurfaceView
+		//åˆå§‹åŒ–GLSurfaceView
         mGLSurfaceView = new MySurfaceView(this);
-        //ÇĞ»»µ½Ö÷½çÃæ
+        //åˆ‡æ¢åˆ°ä¸»ç•Œé¢
         setContentView(mGLSurfaceView);	
-        mGLSurfaceView.requestFocus();//»ñÈ¡½¹µã
-        mGLSurfaceView.setFocusableInTouchMode(true);//ÉèÖÃÎª¿É´¥¿Ø  
+        mGLSurfaceView.requestFocus();//è·å–ç„¦ç‚¹
+        mGLSurfaceView.setFocusableInTouchMode(true);//è®¾ç½®ä¸ºå¯è§¦æ§  
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.bn.Sample3_16;//ÉùÃ÷°ü
+package com.bn.Sample3_16;//å£°æ˜åŒ…
 
 import static com.bn.Sample3_16.MySurfaceView.cx;
 import static com.bn.Sample3_16.MySurfaceView.cz;
@@ -7,47 +7,47 @@ import android.opengl.GLES30;
 
 public class ParticleSystem implements Comparable<ParticleSystem> 
 {
-	//ÆğÊ¼ÑÕÉ«
+	//èµ·å§‹é¢œè‰²
 	public float[] startColor;
-	//ÖÕÖ¹ÑÕÉ«
+	//ç»ˆæ­¢é¢œè‰²
 	public float[] endColor;
-	//Ô´»ìºÏÒò×Ó
+	//æºæ··åˆå› å­
 	public int srcBlend;
-	//Ä¿±ê»ìºÏÒò×Ó
+	//ç›®æ ‡æ··åˆå› å­
 	public int dstBlend;
-	//»ìºÏ·½Ê½
+	//æ··åˆæ–¹å¼
 	public int blendFunc;
-	//Á£×Ó×î´óÉúÃüÆÚ
+	//ç²’å­æœ€å¤§ç”Ÿå‘½æœŸ
 	public float maxLifeSpan;
-	//Á£×ÓÉúÃüÆÚ²½½ø
+	//ç²’å­ç”Ÿå‘½æœŸæ­¥è¿›
 	public float lifeSpanStep;
-	//Á£×Ó¸üĞÂÏß³ÌĞİÃßÊ±¼ä¼ä¸ô
+	//ç²’å­æ›´æ–°çº¿ç¨‹ä¼‘çœ æ—¶é—´é—´éš”
 	public int sleepSpan;
-	//Ã¿´ÎÅç·¢µÄÀı×ÓÊıÁ¿
+	//æ¯æ¬¡å–·å‘çš„ä¾‹å­æ•°é‡
 	public int groupCount;
-	//»ù´¡·¢Éäµã
+	//åŸºç¡€å‘å°„ç‚¹
 	public float sx;
 	public float sy;
-	//»æÖÆÎ»ÖÃ
+	//ç»˜åˆ¶ä½ç½®
 	float positionX;
 	float positionZ;
-	//·¢Éäµã±ä»¯·¶Î§
+	//å‘å°„ç‚¹å˜åŒ–èŒƒå›´
 	public float xRange;
 	public float yRange;
-	//Á£×Ó·¢ÉäµÄËÙ¶È
+	//ç²’å­å‘å°„çš„é€Ÿåº¦
 	public float vx;
 	public float vy;
-	//Ğı×ª½Ç¶È
+	//æ—‹è½¬è§’åº¦
 	float yAngle=0;
-	//»æÖÆÕß
+	//ç»˜åˆ¶è€…
 	ParticleForDraw fpfd;
-	//¹¤×÷±êÖ¾Î»
+	//å·¥ä½œæ ‡å¿—ä½
 	boolean flag=true;
 	
-	public float[] points;//Á£×ÓµÄ»ù±¾ÊôĞÔÊı×é
-	public float[] tpoints;//Á£×ÓµÄ¹Ì¶¨ÊôĞÔÊı×é
+	public float[] points;//ç²’å­çš„åŸºæœ¬å±æ€§æ•°ç»„
+	public float[] tpoints;//ç²’å­çš„å›ºå®šå±æ€§æ•°ç»„
 	
-	public long preCal=System.nanoTime();//»ñÈ¡µ±Ç°ÏµÍ³Ê±¼ä
+	public long preCal=System.nanoTime();//è·å–å½“å‰ç³»ç»Ÿæ—¶é—´
 	
     public ParticleSystem(float positionx,float positionz,ParticleForDraw fpfd,int count)
     {
@@ -70,22 +70,22 @@ public class ParticleSystem implements Comparable<ParticleSystem>
     	this.vy=VY[CURR_INDEX];
     	this.fpfd=fpfd;
     
-    	this.points=initPoints(count);//´´½¨Á£×ÓÊı
+    	this.points=initPoints(count);//åˆ›å»ºç²’å­æ•°
     	
-    	fpfd.initVertexData(points,tpoints);//¸üĞÂÁ£×ÓµÄÎ»ÖÃ×ø±ê
+    	fpfd.initVertexData(points,tpoints);//æ›´æ–°ç²’å­çš„ä½ç½®åæ ‡
     	
     }
     
   
     public float[] initPoints(int zcount)
-    {//³õÊ¼»¯Á£×Ó¶¥µãÊı¾İµÄ·½·¨
-    	float[] points=new float[zcount*4];//Á£×Ó¶¥µãÊı¾İÊı×é
+    {//åˆå§‹åŒ–ç²’å­é¡¶ç‚¹æ•°æ®çš„æ–¹æ³•
+    	float[] points=new float[zcount*4];//ç²’å­é¡¶ç‚¹æ•°æ®æ•°ç»„
     	
-    	tpoints=new float[zcount*4];//Á£×Ó¹Ì¶¨ÊôĞÔÊı×é
+    	tpoints=new float[zcount*4];//ç²’å­å›ºå®šå±æ€§æ•°ç»„
     	
     	for(int i=0;i<zcount;i++)//groupCount
-    	{//Ñ­»·±éÀúËùÓĞÁ£×Ó
-    		//ÔÚÖĞĞÄ¸½½ü²úÉú²úÉúÁ£×ÓµÄÎ»ÖÃ------**/
+    	{//å¾ªç¯éå†æ‰€æœ‰ç²’å­
+    		//åœ¨ä¸­å¿ƒé™„è¿‘äº§ç”Ÿäº§ç”Ÿç²’å­çš„ä½ç½®------**/
     		float px=(float) (sx+xRange*(Math.random()*2-1.0f));
             float py=(float) (sy+yRange*(Math.random()*2-1.0f));
             float vx=(sx-px)/150;
@@ -94,81 +94,81 @@ public class ParticleSystem implements Comparable<ParticleSystem>
             points[i*4+2]=vx;
             points[i*4+3]=10.0f;
             
-            tpoints[i*4]=px;//½«Á£×ÓÆğÊ¼Î»ÖÃµÄx×ø±ê´æÈëtpointsÊı×éÖĞ
-            tpoints[i*4+1]=py;//½«Á£×ÓÆğÊ¼Î»ÖÃµÄy×ø±ê´æÈëtpointsÊı×éÖĞ
-            tpoints[i*4+2]=vy;//½«Á£×Óy·½ÏòµÄËÙ¶È´æÈëtpointsÊı×éÖĞ
-            tpoints[i*4+3]=maxLifeSpan;//½«Á£×Ó×î´óÔÊĞíÉúÃüÆÚ´æÈëtpointsÊı×éÖĞ
+            tpoints[i*4]=px;//å°†ç²’å­èµ·å§‹ä½ç½®çš„xåæ ‡å­˜å…¥tpointsæ•°ç»„ä¸­
+            tpoints[i*4+1]=py;//å°†ç²’å­èµ·å§‹ä½ç½®çš„yåæ ‡å­˜å…¥tpointsæ•°ç»„ä¸­
+            tpoints[i*4+2]=vy;//å°†ç²’å­yæ–¹å‘çš„é€Ÿåº¦å­˜å…¥tpointsæ•°ç»„ä¸­
+            tpoints[i*4+3]=maxLifeSpan;//å°†ç²’å­æœ€å¤§å…è®¸ç”Ÿå‘½æœŸå­˜å…¥tpointsæ•°ç»„ä¸­
     	}
     	
     	for(int j=0;j<groupCount;j++)
         {
-    		points[4*j+3]=lifeSpanStep;//Á£×Ó´¦ÓÚ»îÔ¾×´Ì¬
+    		points[4*j+3]=lifeSpanStep;//ç²’å­å¤„äºæ´»è·ƒçŠ¶æ€
         }
     	
-		return points;//·µ»ØËùÓĞÁ£×Ó¶¥µãÊôĞÔÊı¾İ
+		return points;//è¿”å›æ‰€æœ‰ç²’å­é¡¶ç‚¹å±æ€§æ•°æ®
     }
     
-//    int countt=0;//¼ÆËãÖ¡ËÙÂÊµÄÊ±¼ä¼ä¸ô´ÎÊı--¼ÆËãÆ÷
-//	long timeStart=System.nanoTime();//¿ªÊ¼Ê±¼ä
+//    int countt=0;//è®¡ç®—å¸§é€Ÿç‡çš„æ—¶é—´é—´éš”æ¬¡æ•°--è®¡ç®—å™¨
+//	long timeStart=System.nanoTime();//å¼€å§‹æ—¶é—´
 	
     public void drawSelf(int texId)
-    {//»æÖÆ·½·¨
-//    	if(countt==19)//Ã¿Ê®´ÎÒ»¼ÆËãÖ¡ËÙÂÊ
+    {//ç»˜åˆ¶æ–¹æ³•
+//    	if(countt==19)//æ¯åæ¬¡ä¸€è®¡ç®—å¸§é€Ÿç‡
 //    	{
-//    		long timeEnd=System.nanoTime();//½áÊøÊ±¼ä
+//    		long timeEnd=System.nanoTime();//ç»“æŸæ—¶é—´
 //    		
-//    		//¼ÆËãÖ¡ËÙÂÊ
+//    		//è®¡ç®—å¸§é€Ÿç‡
 //    		float ps=(float)(1000000000.0/((timeEnd-timeStart)/20));
 //    		System.out.println("ps="+ps);
-//    		countt=0;//¼ÆËãÆ÷ÖÃ0
-//    		timeStart=timeEnd;//ÆğÊ¼Ê±¼äÖÃÎª½áÊøÊ±¼ä
+//    		countt=0;//è®¡ç®—å™¨ç½®0
+//    		timeStart=timeEnd;//èµ·å§‹æ—¶é—´ç½®ä¸ºç»“æŸæ—¶é—´
 //    	}
-//    	countt=(countt+1)%20;//¸üĞÂ¼ÆÊıÆ÷µÄÖµ
+//    	countt=(countt+1)%20;//æ›´æ–°è®¡æ•°å™¨çš„å€¼
     	
-    	//¹Ø±ÕÉî¶È¼ì²â
+    	//å…³é—­æ·±åº¦æ£€æµ‹
         GLES30.glDisable(GLES30.GL_DEPTH_TEST);
-    	//¿ªÆô»ìºÏ
+    	//å¼€å¯æ··åˆ
         GLES30.glEnable(GLES30.GL_BLEND);  
-        //ÉèÖÃ»ìºÏ·½Ê½
+        //è®¾ç½®æ··åˆæ–¹å¼
          GLES30.glBlendEquation(blendFunc);
-        //ÉèÖÃ»ìºÏÒò×Ó
+        //è®¾ç½®æ··åˆå› å­
         GLES30.glBlendFunc(srcBlend,dstBlend); 
  
         MatrixState.translate(positionX, 1, positionZ);
 		MatrixState.rotate(yAngle, 0, 1, 0);
 		
-		MatrixState.pushMatrix();//±£»¤ÏÖ³¡
+		MatrixState.pushMatrix();//ä¿æŠ¤ç°åœº
 		
-		long currCal=System.nanoTime();//»ñÈ¡µ±Ç°ÏµÍ³Ê±¼ä
+		long currCal=System.nanoTime();//è·å–å½“å‰ç³»ç»Ÿæ—¶é—´
 		if(currCal-preCal>sleepSpan*1000000)
-		{//Ê±¼ä¼ä¸ô´óÓÚ¸üĞÂÁ£×ÓµÄĞİÏ¢Ê±¼ä
-			fpfd.drawSelf0(count,groupCount,lifeSpanStep);//ÀûÓÃ±ä»»·´À¡¸üĞÂÁ£×Ó×´Ì¬
-			preCal=currCal;//ÉèÖÃÆğÊ¼Ê±¼äÎªµ±Ç°Ê±¼ä
-			update();//¸üĞÂ¼¤»îÁ£×ÓÎ»ÖÃµÄ¼ÆËãÆ÷
+		{//æ—¶é—´é—´éš”å¤§äºæ›´æ–°ç²’å­çš„ä¼‘æ¯æ—¶é—´
+			fpfd.drawSelf0(count,groupCount,lifeSpanStep);//åˆ©ç”¨å˜æ¢åé¦ˆæ›´æ–°ç²’å­çŠ¶æ€
+			preCal=currCal;//è®¾ç½®èµ·å§‹æ—¶é—´ä¸ºå½“å‰æ—¶é—´
+			update();//æ›´æ–°æ¿€æ´»ç²’å­ä½ç½®çš„è®¡ç®—å™¨
 		}
-    	fpfd.drawSelf(texId,maxLifeSpan,startColor,endColor);//»æÖÆÁ£×ÓÈº   	
-		MatrixState.popMatrix();//»Ö¸´ÏÖ³¡
+    	fpfd.drawSelf(texId,maxLifeSpan,startColor,endColor);//ç»˜åˆ¶ç²’å­ç¾¤   	
+		MatrixState.popMatrix();//æ¢å¤ç°åœº
 		
-    	//¿ªÆôÉî¶È¼ì²â
+    	//å¼€å¯æ·±åº¦æ£€æµ‹
         GLES30.glEnable(GLES30.GL_DEPTH_TEST);
-    	//¹Ø±Õ»ìºÏ
+    	//å…³é—­æ··åˆ
         GLES30.glDisable(GLES30.GL_BLEND);  
         
     }
-    int count=1;//¼¤»îÁ£×ÓµÄÎ»ÖÃ¼ÆËãÆ÷
-    public void update()//¸üĞÂ¼¤»îÁ£×ÓÎ»ÖÃµÄ¼ÆËãÆ÷µÄ·½·¨
+    int count=1;//æ¿€æ´»ç²’å­çš„ä½ç½®è®¡ç®—å™¨
+    public void update()//æ›´æ–°æ¿€æ´»ç²’å­ä½ç½®çš„è®¡ç®—å™¨çš„æ–¹æ³•
     {	
-    	if(count>=(points.length/groupCount/4))//¼ÆËãÆ÷³¬¹ı¼¤»îÁ£×ÓÎ»ÖÃÊ±
+    	if(count>=(points.length/groupCount/4))//è®¡ç®—å™¨è¶…è¿‡æ¿€æ´»ç²’å­ä½ç½®æ—¶
     	{
-    		count=0;//ÖØĞÂ¼ÆÊı
+    		count=0;//é‡æ–°è®¡æ•°
     	}
-    	//ÏÂ´Î¼¤»îÁ£×ÓµÄÎ»ÖÃ
+    	//ä¸‹æ¬¡æ¿€æ´»ç²’å­çš„ä½ç½®
     	count++;
     }
     
 	public void calculateBillboardDirection()
 	{
-		//¸ù¾İÉãÏñ»úÎ»ÖÃ¼ÆËã»ğÑæ³¯Ïò
+		//æ ¹æ®æ‘„åƒæœºä½ç½®è®¡ç®—ç«ç„°æœå‘
 		float xspan=positionX-MySurfaceView.cx;
 		float zspan=positionZ-MySurfaceView.cz;
 		
@@ -183,7 +183,7 @@ public class ParticleSystem implements Comparable<ParticleSystem>
 	}
 	@Override
 	public int compareTo(ParticleSystem another) {
-		//ÖØĞ´µÄ±È½ÏÁ½¸ö»ğÑæÀëÉãÏñ»ú¾àÀëµÄ·½·¨
+		//é‡å†™çš„æ¯”è¾ƒä¸¤ä¸ªç«ç„°ç¦»æ‘„åƒæœºè·ç¦»çš„æ–¹æ³•
 		float xs=positionX-cx;
 		float zs=positionZ-cz;
 		

@@ -40,6 +40,7 @@ public class EglActivity extends AppCompatActivity {
         imageView.post(() -> {
             int w = imageView.getWidth();
             int h = imageView.getHeight();
+            eglThread.initEglCore(w, h);
             eglThread.post(() -> {
                 simpleRender.onSurfaceCreated(null, null);
                 simpleRender.onSurfaceChanged(null, w, h);

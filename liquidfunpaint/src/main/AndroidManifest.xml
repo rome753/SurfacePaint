@@ -28,7 +28,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name="com.google.fpl.liquidfunpaint.MainActivity"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

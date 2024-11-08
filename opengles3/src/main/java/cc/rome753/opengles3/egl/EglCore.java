@@ -70,8 +70,8 @@ public class EglCore {
         return eglSurface;
     }
 
-    public void makeCurrent() {
-        mEglSurface = createPbufferSurface(1080, 2054);
+    public void makeCurrent(int w, int h) {
+        mEglSurface = createPbufferSurface(w, h);
         if (!EGL14.eglMakeCurrent(mEglDisplay, mEglSurface, mEglSurface, mEglContext)) {
             Log.e("chao", "eglMakeCurrent failed");
         }

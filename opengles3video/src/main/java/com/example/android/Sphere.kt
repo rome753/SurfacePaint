@@ -37,7 +37,7 @@ class Sphere {
         private const val STRIDE =
             (POSITION_COMPONENT_COUNT + TEXTURE_COORDINATES_COMPONENT_COUNT) * BYTES_PER_FLOAT
 
-        fun getStripArray(array: FloatArray?, rows: Int, cols: Int, stride: Int): FloatArray {
+        fun getStripArray(array: FloatArray, rows: Int, cols: Int, stride: Int): FloatArray {
             val stripArray = FloatArray((rows - 1) * (cols * 2) * stride)
             for (i in 0 until rows - 1) {
                 for (j in 0 until cols) {

@@ -12,10 +12,15 @@ public class EglThread {
         ht.start();
 
         mHandler = new Handler(ht.getLooper());
-        mHandler.post(() -> {
-            mEglCore = new EglCore();
-            mEglCore.makeCurrent();
-        });
+    }
+
+    public void initEglCore(int w, int h) {
+        if (mEglCore == null) {
+            mHandler.post(() -> {
+                mEglCore = new EglCore();
+                mEglCore.makeCurrent(w, h);
+            });
+        }
     }
 
     public void post(Runnable r) {
@@ -33,6 +38,4 @@ public class EglThread {
             });
         }
     }
-
-
 }

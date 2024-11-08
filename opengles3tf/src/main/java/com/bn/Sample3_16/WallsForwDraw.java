@@ -12,19 +12,19 @@ public class WallsForwDraw {
 	
 	public void drawSelf()
 	{
-		//»æÖÆµÚÒ»ÃæÇ½-µ×
+		//ç»˜åˆ¶ç¬¬ä¸€é¢å¢™-åº•
 		MatrixState.pushMatrix();
 		MatrixState.translate(0, 0, 0);
 		wall.drawSelf(ParticleDataConstant.walls[0]);
 		MatrixState.popMatrix();
 		
-		//»æÖÆµÚ¶şÃæÇ½-ÉÏ
+		//ç»˜åˆ¶ç¬¬äºŒé¢å¢™-ä¸Š
 		MatrixState.pushMatrix();
 		MatrixState.translate(0,2*ParticleDataConstant.wallsLength, 0);
 		wall.drawSelf(ParticleDataConstant.walls[1]);
 		MatrixState.popMatrix();
 		
-		//»æÖÆµÚÈıÃæÇ½-×ó
+		//ç»˜åˆ¶ç¬¬ä¸‰é¢å¢™-å·¦
 		MatrixState.pushMatrix();
 		MatrixState.translate(-ParticleDataConstant.wallsLength, ParticleDataConstant.wallsLength, 0);
 		MatrixState.rotate(90, 0, 0, 1);
@@ -32,7 +32,7 @@ public class WallsForwDraw {
 		wall.drawSelf(ParticleDataConstant.walls[2]);
 		MatrixState.popMatrix();
 		
-		//»æÖÆµÚËÄÃæÇ½-ÓÒ
+		//ç»˜åˆ¶ç¬¬å››é¢å¢™-å³
 		MatrixState.pushMatrix();
 		MatrixState.translate(ParticleDataConstant.wallsLength, ParticleDataConstant.wallsLength, 0);
 		MatrixState.rotate(-90, 0, 0, 1);
@@ -40,14 +40,14 @@ public class WallsForwDraw {
 		wall.drawSelf(ParticleDataConstant.walls[3]);
 		MatrixState.popMatrix();
 		
-		//»æÖÆµÚÎåÃæÇ½-Ç°
+		//ç»˜åˆ¶ç¬¬äº”é¢å¢™-å‰
 		MatrixState.pushMatrix();
 		MatrixState.translate(0, ParticleDataConstant.wallsLength,ParticleDataConstant.wallsLength);
 		MatrixState.rotate(90, 1, 0, 0);
 		wall.drawSelf(ParticleDataConstant.walls[4]);
 		MatrixState.popMatrix();
 		
-		//»æÖÆµÚÁùÃæÇ½-ºó
+		//ç»˜åˆ¶ç¬¬å…­é¢å¢™-å
 		MatrixState.pushMatrix();
 		MatrixState.translate(0, ParticleDataConstant.wallsLength,-ParticleDataConstant.wallsLength);
 		MatrixState.rotate(90, 1, 0, 0);

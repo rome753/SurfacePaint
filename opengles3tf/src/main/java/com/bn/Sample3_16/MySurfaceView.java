@@ -26,44 +26,44 @@ import com.example.opengles3tf.R;
 
 class MySurfaceView extends GLSurfaceView 
 {
-     private SceneRenderer mRenderer;//³¡¾°äÖÈ¾Æ÷    
+     private SceneRenderer mRenderer;//åœºæ™¯æ¸²æŸ“å™¨    
      
      List<ParticleSystem> fps=new ArrayList<ParticleSystem>();
      ParticleForDraw[] fpfd;
      WallsForwDraw wallsForDraw;    
      LoadedObjectVertexNormalTexture brazier;
      
-     static float direction=0;//ÊÓÏß·½Ïò
-     static float cx=0;//ÉãÏñ»úx×ø±ê
-	 static float cy=18;//ÉãÏñ»úz×ø±ê
-	 static float cz=20;//ÉãÏñ»úz×ø±ê  
-     static float tx=0;//¹Û²ìÄ¿±êµãx×ø±ê  
-     static float ty=5;//¹Û²ìÄ¿±êµãy×ø±ê
-     static float tz=0;//¹Û²ìÄ¿±êµãz×ø±ê   
-     static float ux=-cx;//¹Û²ìÄ¿±êµãx×ø±ê  
-     static float uy=Math.abs((cx*tx+cz*tz-cx*cx-cz*cz)/(ty-cy));//¹Û²ìÄ¿±êµãy×ø±ê
-     static float uz=-cz;//¹Û²ìÄ¿±êµãz×ø±ê   
-     static final float DEGREE_SPAN=(float)(3.0/180.0f*Math.PI);//ÉãÏñ»úÃ¿´Î×ª¶¯µÄ½Ç¶È
+     static float direction=0;//è§†çº¿æ–¹å‘
+     static float cx=0;//æ‘„åƒæœºxåæ ‡
+	 static float cy=18;//æ‘„åƒæœºzåæ ‡
+	 static float cz=20;//æ‘„åƒæœºzåæ ‡  
+     static float tx=0;//è§‚å¯Ÿç›®æ ‡ç‚¹xåæ ‡  
+     static float ty=5;//è§‚å¯Ÿç›®æ ‡ç‚¹yåæ ‡
+     static float tz=0;//è§‚å¯Ÿç›®æ ‡ç‚¹zåæ ‡   
+     static float ux=-cx;//è§‚å¯Ÿç›®æ ‡ç‚¹xåæ ‡  
+     static float uy=Math.abs((cx*tx+cz*tz-cx*cx-cz*cz)/(ty-cy));//è§‚å¯Ÿç›®æ ‡ç‚¹yåæ ‡
+     static float uz=-cz;//è§‚å¯Ÿç›®æ ‡ç‚¹zåæ ‡   
+     static final float DEGREE_SPAN=(float)(3.0/180.0f*Math.PI);//æ‘„åƒæœºæ¯æ¬¡è½¬åŠ¨çš„è§’åº¦
      
      float Offset=20;
-     float preX;//´¥¿Øµãx×ø±ê
-     float preY;//´¥¿Øµãy×ø±ê
+     float preX;//è§¦æ§ç‚¹xåæ ‡
+     float preY;//è§¦æ§ç‚¹yåæ ‡
      float x;
      float y;  
      
-     int textureIdFire;//ÏµÍ³»ğÑæ·ÖÅäµÄÎÆÀíid
+     int textureIdFire;//ç³»ç»Ÿç«ç„°åˆ†é…çš„çº¹ç†id
      
-     int textureIdbrazier;//ÏµÍ³»ğÅè·ÖÅäµÄÎÆÀíid
+     int textureIdbrazier;//ç³»ç»Ÿç«ç›†åˆ†é…çš„çº¹ç†id
      int count;
    	 
-     boolean flag=true;//Ïß³ÌÑ­»·µÄ±êÖ¾Î»
+     boolean flag=true;//çº¿ç¨‹å¾ªç¯çš„æ ‡å¿—ä½
      
 	public MySurfaceView(Context context) {
         super(context);
-        this.setEGLContextClientVersion(3); //ÉèÖÃÊ¹ÓÃOPENGL ES 3.0
-        mRenderer = new SceneRenderer();	//´´½¨³¡¾°äÖÈ¾Æ÷
-        setRenderer(mRenderer);				//ÉèÖÃäÖÈ¾Æ÷		        
-        setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);//ÉèÖÃäÖÈ¾Ä£Ê½ÎªÖ÷¶¯äÖÈ¾   
+        this.setEGLContextClientVersion(3); //è®¾ç½®ä½¿ç”¨OPENGL ES 3.0
+        mRenderer = new SceneRenderer();	//åˆ›å»ºåœºæ™¯æ¸²æŸ“å™¨
+        setRenderer(mRenderer);				//è®¾ç½®æ¸²æŸ“å™¨		        
+        setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);//è®¾ç½®æ¸²æŸ“æ¨¡å¼ä¸ºä¸»åŠ¨æ¸²æŸ“   
     }
 
 	@Override
@@ -82,7 +82,7 @@ class MySurfaceView extends GLSurfaceView
 						while(flag)
 						{
 							if(x>WIDTH/4&&x<3*WIDTH/4&&y>0&&y<HEIGHT/2)
-							{	//ÏòÇ°
+							{	//å‘å‰
 								if(Math.abs(Offset-0.5f)>25||Math.abs(Offset-0.5f)<15)
 								{
 								   return;
@@ -90,7 +90,7 @@ class MySurfaceView extends GLSurfaceView
 								Offset=Offset-0.5f;
 							}
 							else if(x>WIDTH/4&&x<3*WIDTH/4&&y>HEIGHT/2&&y<HEIGHT)
-							{	//Ïòºó
+							{	//å‘å
 								if(Math.abs(Offset+0.5f)>25||Math.abs(Offset+0.5f)<15)
 								{
 								   return;
@@ -99,12 +99,12 @@ class MySurfaceView extends GLSurfaceView
 							}
 							else if(x<WIDTH/4)
 							{
-								//Ë³Ê±ÕëĞı×ª
+								//é¡ºæ—¶é’ˆæ—‹è½¬
 								direction=direction-DEGREE_SPAN;
 							}
 							else if(x>WIDTH/4)
 							{
-								//ÄæÊ±ÕëĞı×ª
+								//é€†æ—¶é’ˆæ—‹è½¬
 								direction=direction+DEGREE_SPAN;
 							}
 							try
@@ -123,55 +123,55 @@ class MySurfaceView extends GLSurfaceView
 				flag=false;
 				break;
 			}
-			 //ÉèÖÃĞÂµÄ¹Û²ìÄ¿±êµãXZ×ø±ê
-			 cx=(float)(Math.sin(direction)*Offset);//¹Û²ìÄ¿±êµãx×ø±ê 
-	         cz=(float)(Math.cos(direction)*Offset);//¹Û²ìÄ¿±êµãz×ø±ê 
-	         //ÖØĞÂ¼ÆËãUpÏòÁ¿
-	         ux=-cx;//¹Û²ìÄ¿±êµãx×ø±ê  
-	         uy=Math.abs((cx*tx+cz*tz-cx*cx-cz*cz)/(ty-cy));//¹Û²ìÄ¿±êµãy×ø±ê
-	         uz=-cz;//¹Û²ìÄ¿±êµãz×ø±ê   
-	         //¼ÆËãÁ£×ÓµÄ³¯Ïò
+			 //è®¾ç½®æ–°çš„è§‚å¯Ÿç›®æ ‡ç‚¹XZåæ ‡
+			 cx=(float)(Math.sin(direction)*Offset);//è§‚å¯Ÿç›®æ ‡ç‚¹xåæ ‡ 
+	         cz=(float)(Math.cos(direction)*Offset);//è§‚å¯Ÿç›®æ ‡ç‚¹zåæ ‡ 
+	         //é‡æ–°è®¡ç®—Upå‘é‡
+	         ux=-cx;//è§‚å¯Ÿç›®æ ‡ç‚¹xåæ ‡  
+	         uy=Math.abs((cx*tx+cz*tz-cx*cx-cz*cz)/(ty-cy));//è§‚å¯Ÿç›®æ ‡ç‚¹yåæ ‡
+	         uz=-cz;//è§‚å¯Ÿç›®æ ‡ç‚¹zåæ ‡   
+	         //è®¡ç®—ç²’å­çš„æœå‘
 	         for(int i=0;i<count;i++)
 	         {
 	        	fps.get(i).calculateBillboardDirection();
 	         }
 			 Collections.sort(this.fps);
-			 //ÖØĞÂÉèÖÃÉãÏñ»úµÄÎ»ÖÃ
+			 //é‡æ–°è®¾ç½®æ‘„åƒæœºçš„ä½ç½®
 			 MatrixState.setCamera(cx,cy,cz,tx,ty,tz,ux,uy,uz);
-			 //¸ù¾İÁ£×ÓÓëÉãÏñ»úµÄ¾àÀë½øĞĞÅÅĞò
+			 //æ ¹æ®ç²’å­ä¸æ‘„åƒæœºçš„è·ç¦»è¿›è¡Œæ’åº
 		 return true;
 	}
 
 	private class SceneRenderer implements GLSurfaceView.Renderer 
     {   
 		
-//		int countt=0;//¼ÆËãÖ¡ËÙÂÊµÄÊ±¼ä¼ä¸ô´ÎÊı--¼ÆËãÆ÷
-//		long timeStart=System.nanoTime();//¿ªÊ¼Ê±¼ä
+//		int countt=0;//è®¡ç®—å¸§é€Ÿç‡çš„æ—¶é—´é—´éš”æ¬¡æ•°--è®¡ç®—å™¨
+//		long timeStart=System.nanoTime();//å¼€å§‹æ—¶é—´
         public void onDrawFrame(GL10 gl) 
         { 
-//        	if(countt==19)//Ã¿Ê®´ÎÒ»¼ÆËãÖ¡ËÙÂÊ
+//        	if(countt==19)//æ¯åæ¬¡ä¸€è®¡ç®—å¸§é€Ÿç‡
 //        	{
-//        		long timeEnd=System.nanoTime();//½áÊøÊ±¼ä
+//        		long timeEnd=System.nanoTime();//ç»“æŸæ—¶é—´
 //        		
-//        		//¼ÆËãÖ¡ËÙÂÊ
+//        		//è®¡ç®—å¸§é€Ÿç‡
 //        		float ps=(float)(1000000000.0/((timeEnd-timeStart)/20));
 //        		System.out.println("pss="+ps);
-//        		countt=0;//¼ÆËãÆ÷ÖÃ0
-//        		timeStart=timeEnd;//ÆğÊ¼Ê±¼äÖÃÎª½áÊøÊ±¼ä
+//        		countt=0;//è®¡ç®—å™¨ç½®0
+//        		timeStart=timeEnd;//èµ·å§‹æ—¶é—´ç½®ä¸ºç»“æŸæ—¶é—´
 //        	}
-//        	countt=(countt+1)%20;//¸üĞÂ¼ÆÊıÆ÷µÄÖµ
+//        	countt=(countt+1)%20;//æ›´æ–°è®¡æ•°å™¨çš„å€¼
         	
-        	//Çå³ıÉî¶È»º³åÓëÑÕÉ«»º³å
+        	//æ¸…é™¤æ·±åº¦ç¼“å†²ä¸é¢œè‰²ç¼“å†²
             GLES30.glClear( GLES30.GL_DEPTH_BUFFER_BIT | GLES30.GL_COLOR_BUFFER_BIT);
             MatrixState.pushMatrix();
-            //»æÖÆÇ½Ìå
+            //ç»˜åˆ¶å¢™ä½“
             wallsForDraw.drawSelf();
             MatrixState.translate(0, 2.5f, 0);
             for(int i=0;i<count;i++)
             {
             	MatrixState.pushMatrix();
             	MatrixState.translate(ParticleDataConstant.positionBrazierXZ[i][0],-2f,ParticleDataConstant.positionBrazierXZ[i][1]);
-            	//Èô¼ÓÔØµÄÎïÌå²¿Î»¿ÕÔò»æÖÆÎïÌå
+            	//è‹¥åŠ è½½çš„ç‰©ä½“éƒ¨ä½ç©ºåˆ™ç»˜åˆ¶ç‰©ä½“
                 if(brazier!=null)
 	            {
 	           	  brazier.drawSelf(textureIdbrazier);
@@ -188,22 +188,22 @@ class MySurfaceView extends GLSurfaceView
             MatrixState.popMatrix();
         }  
         public void onSurfaceChanged(GL10 gl, int width, int height) {
-            //ÉèÖÃÊÓ´°´óĞ¡¼°Î»ÖÃ 
+            //è®¾ç½®è§†çª—å¤§å°åŠä½ç½® 
         	GLES30.glViewport(0, 0, width, height); 
-        	//¼ÆËãGLSurfaceViewµÄ¿í¸ß±È
+        	//è®¡ç®—GLSurfaceViewçš„å®½é«˜æ¯”
             float ratio = (float) width / height;
-            //µ÷ÓÃ´Ë·½·¨¼ÆËã²úÉúÍ¸ÊÓÍ¶Ó°¾ØÕó
+            //è°ƒç”¨æ­¤æ–¹æ³•è®¡ç®—äº§ç”Ÿé€è§†æŠ•å½±çŸ©é˜µ
             MatrixState.setProjectFrustum(-0.3f*ratio, 0.3f*ratio, -1*0.3f, 1*0.3f, 1, 100);
-            //µ÷ÓÃ´Ë·½·¨²úÉúÉãÏñ»ú9²ÎÊıÎ»ÖÃ¾ØÕó
+            //è°ƒç”¨æ­¤æ–¹æ³•äº§ç”Ÿæ‘„åƒæœº9å‚æ•°ä½ç½®çŸ©é˜µ
             MatrixState.setCamera(cx,cy,cz,tx,ty,tz,ux,uy,uz);
-            //³õÊ¼»¯±ä»»¾ØÕó
+            //åˆå§‹åŒ–å˜æ¢çŸ©é˜µ
        	    MatrixState.setInitStack();
-       	    //³õÊ¼»¯¹âÔ´Î»ÖÃ   
+       	    //åˆå§‹åŒ–å…‰æºä½ç½®   
             MatrixState.setLightLocation(0, 15, 0);
         }
         public void onSurfaceCreated(GL10 gl, EGLConfig config) 
         {
-            //³õÊ¼»¯ÎÆÀí×ø±ê
+            //åˆå§‹åŒ–çº¹ç†åæ ‡
             for(int i=0;i<walls.length;i++)
             {
             	ParticleDataConstant.walls[i]=initTexture(R.drawable.wall0+i);
@@ -211,27 +211,27 @@ class MySurfaceView extends GLSurfaceView
             }
             textureIdbrazier=initTexture(R.drawable.brazier);
         	count=ParticleDataConstant.START_COLOR.length;
-    		fpfd=new ParticleForDraw[count];//4×é»æÖÆ×Å£¬4ÖÖÑÕÉ«
-    		 //´´½¨Á£×ÓÏµÍ³
+    		fpfd=new ParticleForDraw[count];//4ç»„ç»˜åˆ¶ç€ï¼Œ4ç§é¢œè‰²
+    		 //åˆ›å»ºç²’å­ç³»ç»Ÿ
             for(int i=0;i<count;i++)
             {
             	
             	CURR_INDEX=i;
             	fpfd[i]=new ParticleForDraw(MySurfaceView.this,RADIS[CURR_INDEX],0,0);  
-            	//´´½¨¶ÔÏó,½«»ğÑæµÄ³õÊ¼Î»ÖÃ´«¸ø¹¹ÔìÆ÷
+            	//åˆ›å»ºå¯¹è±¡,å°†ç«ç„°çš„åˆå§‹ä½ç½®ä¼ ç»™æ„é€ å™¨
             	fps.add(new ParticleSystem(ParticleDataConstant.positionFireXZ[i][0],ParticleDataConstant.positionFireXZ[i][1],fpfd[i],COUNT[i]));
             }
     		wallsForDraw=new WallsForwDraw(MySurfaceView.this);
-        	 //¼ÓÔØÒª»æÖÆµÄÎïÌå
+        	 //åŠ è½½è¦ç»˜åˆ¶çš„ç‰©ä½“
         	 brazier=LoadUtil.loadFromFile("brazier.obj", MySurfaceView.this.getResources(),MySurfaceView.this);
-            //ÉèÖÃÆÁÄ»±³¾°É«RGBA
+            //è®¾ç½®å±å¹•èƒŒæ™¯è‰²RGBA
             GLES30.glClearColor(0.6f,0.3f,0.0f, 1.0f);
-            //´ò¿ªÉî¶È¼ì²â
+            //æ‰“å¼€æ·±åº¦æ£€æµ‹
             GLES30.glEnable(GLES30.GL_DEPTH_TEST);
-            //³õÊ¼»¯ÎÆÀí
+            //åˆå§‹åŒ–çº¹ç†
             textureIdFire=initTexture(R.drawable.fire);
             
-            //¹Ø±Õ±³Ãæ¼ô²Ã   
+            //å…³é—­èƒŒé¢å‰ªè£   
             GLES30.glDisable(GLES30.GL_CULL_FACE);
            
         }
@@ -239,13 +239,13 @@ class MySurfaceView extends GLSurfaceView
 	
 	public int initTexture(int resId)
 	{
-		//Éú³ÉÎÆÀíID
+		//ç”Ÿæˆçº¹ç†ID
 		int[] textures = new int[1];
 		GLES30.glGenTextures
 		(
-				1,          //²úÉúµÄÎÆÀíidµÄÊıÁ¿
-				textures,   //ÎÆÀíidµÄÊı×é
-				0           //Æ«ÒÆÁ¿
+				1,          //äº§ç”Ÿçš„çº¹ç†idçš„æ•°é‡
+				textures,   //çº¹ç†idçš„æ•°ç»„
+				0           //åç§»é‡
 		);    
 		int textureId=textures[0];    
 		GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureId);
@@ -255,7 +255,7 @@ class MySurfaceView extends GLSurfaceView
 		GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T,GLES30.GL_CLAMP_TO_EDGE);
         
      
-        //Í¨¹ıÊäÈëÁ÷¼ÓÔØÍ¼Æ¬===============begin===================
+        //é€šè¿‡è¾“å…¥æµåŠ è½½å›¾ç‰‡===============begin===================
         InputStream is = this.getResources().openRawResource(resId);
         Bitmap bitmapTmp;
         try 
@@ -273,16 +273,16 @@ class MySurfaceView extends GLSurfaceView
                 e.printStackTrace();
             }
         }
-        //Í¨¹ıÊäÈëÁ÷¼ÓÔØÍ¼Æ¬===============end=====================  
-        //Êµ¼Ê¼ÓÔØÎÆÀí
+        //é€šè¿‡è¾“å…¥æµåŠ è½½å›¾ç‰‡===============end=====================  
+        //å®é™…åŠ è½½çº¹ç†
         GLUtils.texImage2D
         (
-        		GLES30.GL_TEXTURE_2D,   //ÎÆÀíÀàĞÍ£¬ÔÚOpenGL ESÖĞ±ØĞëÎªGL10.GL_TEXTURE_2D
-        		0, 					  //ÎÆÀíµÄ²ã´Î£¬0±íÊ¾»ù±¾Í¼Ïñ²ã£¬¿ÉÒÔÀí½âÎªÖ±½ÓÌùÍ¼
-        		bitmapTmp, 			  //ÎÆÀíÍ¼Ïñ
-        		0					  //ÎÆÀí±ß¿ò³ß´ç
+        		GLES30.GL_TEXTURE_2D,   //çº¹ç†ç±»å‹ï¼Œåœ¨OpenGL ESä¸­å¿…é¡»ä¸ºGL10.GL_TEXTURE_2D
+        		0, 					  //çº¹ç†çš„å±‚æ¬¡ï¼Œ0è¡¨ç¤ºåŸºæœ¬å›¾åƒå±‚ï¼Œå¯ä»¥ç†è§£ä¸ºç›´æ¥è´´å›¾
+        		bitmapTmp, 			  //çº¹ç†å›¾åƒ
+        		0					  //çº¹ç†è¾¹æ¡†å°ºå¯¸
         );
-        bitmapTmp.recycle(); 		  //ÎÆÀí¼ÓÔØ³É¹¦ºóÊÍ·ÅÍ¼Æ¬
+        bitmapTmp.recycle(); 		  //çº¹ç†åŠ è½½æˆåŠŸåé‡Šæ”¾å›¾ç‰‡
         return textureId;
 	}
 }

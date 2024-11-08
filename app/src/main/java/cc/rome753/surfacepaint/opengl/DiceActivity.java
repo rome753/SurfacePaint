@@ -28,9 +28,9 @@ public class DiceActivity extends Activity {
                 float y = event.values[1];
                 float z = event.values[2];
                 try {
-                    if (Math.abs(lastX - x) > 0.1 || Math.abs(lastY - y) > 0.1) {
-                        diceRenderer.rotate(x / 2 + lastX, y / 2 + lastY, z);
-                    }
+//                    if (Math.abs(lastX - x) > 0.1 || Math.abs(lastY - y) > 0.1) {
+                        diceRenderer.rotate(x, y, z);
+//                    }
                 } catch (Exception e) {
                 }
                 lastX = x;
@@ -76,7 +76,7 @@ public class DiceActivity extends Activity {
         super.onResume();
         sensorManager.registerListener(sensorEventListener,
                 sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_UI);
+                SensorManager.SENSOR_DELAY_FASTEST);
         if (rendererSet) {
             glSurfaceView.onResume();
         }

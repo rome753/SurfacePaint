@@ -82,12 +82,12 @@ public class YUVDetectView extends FrameLayout {
     }
 
     public void input(final Image image) {
-//        final ImageBytes imageBytes = YUVTools.getBytesFromImage(image);
-//        if(imageBytes != null) {
-//            final int w = isFlip ? imageBytes.height : imageBytes.width;
-//            final int h = isFlip ? imageBytes.width : imageBytes.height;
-//            displayImage(imageBytes.bytes, w, h);
-//        }
+        final ImageBytes imageBytes = YUVTools.getBytesFromImage(image);
+        if(imageBytes != null) {
+            final int w = isFlip ? imageBytes.height : imageBytes.width;
+            final int h = isFlip ? imageBytes.width : imageBytes.height;
+            displayImage(imageBytes.bytes, w, h);
+        }
 
         yuvRender.setImageBytes(new ImageBytes(image));
         gls.requestRender();
@@ -96,18 +96,18 @@ public class YUVDetectView extends FrameLayout {
     }
 
     public void inputAsync(final byte[] data, int width, int height) {
-//        final int w = isFlip ? height : width;
-//        final int h = isFlip ? width : height;
-//
-//        if (isShowing) return;
-//        isShowing = true;
-//        new Thread() {
-//            @Override
-//            public void run() {
-//                displayImage(data, w, h);
-//                isShowing = false;
-//            }
-//        }.start();
+        final int w = isFlip ? height : width;
+        final int h = isFlip ? width : height;
+
+        if (isShowing) return;
+        isShowing = true;
+        new Thread() {
+            @Override
+            public void run() {
+                displayImage(data, w, h);
+                isShowing = false;
+            }
+        }.start();
 
         yuvRender.setImageBytes(new ImageBytes(data, width, height));
         gls.requestRender();

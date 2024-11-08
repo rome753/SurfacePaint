@@ -4,139 +4,139 @@ import android.opengl.GLES30;
      
 public class ParticleDataConstant 
 {       
-	//Ç½ÌåµÄ³¤¶ÈËõ·Å±È
+	//å¢™ä½“çš„é•¿åº¦ç¼©æ”¾æ¯”
 	public static float wallsLength=30;
-	//µ±Ç°Ë÷Òı  
+	//å½“å‰ç´¢å¼•  
     public static int CURR_INDEX=3;
-    //»ğÑæµÄ³õÊ¼×ÜÎ»ÖÃ  
+    //ç«ç„°çš„åˆå§‹æ€»ä½ç½®  
      public static float distancesFireXZ=6;
-    //»ğÅèµÄ³õÊ¼×ÜÎ»ÖÃ  
+    //ç«ç›†çš„åˆå§‹æ€»ä½ç½®  
      public static float distancesBrazierXZ=6;
     public static float[][] positionFireXZ={{distancesFireXZ,distancesFireXZ},{distancesFireXZ,-distancesFireXZ},{-distancesFireXZ,distancesFireXZ},{-distancesFireXZ,-distancesFireXZ}};
     public static float[][] positionBrazierXZ={{distancesBrazierXZ,distancesBrazierXZ},{distancesBrazierXZ,-distancesBrazierXZ},{-distancesBrazierXZ,distancesBrazierXZ},{-distancesBrazierXZ,-distancesBrazierXZ}};
     public static int walls[]=new int[6];
-    //ÆğÊ¼ÑÕÉ«
+    //èµ·å§‹é¢œè‰²
     public static final float[][] START_COLOR=
 	{
-    	{0.7569f,0.2471f,0.1176f,1.0f},	//0-ÆÕÍ¨»ğÑæ
-    	{0.7569f,0.2471f,0.1176f,1.0f},	//1-°×ÁÁ»ğÑæ
-    	{0.6f,0.6f,0.6f,1.0f},			//2-ÆÕÍ¨ÑÌ
-    	{0.6f,0.6f,0.6f,1.0f},			//3-´¿ºÚÑÌ
+    	{0.7569f,0.2471f,0.1176f,1.0f},	//0-æ™®é€šç«ç„°
+    	{0.7569f,0.2471f,0.1176f,1.0f},	//1-ç™½äº®ç«ç„°
+    	{0.6f,0.6f,0.6f,1.0f},			//2-æ™®é€šçƒŸ
+    	{0.6f,0.6f,0.6f,1.0f},			//3-çº¯é»‘çƒŸ
 	};
     
-    //ÖÕÖ¹ÑÕÉ«
+    //ç»ˆæ­¢é¢œè‰²
     public static final float[][] END_COLOR=
 	{
-    	{0.0f,0.0f,0.0f,0.0f},	//0-ÆÕÍ¨»ğÑæ
-    	{0.0f,0.0f,0.0f,0.0f},	//1-°×ÁÁ»ğÑæ
-    	{0.0f,0.0f,0.0f,0.0f},	//2-ÆÕÍ¨ÑÌ
-    	{0.0f,0.0f,0.0f,0.0f},	//3-´¿ºÚÑÌ
+    	{0.0f,0.0f,0.0f,0.0f},	//0-æ™®é€šç«ç„°
+    	{0.0f,0.0f,0.0f,0.0f},	//1-ç™½äº®ç«ç„°
+    	{0.0f,0.0f,0.0f,0.0f},	//2-æ™®é€šçƒŸ
+    	{0.0f,0.0f,0.0f,0.0f},	//3-çº¯é»‘çƒŸ
 	};
     
-    //Ô´»ìºÏÒò×Ó
+    //æºæ··åˆå› å­
     public static final int[] SRC_BLEND=
 	{
-    	GLES30.GL_SRC_ALPHA,   				//0-ÆÕÍ¨»ğÑæ
-    	GLES30.GL_ONE,   					//1-°×ÁÁ»ğÑæ
-    	GLES30.GL_SRC_ALPHA,				//2-ÆÕÍ¨ÑÌ
-    	GLES30.GL_ONE,						//3-´¿ºÚÑÌ
+    	GLES30.GL_SRC_ALPHA,   				//0-æ™®é€šç«ç„°
+    	GLES30.GL_ONE,   					//1-ç™½äº®ç«ç„°
+    	GLES30.GL_SRC_ALPHA,				//2-æ™®é€šçƒŸ
+    	GLES30.GL_ONE,						//3-çº¯é»‘çƒŸ
 	};
     
-    //Ä¿±ê»ìºÏÒò×Ó
+    //ç›®æ ‡æ··åˆå› å­
     public static final int[] DST_BLEND=
 	{
-    	GLES30.GL_ONE,      				//0-ÆÕÍ¨»ğÑæ
-    	GLES30.GL_ONE,      				//1-°×ÁÁ»ğÑæ
-    	GLES30.GL_ONE_MINUS_SRC_ALPHA,		//2-ÆÕÍ¨ÑÌ
-    	GLES30.GL_ONE,						//3-´¿ºÚÑÌ
+    	GLES30.GL_ONE,      				//0-æ™®é€šç«ç„°
+    	GLES30.GL_ONE,      				//1-ç™½äº®ç«ç„°
+    	GLES30.GL_ONE_MINUS_SRC_ALPHA,		//2-æ™®é€šçƒŸ
+    	GLES30.GL_ONE,						//3-çº¯é»‘çƒŸ
 	};
     
-    //»ìºÏ·½Ê½
+    //æ··åˆæ–¹å¼
     public static final int[] BLEND_FUNC=
 	{
-    	GLES30.GL_FUNC_ADD,    				//0-ÆÕÍ¨»ğÑæ
-    	GLES30.GL_FUNC_ADD,    				//1-°×ÁÁ»ğÑæ
-    	GLES30.GL_FUNC_ADD,    				//2-ÆÕÍ¨ÑÌ
-    	GLES30.GL_FUNC_REVERSE_SUBTRACT,	//3-´¿ºÚÑÌ
+    	GLES30.GL_FUNC_ADD,    				//0-æ™®é€šç«ç„°
+    	GLES30.GL_FUNC_ADD,    				//1-ç™½äº®ç«ç„°
+    	GLES30.GL_FUNC_ADD,    				//2-æ™®é€šçƒŸ
+    	GLES30.GL_FUNC_REVERSE_SUBTRACT,	//3-çº¯é»‘çƒŸ
 	};
     
     //
     public static final int[] COUNT=
 	{
-    	340,   				//0-ÆÕÍ¨»ğÑæ
-    	340,   					//1-°×ÁÁ»ğÑæ
-    	99,				//2-ÆÕÍ¨ÑÌ
-    	99,						//3-´¿ºÚÑÌ
+    	340,   				//0-æ™®é€šç«ç„°
+    	340,   					//1-ç™½äº®ç«ç„°
+    	99,				//2-æ™®é€šçƒŸ
+    	99,						//3-çº¯é»‘çƒŸ
 	};
-    //µ¥¸öÁ£×Ó°ë¾¶
+    //å•ä¸ªç²’å­åŠå¾„
     public static final float[] RADIS=
     {
-    	60*0.5f,		//0-ÆÕÍ¨»ğÑæ
-    	60*0.5f,		//1-°×ÁÁ»ğÑæ
-    	60*0.8f,		//2-ÆÕÍ¨ÑÌ
-    	60*0.8f,		//3-´¿ºÚÑÌ
+    	60*0.5f,		//0-æ™®é€šç«ç„°
+    	60*0.5f,		//1-ç™½äº®ç«ç„°
+    	60*0.8f,		//2-æ™®é€šçƒŸ
+    	60*0.8f,		//3-çº¯é»‘çƒŸ
     };
     
-    //Á£×Ó×î´óÉúÃüÆÚ
+    //ç²’å­æœ€å¤§ç”Ÿå‘½æœŸ
     public static final float[] MAX_LIFE_SPAN=
     {
-    	5.0f,		//0-ÆÕÍ¨»ğÑæ6
-    	5.0f,		//1-°×ÁÁ»ğÑæ6
-    	6.0f,		//2-ÆÕÍ¨ÑÌ7
-    	6.0f,		//3-´¿ºÚÑÌ7
+    	5.0f,		//0-æ™®é€šç«ç„°6
+    	5.0f,		//1-ç™½äº®ç«ç„°6
+    	6.0f,		//2-æ™®é€šçƒŸ7
+    	6.0f,		//3-çº¯é»‘çƒŸ7
     };
     
-    //Á£×ÓÉúÃüÖÜÆÚ²½½ø
+    //ç²’å­ç”Ÿå‘½å‘¨æœŸæ­¥è¿›
     public static final float[] LIFE_SPAN_STEP=
     {
-    	0.07f,		//0-ÆÕÍ¨»ğÑæ0.07
-    	0.07f,		//1-°×ÁÁ»ğÑæ
-    	0.07f,		//2-ÆÕÍ¨ÑÌ
-    	0.07f,		//3-´¿ºÚÑÌ
+    	0.07f,		//0-æ™®é€šç«ç„°0.07
+    	0.07f,		//1-ç™½äº®ç«ç„°
+    	0.07f,		//2-æ™®é€šçƒŸ
+    	0.07f,		//3-çº¯é»‘çƒŸ
     };
     
-    //Á£×Ó·¢ÉäµÄX×óÓÒ·¶Î§
+    //ç²’å­å‘å°„çš„Xå·¦å³èŒƒå›´
     public static final float[] X_RANGE=
 	{
-	    0.5f,		//0-ÆÕÍ¨»ğÑæ
-	    0.5f,		//1-°×ÁÁ»ğÑæ
-	    0.5f,		//2-ÆÕÍ¨ÑÌ
-	    0.5f,		//3-´¿ºÚÑÌ
+	    0.5f,		//0-æ™®é€šç«ç„°
+	    0.5f,		//1-ç™½äº®ç«ç„°
+	    0.5f,		//2-æ™®é€šçƒŸ
+	    0.5f,		//3-çº¯é»‘çƒŸ
 	};
     
-    //Á£×Ó·¢ÉäµÄYÉÏÏÂ·¶Î§
+    //ç²’å­å‘å°„çš„Yä¸Šä¸‹èŒƒå›´
     public static final float[] Y_RANGE=
 	{
-	    0.3f,		//0-ÆÕÍ¨»ğÑæ
-	    0.3f,		//1-°×ÁÁ»ğÑæ
-	    0.15f,		//2-ÆÕÍ¨ÑÌ
-	    0.15f,		//3-´¿ºÚÑÌ
+	    0.3f,		//0-æ™®é€šç«ç„°
+	    0.3f,		//1-ç™½äº®ç«ç„°
+	    0.15f,		//2-æ™®é€šçƒŸ
+	    0.15f,		//3-çº¯é»‘çƒŸ
 	};
     
-    //Ã¿´ÎÅç·¢·¢ÉäµÄÊıÁ¿
+    //æ¯æ¬¡å–·å‘å‘å°„çš„æ•°é‡
     public static final int[] GROUP_COUNT=
 	{
-    	4,			//0-ÆÕÍ¨»ğÑæ
-    	4,			//1-°×ÁÁ»ğÑæ
-    	1,			//2-ÆÕÍ¨ÑÌ
-    	1,			//3-´¿ºÚÑÌ
+    	4,			//0-æ™®é€šç«ç„°
+    	4,			//1-ç™½äº®ç«ç„°
+    	1,			//2-æ™®é€šçƒŸ
+    	1,			//3-çº¯é»‘çƒŸ
 	};
     
-    //Á£×ÓY·½ÏòÉıÌÚµÄËÙ¶È
+    //ç²’å­Yæ–¹å‘å‡è…¾çš„é€Ÿåº¦
     public static final float[] VY=
 	{
-    	0.05f,		//0-ÆÕÍ¨»ğÑæ
-    	0.05f,		//1-°×ÁÁ»ğÑæ
-    	0.04f,		//2-ÆÕÍ¨ÑÌ
-    	0.04f,		//3-´¿ºÚÑÌ
+    	0.05f,		//0-æ™®é€šç«ç„°
+    	0.05f,		//1-ç™½äº®ç«ç„°
+    	0.04f,		//2-æ™®é€šçƒŸ
+    	0.04f,		//3-çº¯é»‘çƒŸ
 	};
   
-    //Á£×Ó¸üĞÂÎïÀíÏß³ÌĞİÏ¢Ê±¼ä
+    //ç²’å­æ›´æ–°ç‰©ç†çº¿ç¨‹ä¼‘æ¯æ—¶é—´
     public static final int[] THREAD_SLEEP=
     {
-    	60,		//0-ÆÕÍ¨»ğÑæ
-    	60,		//1-°×ÁÁ»ğÑæ
-    	30,		//2-ÆÕÍ¨ÑÌ
-    	30,		//3-´¿ºÚÑÌ
+    	60,		//0-æ™®é€šç«ç„°
+    	60,		//1-ç™½äº®ç«ç„°
+    	30,		//2-æ™®é€šçƒŸ
+    	30,		//3-çº¯é»‘çƒŸ
     };
 }
